@@ -1,0 +1,50 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://${HOST}:3306/${DB}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+        auto_quote_keyword: true
+        default_batch_fetch_size: 500
+    database: mysql
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+#  cloud:
+#    aws:
+#      credentials:
+#        access-key: ${S3_ACCESS_KEY}
+#        secret-key: ${S3_SECRET_KEY}
+#      region:
+#        static: ap-northeast-2
+#      s3:
+#        bucket: ${BUCKET_NAME}
+
+#jwtpassword:
+#  source: ${JWT_SECRET_KEY}
+
+logging:
+  level:
+    root: debug
+    web: debug
+    sql: debug
