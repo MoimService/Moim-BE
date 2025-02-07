@@ -1,5 +1,6 @@
 name: CD
 
+# event: 실행되는 시점을 설정
 on:
   push:
     branches:
@@ -7,8 +8,16 @@ on:
 
 jobs:
   deploy:
+    # 내 github actions를 실행할 컴퓨터 OS
     runs-on: ubuntu-latest
 
     steps:
+      - name: Github Actions variables
+        run: | 
+          echo $GITHUB_SHA
+          echo $GITHUB_REPOSITORY
+
       - name: Checkout repository
         uses: actions/checkout@v2
+
+
