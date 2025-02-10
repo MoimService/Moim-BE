@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout repository #java repository에 가라
-        uses: actions/checkout@2
+        uses: actions/checkout@vgit2
 
       - name: Set up JDK 17  #java 17을 설치해라, 그 중에서도 temurin
-        uses: actions/setup-java@4
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
