@@ -26,7 +26,8 @@ public class SecurityConfig {
                                 .requestMatchers("/login").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/**").permitAll()
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
+//                    .anyRequest().authenticated() // 인증 구현시, 주석 해제
                 );
         return http.build();
     }

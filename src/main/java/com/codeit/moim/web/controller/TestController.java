@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 public class TestController {
-    @GetMapping("/login/test")
+    @GetMapping("/test")
     public String hello() {
-        return "/login/test 요청되었습니다.";
+        return "/test 페이지입니다. Security config에 permitAll()로 설정되어 있습니다";
     }
 }
