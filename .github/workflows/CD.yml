@@ -3,51 +3,43 @@ name: CD
 on:
   push:
     branches:
-      - cicd
+      - deploy
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository #java repository에 가라
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 17  #java 17을 설치해라, 그 중에서도 temurin
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: test and build #build하고
+      - name: test and build
         run: ./gradlew clean build -x test
 
-      - name: change build file name #build file이름 바꾸기
-        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar #원래 *SNAPSHOT.jar 였는데 ./project.jar로 바꾼다
+      - name: change build file name
+        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
 
-      - name: use SCP to send build file to EC2 #SCP라는걸 이용해서 만든 build file을 EC2로 보낸다
+      - name: use SCP to send build file to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{secrets.EC2_PRIVATE_KEY }}
           source: project.jar
-          target: /home/ec2-user/Moim-BE/willrun  #앞으로 실행될 파일을 build file을 willrun라는 폴더에 저장할 것
+          target: /home/ec2-user/Moim-BE/willrun
 
       - name: connect EC2 through SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{secrets.EC2_PRIVATE_KEY }} #EC2만들 때 다운받은 pem키
-          #rm -rf 현재 실행 중인 파일 담긴 폴더 지우기
-          #mkdir 현재 실행 중인 파일 담을 폴더 만들기 mkdir
-          #앞으로 실행될 파일에 있는 폴더에 가서 willrun/project.jar
-          #현재 실행될 파일을 저장하는 폴더로 이동
-          #cd 현재 실행되고 있는 파일 있는 폴더로 가서
-          #현재 포트 8080에서 실행되는 파일 있으면 지우고, 없으면 없는대로 true
-          #nohup 빌드 파일 실행
-          #rm -rf 실행될 파일 저장하는 폴더는 삭제
+          key: ${{secrets.EC2_PRIVATE_KEY }}
           script: | 
             rm -rf /home/ec2-user/Moim-BE/running 
             mkdir /home/ec2-user/Moim-BE/running
