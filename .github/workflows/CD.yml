@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout repository #java repository에 가라
-        uses: actions/checkout@vgit2
+        uses: actions/checkout@v2
 
       - name: Set up JDK 17  #java 17을 설치해라, 그 중에서도 temurin
         uses: actions/setup-java@v4
