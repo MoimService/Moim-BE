@@ -12,7 +12,7 @@ assignees: ''
 > Concise description of what feature to develop
 
 ## Suggest a Solution
-> Detailed steps to develop the feaure
+> Detailed steps to develop the feature
 
 - [ ] TODO
 - [ ] TODO
