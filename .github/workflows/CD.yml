@@ -34,7 +34,13 @@ jobs:
           chmod 600 ~/.ssh/private_key.pem
 
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: ./gradlew clean build -x test
+
+      - name: Check JAR File
+        run: ls -l build/libs/
+
+      - name: Debug APP_DIR
+        run: echo "APP_DIR=${{ secrets.APP_DIR }}"
 
       - name: Upload JAR to Remote Server
         run: |
