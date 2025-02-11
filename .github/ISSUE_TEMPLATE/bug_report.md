@@ -1,12 +1,11 @@
 ---
 name: Bug report
-about: 버그 리포트 이슈 템플릿
+about: issue template for bug report
 title: ''
-labels: ''
-assignees: ''
+labels: "\U0001F44D\U0001F3FB enhancement"
+assignees: soheeparklee
 
 ---
-
 
 ## Describe the bug
 > A clear and concise description of what the bug is.

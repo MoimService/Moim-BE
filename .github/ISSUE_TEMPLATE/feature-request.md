@@ -1,9 +1,9 @@
 ---
 name: Feature Request
-about: 기능 추가 이슈 템플릿
-title: ''
-labels: ''
-assignees: ''
+about: issue template for feature request
+title: 'feat: '
+labels: "\U0001F44D\U0001F3FB enhancement"
+assignees: soheeparklee
 
 ---
 
