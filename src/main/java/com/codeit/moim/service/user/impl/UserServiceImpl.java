@@ -1,13 +1,13 @@
 package com.codeit.moim.service.user.impl;
 
 import com.codeit.moim.common.exception.ApplicationException;
+import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.User;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.user.UserService;
 import com.codeit.moim.web.dto.request.auth.LoginRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

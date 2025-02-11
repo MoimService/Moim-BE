@@ -40,8 +40,8 @@ spring:
 #      s3:
 #        bucket: ${BUCKET_NAME}
 
-#jwtpassword:
-#  source: ${JWT_SECRET_KEY}
+jwtpassword:
+  source: ${JWT_SECRET_KEY}
 
 logging:
   level:

@@ -1,4 +1,4 @@
-package com.codeit.moim.service.user.impl;
+package com.codeit.moim.common.exception.auth;
 
 import com.codeit.moim.common.exception.EntityNotFoundException;
 
