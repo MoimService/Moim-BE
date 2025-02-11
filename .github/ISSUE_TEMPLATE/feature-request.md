@@ -9,7 +9,7 @@ assignees: soheeparklee
 
 ## Describe the feature
 
-> Concise description of feature to develop
+> Concise description of feature to develop 
 
 ## Suggest a Solution
 > Detailed steps to develop the feature
