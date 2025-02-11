@@ -1,24 +1,24 @@
 ---
 name: Feature Request
-about: issue template for feature request
+about: Issue template for feature request
 title: 'feat: '
 labels: "\U0001F44D\U0001F3FB enhancement"
 assignees: soheeparklee
 
 ---
 
-## Describe the feature
+## 📝 Describe the feature
 
 > Concise description of feature to develop 
 
-## Suggest a Solution
+## 👣 Suggest a Solution
 > Detailed steps to develop the feature
 
 - [ ] TODO
 - [ ] TODO
 - [ ] TODO
 
-## Additional Context
+## 📸 Additional Context
 > Add sceenshots, photos
 
-## Reference(if appropriate)
+## 💡 Reference(if appropriate)
