@@ -2,6 +2,7 @@ package com.codeit.moim.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -49,4 +50,19 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserSkill> userSkillList = new ArrayList<>();
+
+
+    @Builder
+    public User(int userId, String name, String email, String position, String password, String profilePic, String intro, String gender, String location, String age) {
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.position = position;
+        this.password = password;
+        this.profilePic = profilePic;
+        this.intro = intro;
+        this.gender = gender;
+        this.location = location;
+        this.age = age;
+    }
 }
