@@ -39,13 +39,11 @@ jobs:
       - name: Check JAR File
         run: ls -l build/libs/
 
-      - name: Debug APP_DIR
-        run: echo "APP_DIR=${{ secrets.APP_DIR }}"
-
       - name: Upload JAR to Remote Server
         run: |
           echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/private_key.pem
           chmod 600 ~/.ssh/private_key.pem
+          ssh -i ~/.ssh/private_key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} "mkdir -p ${{ secrets.APP_DIR }}"
           scp -i ~/.ssh/private_key.pem build/libs/moim-0.0.1-SNAPSHOT.jar ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ secrets.APP_DIR }}
         env:
           EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
