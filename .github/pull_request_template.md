@@ -1,17 +1,24 @@
-## #️⃣연관된 이슈
+## #️⃣ Issue ticket number and link
 
-> ex) #이슈번호, #이슈번호
+> ex) #issue number
 
-- close #이슈번호
+- close #issue
 
-## 📝작업 내용
+## ✔️Type of change
+- [ ] 👍 New feature
+- [ ] 🐛 Bug fix
+- [ ] 📕 Docs update
+- [ ] 👩🏻‍💻 Code Refactor
 
-> 이번 PR에서 작업한 내용을 간략히 설명해주세요(이미지 첨부 가능)
+## 📝Description
 
-### 스크린샷 (선택)
+> Summary of the changes made in this PR and the related issue. 
 
-## 💬리뷰 요구사항(선택)
 
-> 리뷰어가 특별히 봐주었으면 하는 부분이 있다면 작성해주세요
->
-> ex) 메소드 XXX의 이름을 더 잘 짓고 싶은데 혹시 좋은 명칭이 있을까요?
+
+### 📸 Screenshots(if appropriate)
+
+## 💬Required review(if appropriate)
+
+> Add if a specific review is required from the reviewer <br>
+> ex) Any better ideas for method name XXX?

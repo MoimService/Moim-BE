@@ -1,6 +1,6 @@
 ---
 name: Etc
-about: 기타 자유 양식 템플릿
+about: Free template
 title: ''
 labels: ''
 assignees: ''
