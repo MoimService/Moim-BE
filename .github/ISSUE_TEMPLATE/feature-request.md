@@ -7,14 +7,18 @@ assignees: ''
 
 ---
 
-## 어떤 기능인가요?
+## Describe the feature
 
-> 추가하려는 기능에 대해 간결하게 설명해주세요
+> Concise description of what feature to develop
 
-## 작업 상세 내용
+## Suggest a Solution
+> Detailed steps to develop the feaure
 
 - [ ] TODO
 - [ ] TODO
 - [ ] TODO
 
-## 참고할만한 자료(선택)
+## Additional Context
+> Add sceenshots, photos
+
+## Reference
