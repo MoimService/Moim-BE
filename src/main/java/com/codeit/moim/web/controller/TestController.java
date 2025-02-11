@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     @GetMapping("/test")
     public String hello() {
-        return "/CICD 후 test 페이지입니다. Security config에 permitAll()로 설정되어 있습니다";
+        return "/CICD merge 후 final test 페이지입니다. Security config에 permitAll()로 설정되어 있습니다";
     }
 }
