@@ -3,6 +3,7 @@ package com.codeit.moim.web.controller;
 import com.codeit.moim.service.user.UserService;
 import com.codeit.moim.web.dto.request.auth.LoginRequest;
 import com.codeit.moim.web.dto.response.Response;
+import com.codeit.moim.web.dto.response.auth.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -24,11 +25,14 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Login success")
     })
     @PostMapping(value = "/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
+
+    public Response login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         String token = userService.login(loginRequest);
         httpServletResponse.addHeader("Access-Control-Expose-Headers", "token");
         httpServletResponse.setHeader("token", token);
 
-        return ResponseEntity.ok( "Login success");
+        return Response.ok(new LoginResponse(loginRequest.email()));
     }
+
+
 }
