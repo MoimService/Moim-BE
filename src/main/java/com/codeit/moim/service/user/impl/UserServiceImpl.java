@@ -36,6 +36,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SignUpResponse signUpUser(SignUpRequest signUpRequest) {
+        userNameCheck(signUpRequest.name());
+        userEmailCheck(signUpRequest.email());
         //password check
         passwordMatchValidation(signUpRequest.password(), signUpRequest.passwordCheck());
 
@@ -78,8 +80,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SignUpCheckResponse userNameCheck(SignUpCheckRequest signUpCheckRequest) {
-        if(userRepository.existsByName(signUpCheckRequest.field())){
+    public SignUpCheckResponse userNameCheck(String name) {
+        if(userRepository.existsByName(name)){
             throw new SignUpExistException("This name already exists in the DB", "name");
         }
         else{
@@ -88,8 +90,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SignUpCheckResponse userEmailCheck(SignUpCheckRequest signUpCheckRequest) {
-        if(userRepository.existsByEmail(signUpCheckRequest.field())){
+    public SignUpCheckResponse userEmailCheck(String email) {
+        if(userRepository.existsByEmail(email)){
             throw new SignUpExistException("This email already exists in the DB", "email");
         }
         else{
