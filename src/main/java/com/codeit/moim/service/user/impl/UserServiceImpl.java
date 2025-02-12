@@ -3,13 +3,16 @@ package com.codeit.moim.service.user.impl;
 import com.codeit.moim.common.config.JwtTokenProvider;
 import com.codeit.moim.common.exception.ApplicationException;
 import com.codeit.moim.common.exception.auth.PasswordInvlaidException;
+import com.codeit.moim.common.exception.auth.SignUpExistException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.User;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.user.UserService;
 import com.codeit.moim.web.dto.request.auth.LoginRequest;
+import com.codeit.moim.web.dto.request.auth.SignUpCheckRequest;
 import com.codeit.moim.web.dto.request.auth.SignUpRequest;
+import com.codeit.moim.web.dto.response.auth.SignUpCheckResponse;
 import com.codeit.moim.web.dto.response.auth.SignUpResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,9 +36,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SignUpResponse signUpUser(SignUpRequest signUpRequest) {
-        //name double check
-        //email double check
-
         //password check
         passwordMatchValidation(signUpRequest.password(), signUpRequest.passwordCheck());
 
@@ -51,6 +51,8 @@ public class UserServiceImpl implements UserService {
 
         return new SignUpResponse(savedUser.getUserId());
     }
+
+
     @Override
     public String login(LoginRequest loginRequest) {
 
@@ -75,8 +77,21 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void passwordMatchValidation(String password, String passwordCheck){
-        if(! password.equals(passwordCheck)) throw new PasswordInvlaidException(ErrorStatus.toErrorStatus("Password does not match",  BAD_REQUEST));
+    @Override
+    public SignUpCheckResponse userNameCheck(SignUpCheckRequest signUpCheckRequest) {
+        if(userRepository.existsByName(signUpCheckRequest.field())){
+            throw new SignUpExistException("This name already exists in the DB", "name");
+        }
+        else{
+            return new SignUpCheckResponse(signUpCheckRequest.field());
+        }
     }
+
+    private void passwordMatchValidation(String password, String passwordCheck){
+        if(! password.equals(passwordCheck) ) throw new PasswordInvlaidException(ErrorStatus.toErrorStatus("Password does not match",  BAD_REQUEST));
+    }
+
+
+
 
 }

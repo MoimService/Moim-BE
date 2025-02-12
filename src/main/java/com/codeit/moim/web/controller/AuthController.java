@@ -2,6 +2,7 @@ package com.codeit.moim.web.controller;
 
 import com.codeit.moim.service.user.UserService;
 import com.codeit.moim.web.dto.request.auth.LoginRequest;
+import com.codeit.moim.web.dto.request.auth.SignUpCheckRequest;
 import com.codeit.moim.web.dto.request.auth.SignUpRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.auth.LoginResponse;
@@ -10,11 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,6 +40,18 @@ public class AuthController {
 
         return Response.ok(new LoginResponse(loginRequest.email()));
     }
+
+    @Operation(summary = "name check", description = "Check if name already exists in DB")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Name check success")
+    })
+    @GetMapping(value = "/signup/name")
+    public Response nameCheck(@RequestBody SignUpCheckRequest signUpCheckRequest){
+        return Response.ok( userService.userNameCheck(signUpCheckRequest) );
+    }
+
+
+
 
 
 }
