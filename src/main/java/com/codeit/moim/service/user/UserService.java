@@ -12,4 +12,6 @@ public interface UserService {
     SignUpResponse signUpUser(SignUpRequest signUpRequest);
 
     SignUpCheckResponse userNameCheck(SignUpCheckRequest signUpCheckRequest);
+
+    SignUpCheckResponse userEmailCheck(SignUpCheckRequest signUpCheckRequest);
 }

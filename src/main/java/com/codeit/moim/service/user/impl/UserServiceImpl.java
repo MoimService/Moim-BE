@@ -83,7 +83,17 @@ public class UserServiceImpl implements UserService {
             throw new SignUpExistException("This name already exists in the DB", "name");
         }
         else{
-            return new SignUpCheckResponse(signUpCheckRequest.field());
+            return new SignUpCheckResponse(true);
+        }
+    }
+
+    @Override
+    public SignUpCheckResponse userEmailCheck(SignUpCheckRequest signUpCheckRequest) {
+        if(userRepository.existsByEmail(signUpCheckRequest.field())){
+            throw new SignUpExistException("This email already exists in the DB", "email");
+        }
+        else{
+            return new SignUpCheckResponse(true);
         }
     }
 
