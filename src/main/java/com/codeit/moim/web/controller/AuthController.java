@@ -2,6 +2,7 @@ package com.codeit.moim.web.controller;
 
 import com.codeit.moim.service.user.UserService;
 import com.codeit.moim.web.dto.request.auth.LoginRequest;
+import com.codeit.moim.web.dto.request.auth.SignUpRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.auth.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,12 +21,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auths")
 public class AuthController {
     private final UserService userService;
+
+    @Operation(summary = "signup", description = "SignUp API. Basic fields will be made with default value")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "SignUp success")
+    })
+    @PostMapping(value = "/signup")
+    public Response signUp(@RequestBody SignUpRequest signUpRequest){
+        return Response.ok( userService.signUpUser(signUpRequest));
+    }
+
     @Operation(summary = "login", description = "Login API with email and password")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login success")
     })
     @PostMapping(value = "/login")
-
     public Response login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         String token = userService.login(loginRequest);
         httpServletResponse.addHeader("Access-Control-Expose-Headers", "token");
