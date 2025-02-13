@@ -73,8 +73,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String[] excludedPaths = {"/api/v1/auths/signup/**", "/api/v1/auths/login", "/v3/**", "/swagger-ui/**"};
         AntPathMatcher antPathMatcher = new AntPathMatcher();
 
+        log.info("Checking request URI for exclusion: " + request.getRequestURI());
+
         for (String excludedPath : excludedPaths) {
             if (antPathMatcher.match(excludedPath, request.getRequestURI())) {
+                log.info("Excluding path from JWT filter: " +  request.getRequestURI());
                 return true;
             }
         }
