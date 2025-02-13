@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @param errorStatus catch에서 받은 ApplicationException의 ErrorStatus
      */
     private void processExceptionHandle(HttpServletResponse response, ErrorStatus errorStatus) {
-        response.setStatus(errorStatus.status());
+        response.setStatus(errorStatus.statusCode());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 

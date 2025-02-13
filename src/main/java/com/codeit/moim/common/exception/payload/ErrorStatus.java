@@ -11,19 +11,19 @@ import org.springframework.http.HttpStatusCode;
 import java.time.LocalDateTime;
 
 @Builder
-public record ErrorStatus(String message, int status,
+public record ErrorStatus(String message, int statusCode,
                           @JsonSerialize(using = LocalDateTimeSerializer.class)
                           @JsonDeserialize(using = LocalDateTimeDeserializer.class) LocalDateTime timestamp) {
 
-    public static ErrorStatus toErrorStatus(String message, int status) {
+    public static ErrorStatus toErrorStatus(String message, int statusCode) {
         return ErrorStatus.builder()
                 .message(message)
-                .status(status)
+                .statusCode(statusCode)
                 .timestamp(LocalDateTime.now())
                 .build();
     }
 
     public HttpStatusCode toHttpStatus() {
-        return HttpStatus.valueOf(status);
+        return HttpStatus.valueOf(statusCode);
     }
 }
