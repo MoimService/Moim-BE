@@ -21,6 +21,10 @@ public class Skill {
     private String skillTitle;
 
     @OneToMany(mappedBy = "skill", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<UserSkill> skillUserList = new ArrayList<>();
+    private List<UserSkill> userSkillList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "skill", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<MeetingSkill> meetingSkillList = new ArrayList<>();
+
 
 }
