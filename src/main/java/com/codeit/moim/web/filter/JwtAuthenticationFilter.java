@@ -70,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String[] excludedPaths = {"/api/v1/auths/signup/**", "/api/v1/auths/login", "/v3/**", "/swagger-ui/**"};
+        String[] excludedPaths = {"/api/v1/auths/signup", "/api/v1/auths/login", "/v3/**", "/swagger-ui/**", "/favicon.ico"};
         AntPathMatcher antPathMatcher = new AntPathMatcher();
 
         log.info("Checking request URI for exclusion: " + request.getRequestURI());
