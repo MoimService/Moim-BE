@@ -27,12 +27,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final int UNAUTHORIZED = 401;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (shouldNotFilter(request)) {
-            log.info("Skipping JWT filter for path: " + request.getRequestURI());
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String jwtToken = jwtTokenProvider.resolveToken(request);
 
         try{
@@ -76,7 +70,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String[] excludedPaths = {"/api/v1/auths/signup", "/api/v1/auths/login", "/v3/**", "/swagger-ui/**", "/favicon.ico"};
+        String[] excludedPaths = {
+                "/api/v1/auths/signup",
+                "/api/v1/auths/login",
+                "/v3/api-docs/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html",
+                "/favicon.ico"
+        };
         AntPathMatcher antPathMatcher = new AntPathMatcher();
 
         log.info("Checking request URI for exclusion: " + request.getRequestURI());
