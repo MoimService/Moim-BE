@@ -27,6 +27,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final int UNAUTHORIZED = 401;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if (shouldNotFilter(request)) {
+            log.info("Skipping JWT filter for path: " + request.getRequestURI());
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String jwtToken = jwtTokenProvider.resolveToken(request);
 
         try{
