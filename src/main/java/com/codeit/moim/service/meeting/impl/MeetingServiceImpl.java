@@ -8,9 +8,11 @@ import com.codeit.moim.service.meeting.MeetingService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.response.meeting.CreateMeetingResponse;
 import com.codeit.moim.web.dto.response.meeting.ReadTopMeetingResponse;
+import com.codeit.moim.web.dto.response.meeting.SearchMeetingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,8 +60,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     @Override
     public List<ReadTopMeetingResponse> findTopMeetingList(int userId, String categoryTitle) {
-        Category category = categoryRepository.findByTitle(categoryTitle);
-        List<Meeting> meetingList = meetingRepository.findByCategory(category);
+        List<Meeting> meetingList = getMeetingByCategory(categoryTitle);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
@@ -85,5 +86,29 @@ public class MeetingServiceImpl implements MeetingService {
             }
         }
         return meetingResponseList;
+    }
+
+    @Override
+    public List<SearchMeetingResponse> findMeetingList(int userId, String categoryTitle, SearchMeetingResponse request) {
+        List<Meeting> meetingList = getMeetingByCategory(categoryTitle);
+        changeMeetingIsPublic(meetingList);
+
+        return null;
+    }
+
+    public List<Meeting> getMeetingByCategory(String categoryTitle){
+        Category category = categoryRepository.findByTitle(categoryTitle);
+        List<Meeting> meetingList = meetingRepository.findByCategory(category);
+        return meetingList;
+    }
+
+    public List<Meeting> changeMeetingIsPublic(List<Meeting> meetingList){
+        LocalDate today = LocalDate.now();
+
+        meetingList.stream()
+                .filter( m -> m.getStartDate().isBefore(today))
+                .forEach(Meeting::updateIsPublic);
+
+        return meetingRepository.saveAll(meetingList);
     }
 }

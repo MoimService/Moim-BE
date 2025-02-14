@@ -84,4 +84,8 @@ public class Meeting {
         this.user = user;
         this.category = category;
     }
+
+    public void updateIsPublic(){
+        this.isPublic = false;
+    }
 }

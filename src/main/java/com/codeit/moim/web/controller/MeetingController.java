@@ -6,6 +6,7 @@ import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.meeting.CreateMeetingResponse;
 import com.codeit.moim.web.dto.response.meeting.ReadTopMeetingResponse;
+import com.codeit.moim.web.dto.response.meeting.SearchMeetingResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -53,6 +54,23 @@ public class MeetingController {
     ){
         int userId = userDetails.getUserId();
         return Response.ok(meetingService.findTopMeetingList(userId, categoryTitle));
+    }
+
+    @Operation(
+            summary = "Search Meetings with category, keyword, skillList, filterField",
+            description = "Get meeting that match search fields API"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get meetings success")
+    })
+    @GetMapping("/search")
+    public Response<List<SearchMeetingResponse>> getSearchedMeeting(
+            @RequestParam String categoryTitle,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody SearchMeetingResponse request
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(meetingService.findMeetingList(userId, categoryTitle, request));
     }
 
 }
