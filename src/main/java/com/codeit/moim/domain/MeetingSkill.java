@@ -2,6 +2,7 @@ package com.codeit.moim.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +22,11 @@ public class MeetingSkill {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "skill_id", nullable = false)
     private Skill skill;
+
+    @Builder
+    public MeetingSkill(int meetingSkillId, Meeting meeting, Skill skill) {
+        this.meetingSkillId = meetingSkillId;
+        this.meeting = meeting;
+        this.skill = skill;
+    }
 }

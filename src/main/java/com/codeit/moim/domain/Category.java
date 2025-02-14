@@ -17,8 +17,8 @@ public class Category {
     @Column(name="category_id")
     private int categoryId;
 
-    @Column(name= "category_title", nullable = false)
-    private String categoryTitle;
+    @Column(name= "title", nullable = false)
+    private String title;
 
     @OneToMany(mappedBy= "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Meeting> meetingList = new ArrayList<>();

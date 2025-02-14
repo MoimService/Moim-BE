@@ -2,6 +2,7 @@ package com.codeit.moim.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,8 +27,8 @@ public class Meeting {
     @Column(name= "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name= "meeting_pic", nullable = false)
-    private String meetingPic;
+    @Column(name= "thumbnail", nullable = false)
+    private String thumbnail;
 
     @Column(name= "content", nullable = false)
     private String content;
@@ -56,10 +57,10 @@ public class Meeting {
     private Category category;
 
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Member> meetingMemberList = new ArrayList<>();
+    private List<MeetingSkill> meetingSkillList = new ArrayList<>();
 
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<MeetingSkill> meetingSkillList = new ArrayList<>();
+    private List<Member> meetingMemberList = new ArrayList<>();
 
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Likes> likesList = new ArrayList<>();
@@ -67,4 +68,20 @@ public class Meeting {
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();
 
+
+    @Builder
+    public Meeting(int meetingId, String meetingTitle, LocalDateTime createdAt, String thumbnail, String content, String location, int maxMember, LocalDate startDate, boolean isPublic, boolean enroll, User user, Category category) {
+        this.meetingId = meetingId;
+        this.meetingTitle = meetingTitle;
+        this.createdAt = createdAt;
+        this.thumbnail = thumbnail;
+        this.content = content;
+        this.location = location;
+        this.maxMember = maxMember;
+        this.startDate = startDate;
+        this.isPublic = isPublic;
+        this.enroll = enroll;
+        this.user = user;
+        this.category = category;
+    }
 }
