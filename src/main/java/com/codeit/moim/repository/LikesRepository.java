@@ -3,12 +3,11 @@ package com.codeit.moim.repository;
 import com.codeit.moim.domain.Likes;
 import com.codeit.moim.domain.Meeting;
 import com.codeit.moim.domain.User;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LikesRepository extends JpaRepository<Likes, Integer> {
-    int countByMeeting(Meeting meeting);
-
-    Boolean existsByUserAndMeeting(User user, Meeting meeting);
+    Boolean existsByUserAndMeeting(@Param("user") User user, @Param("meeting") Meeting meeting);
 }
