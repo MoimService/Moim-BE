@@ -14,14 +14,14 @@ public record ReadTopMeetingResponse(
         Boolean isLike
 
 ) {
-    public static ReadTopMeetingResponse fromEntity(Meeting meeting, int memberCount, boolean isLike){
+    public static ReadTopMeetingResponse fromEntity(Meeting meeting, boolean isLike){
         return ReadTopMeetingResponse.builder()
                 .meetingId(meeting.getMeetingId())
                 .title(meeting.getMeetingTitle())
                 .thumbnail(meeting.getThumbnail())
                 .location(meeting.getLocation())
                 .maxMember(meeting.getMaxMember())
-                .memberCount(memberCount)
+                .memberCount(meeting.getMemberCount())
                 .isLike(isLike)
                 .build();
     }

@@ -71,19 +71,20 @@ public class MeetingServiceImpl implements MeetingService {
         List<ReadTopMeetingResponse> meetingResponseList = new ArrayList<>();
 
         if( !meetingList.isEmpty() ){
+//            List<Meeting> topMeetingList = meetingList.stream()
+//                    .sorted((m1, m2) -> Integer.compare(likesRepository.countByMeeting(m2), likesRepository.countByMeeting(m1))) //⚡ use like_count field
+//                    .limit(4)
+//                    .collect(Collectors.toList());
+
             List<Meeting> topMeetingList = meetingList.stream()
-                    .sorted((m1, m2) -> Integer.compare(likesRepository.countByMeeting(m2), likesRepository.countByMeeting(m1))) //⚡ use like_count field
+                    .sorted(Comparator.comparing(Meeting::getLikesCount).reversed())
                     .limit(4)
                     .collect(Collectors.toList());
 
             for( Meeting meeting : topMeetingList ){
-                System.out.println("Counting members with status APPROVED..."); //⚡️delete
-                int memberCount = memberRepository.countByMeetingAndStatus(meeting, MemberStatus.APPROVED); //⚡ use member_count field
-                System.out.println("Member count: " + memberCount);
-
                 Boolean isLike = likesRepository.existsByUserAndMeeting(user, meeting);
 
-                ReadTopMeetingResponse response = ReadTopMeetingResponse.fromEntity(meeting, memberCount, isLike);
+                ReadTopMeetingResponse response = ReadTopMeetingResponse.fromEntity(meeting, isLike);
                 meetingResponseList.add(response);
             }
         }

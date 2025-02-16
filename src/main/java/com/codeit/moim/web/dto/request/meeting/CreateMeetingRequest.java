@@ -45,6 +45,8 @@ public record CreateMeetingRequest (
                 .startDate(this.startDate)
                 .isPublic(this.isPublic)
                 .enroll(this.enroll)
+                .memberCount(0)
+                .likesCount(0)
                 .user(user)
                 .category(category)
                 .build();
