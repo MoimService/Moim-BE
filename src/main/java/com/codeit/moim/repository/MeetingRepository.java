@@ -40,7 +40,8 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
             "SELECT DISTINCT m from Meeting m " +
                     "LEFT JOIN FETCH m.meetingSkillList ms " +
                     "LEFT JOIN FETCH ms.skill " +
-                    "WHERE m.category.categoryTitle = :categoryTitle "
+                    "WHERE m.category.categoryTitle = :categoryTitle " +
+                    "AND m.isPublic = :isPublic "
     )
-    List<Meeting> findMeetingsByCategory(@Param("categoryTitle") String categoryTitle);
+    List<Meeting> findPublicMeetingsByCategory(@Param("categoryTitle") String categoryTitle, @Param("isPublic") boolean isPublic);
 }

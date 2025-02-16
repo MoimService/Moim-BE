@@ -63,7 +63,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     @Override
     public List<ReadTopMeetingResponse> findTopMeetingList(int userId, String categoryTitle) {
-        List<Meeting> meetingList = getMeetingByCategory(categoryTitle); //⚡️JPA
+        List<Meeting> meetingList = meetingRepository.findPublicMeetingsByCategory(categoryTitle, true);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
@@ -71,11 +71,6 @@ public class MeetingServiceImpl implements MeetingService {
         List<ReadTopMeetingResponse> meetingResponseList = new ArrayList<>();
 
         if( !meetingList.isEmpty() ){
-//            List<Meeting> topMeetingList = meetingList.stream()
-//                    .sorted((m1, m2) -> Integer.compare(likesRepository.countByMeeting(m2), likesRepository.countByMeeting(m1))) //⚡ use like_count field
-//                    .limit(4)
-//                    .collect(Collectors.toList());
-
             List<Meeting> topMeetingList = meetingList.stream()
                     .sorted(Comparator.comparing(Meeting::getLikesCount).reversed())
                     .limit(4)
@@ -93,7 +88,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     @Override
     public List<SearchMeetingResponse> findMeetingList(int userId, String categoryTitle, SearchMeetingRequest request) {
-       List<Meeting> meetingList = meetingRepository.findMeetingsByCategory(categoryTitle);
+       List<Meeting> meetingList = meetingRepository.findPublicMeetingsByCategory(categoryTitle, true);
 
         List<String> skillList = Arrays.asList(request.skillArray());
         if( request.keyword() == null && skillList.isEmpty() ){
@@ -134,15 +129,6 @@ public class MeetingServiceImpl implements MeetingService {
                 .collect(Collectors.toList());
     }
 
-    public List<Meeting> getMeetingByCategory(String categoryTitle){
-        Category category = categoryRepository.findByCategoryTitle(categoryTitle);
-        List<Meeting> meetingList = meetingRepository.findByCategory(category);
-        return meetingList;
-    }
-
-    public List<Meeting> getPublicMeetings(List<Meeting> meetingList){
-        return meetingList.stream().filter(Meeting::isPublic).collect(Collectors.toList());
-    }
 
     public List<Meeting> sortMeetings(List<Meeting> meetingList, String sortField){
 
