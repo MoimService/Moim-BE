@@ -12,21 +12,6 @@ import java.util.List;
 
 @Repository
 public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
-    List<Meeting> findByCategory(Category category);
-
-    @Query(
-         "SELECT m FROM Meeting m " +
-                 "JOIN m.meetingSkillList ms " +
-                 "JOIN ms.skill s " +
-                 "WHERE s.skillTitle IN :skillList " +
-                 "GROUP BY m.meetingId " +
-                 "HAVING COUNT(DISTINCT s.skillTitle) = :size "
-
-    )
-    List<Meeting> findMeetingsBySkills(@Param("skillList")
-                                       List<String> skillList,
-                                       @Param("size") int size);
-
     @Query(
             "SELECT m.user FROM Meeting m " +
                     "WHERE m = :meeting "
