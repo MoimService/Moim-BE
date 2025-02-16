@@ -18,13 +18,13 @@ public record SearchMeetingResponse (
         String name,
         String profilePic
 ){
-    static public SearchMeetingResponse fromEntity(Meeting meeting, int memberCount, User user){
+    static public SearchMeetingResponse fromEntity(Meeting meeting, User user){
         return SearchMeetingResponse.builder()
                 .meetingId(meeting.getMeetingId())
                 .meetingTitle(meeting.getMeetingTitle())
                 .thumbnail(meeting.getThumbnail())
                 .location(meeting.getLocation())
-                .memberCount(memberCount)
+                .memberCount(meeting.getMemberCount())
                 .maxMember(meeting.getMaxMember())
                 .startDate(meeting.getStartDate())
                 .name(user.getName())

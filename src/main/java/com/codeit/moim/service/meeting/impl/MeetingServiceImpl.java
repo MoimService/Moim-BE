@@ -150,8 +150,7 @@ public class MeetingServiceImpl implements MeetingService {
         List<SearchMeetingResponse> meetingResponseList = new ArrayList<>();
         for (Meeting meeting : finalMeetingList) {
             User user = meetingRepository.findUserByMeeting(meeting);
-            int memberCount = memberRepository.countByMeetingAndStatus(meeting, MemberStatus.APPROVED);
-            SearchMeetingResponse response = SearchMeetingResponse.fromEntity(meeting, memberCount, user);
+            SearchMeetingResponse response = SearchMeetingResponse.fromEntity(meeting, user);
             meetingResponseList.add(response);
         }
         return meetingResponseList;
