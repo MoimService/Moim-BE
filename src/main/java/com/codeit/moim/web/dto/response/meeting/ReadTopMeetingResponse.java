@@ -6,7 +6,7 @@ import lombok.Builder;
 @Builder
 public record ReadTopMeetingResponse(
         int meetingId,
-        String meetingTitle,
+        String title,
         String thumbnail,
         String location,
         int memberCount,
@@ -17,7 +17,7 @@ public record ReadTopMeetingResponse(
     public static ReadTopMeetingResponse fromEntity(Meeting meeting, int memberCount, boolean isLike){
         return ReadTopMeetingResponse.builder()
                 .meetingId(meeting.getMeetingId())
-                .meetingTitle(meeting.getMeetingTitle())
+                .title(meeting.getMeetingTitle())
                 .thumbnail(meeting.getThumbnail())
                 .location(meeting.getLocation())
                 .maxMember(meeting.getMaxMember())

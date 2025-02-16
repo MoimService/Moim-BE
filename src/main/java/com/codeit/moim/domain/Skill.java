@@ -17,8 +17,8 @@ public class Skill {
     @Column(name="skill_id")
     private int skillId;
 
-    @Column(name= "title", nullable = false)
-    private String title;
+    @Column(name= "skill_title", nullable = false)
+    private String skillTitle;
 
     @OneToMany(mappedBy = "skill", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserSkill> userSkillList = new ArrayList<>();

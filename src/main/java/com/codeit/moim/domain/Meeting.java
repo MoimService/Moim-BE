@@ -48,6 +48,12 @@ public class Meeting {
     @Column(name= "enroll", nullable = false)
     private boolean enroll;
 
+    @Column(name= "member_count", nullable = false)
+    private int memberCount;
+
+    @Column(name= "likes_count", nullable = false)
+    private int likesCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -70,7 +76,7 @@ public class Meeting {
 
 
     @Builder
-    public Meeting(int meetingId, String meetingTitle, LocalDateTime createdAt, String thumbnail, String content, String location, int maxMember, LocalDate startDate, boolean isPublic, boolean enroll, User user, Category category) {
+    public Meeting(int meetingId, String meetingTitle, LocalDateTime createdAt, String thumbnail, String content, String location, int maxMember, LocalDate startDate, boolean isPublic, boolean enroll, int memberCount, int likesCount, User user, Category category) {
         this.meetingId = meetingId;
         this.meetingTitle = meetingTitle;
         this.createdAt = createdAt;
@@ -81,6 +87,8 @@ public class Meeting {
         this.startDate = startDate;
         this.isPublic = isPublic;
         this.enroll = enroll;
+        this.memberCount = memberCount;
+        this.likesCount = likesCount;
         this.user = user;
         this.category = category;
     }

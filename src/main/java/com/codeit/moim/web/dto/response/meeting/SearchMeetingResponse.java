@@ -4,6 +4,8 @@ import com.codeit.moim.domain.Meeting;
 import com.codeit.moim.domain.User;
 import lombok.Builder;
 
+import java.time.LocalDate;
+
 @Builder
 public record SearchMeetingResponse (
         int meetingId,
@@ -12,6 +14,7 @@ public record SearchMeetingResponse (
         String location,
         int memberCount,
         int maxMember,
+        LocalDate startDate,
         String name,
         String profilePic
 ){
@@ -23,6 +26,7 @@ public record SearchMeetingResponse (
                 .location(meeting.getLocation())
                 .memberCount(memberCount)
                 .maxMember(meeting.getMaxMember())
+                .startDate(meeting.getStartDate())
                 .name(user.getName())
                 .profilePic(user.getProfilePic())
                 .build();

@@ -3,6 +3,7 @@ package com.codeit.moim.web.controller;
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.meeting.MeetingService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
+import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.meeting.CreateMeetingResponse;
 import com.codeit.moim.web.dto.response.meeting.ReadTopMeetingResponse;
@@ -67,7 +68,7 @@ public class MeetingController {
     public Response<List<SearchMeetingResponse>> getSearchedMeeting(
             @RequestParam String categoryTitle,
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @Valid @RequestBody SearchMeetingResponse request
+            @Valid @RequestBody SearchMeetingRequest request
     ){
         int userId = userDetails.getUserId();
         return Response.ok(meetingService.findMeetingList(userId, categoryTitle, request));

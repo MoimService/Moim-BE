@@ -8,7 +8,7 @@ public record SearchMeetingRequest (
 
         String[] skillArray,
 
-        String filterField,
+        String sortField,
         int lastMeetingId,
 
         @Min(4)
