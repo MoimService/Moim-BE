@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 public enum MemberStatus {
-    PENDING("대기"),
-    APPROVED("승인"),
+    PENDING("대기중"),
+    APPROVED("참여중"),
     REJECTED("거절"),
     EXPEL("강퇴");
 
