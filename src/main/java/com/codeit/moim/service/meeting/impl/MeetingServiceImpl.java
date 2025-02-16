@@ -91,15 +91,13 @@ public class MeetingServiceImpl implements MeetingService {
        List<Meeting> meetingList = meetingRepository.findPublicMeetingsByCategory(categoryTitle, true);
 
         List<String> skillList = Arrays.asList(request.skillArray());
-        if( request.keyword() == null && skillList.isEmpty() ){
-            meetingList =  sortMeetings(meetingList, request.sortField());
+        if( request.keyword() != null && !skillList.isEmpty() ){
+            meetingList = searchKeyword(request.keyword(), meetingList);
+            meetingList = searchSkill(skillList, meetingList);
         }
         else if( request.keyword() != null && skillList.isEmpty()){
             meetingList = searchKeyword(request.keyword(), meetingList);
-        }else if(request.keyword() == null && !skillList.isEmpty() ){
-            meetingList = searchSkill(skillList, meetingList);
-        }else{
-            meetingList = searchKeyword(request.keyword(), meetingList);
+        }else if(request.keyword() == null && !skillList.isEmpty() ) {
             meetingList = searchSkill(skillList, meetingList);
         }
 
