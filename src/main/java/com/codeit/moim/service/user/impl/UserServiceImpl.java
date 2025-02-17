@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(signUpRequest.password());
 
         //profile_pic, intro
-        String profilePic = "image";
+        String profilePic = "https://deving-bucket.s3.ap-northeast-2.amazonaws.com/profile_img.png";
         String intro = "안녕하세요, 개발자 " + signUpRequest.name() + "입니다.";
 
         User user = signUpRequest.toEntity(encodedPassword, profilePic, intro);
