@@ -52,7 +52,7 @@ public class User {
     private List<UserSkill> userSkillList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Meeting> meetingLeaderList = new ArrayList<>();
+    private List<Meeting> meetingManagerList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Member> userMemberList = new ArrayList<>();
