@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
@@ -29,4 +30,13 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
                     "AND m.isPublic = :isPublic "
     )
     List<Meeting> findPublicMeetingsByCategory(@Param("categoryTitle") String categoryTitle, @Param("isPublic") boolean isPublic);
+
+    @Query(
+            "SELECT m FROM Meeting m " +
+                    "JOIN FETCH m.user u " +
+                    "LEFT JOIN FETCH u.userSkillList us " +
+                    "LEFT JOIN FETCH us.skill s " +
+                    "WHERE m.meetingId = :meetingId "
+    )
+    Optional<Meeting> findMeetingWithManagerAndSkill(@Param("meetingId") int meetingId);
 }

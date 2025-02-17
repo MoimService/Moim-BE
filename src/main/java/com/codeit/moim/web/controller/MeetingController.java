@@ -5,10 +5,7 @@ import com.codeit.moim.service.meeting.MeetingService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.response.Response;
-import com.codeit.moim.web.dto.response.meeting.CreateMeetingResponse;
-import com.codeit.moim.web.dto.response.meeting.ReadMeetingDetailResponse;
-import com.codeit.moim.web.dto.response.meeting.ReadTopMeetingResponse;
-import com.codeit.moim.web.dto.response.meeting.SearchMeetingResponse;
+import com.codeit.moim.web.dto.response.meeting.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -83,7 +80,7 @@ public class MeetingController {
             @ApiResponse(responseCode = "200", description = "Get meeting detail success")
     })
     @GetMapping("/detail/{meetingId}")
-    public Response<ReadMeetingDetailResponse> getSearchedMeeting(
+    public Response<ReadMeetingDetailResponse> getMeetingDetail(
             @PathVariable int meetingId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
@@ -91,4 +88,19 @@ public class MeetingController {
         return Response.ok(meetingService.findMeetingDetail(meetingId, userId));
     }
 
+    @Operation(
+            summary = "Get meeting manager detail",
+            description = "Get manager detail with meetingId"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get meeting manager detail success")
+    })
+    @GetMapping("/detail/manager/{meetingId}")
+    public Response<ReadMeetingManagerResponse> getMeetingManagerDetail(
+            @PathVariable int meetingId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(meetingService.findMeetingManagerDetail(meetingId, userId));
+    }
 }
