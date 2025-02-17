@@ -1,5 +1,6 @@
 package com.codeit.moim.service.meeting.impl;
 
+import com.codeit.moim.common.exception.auth.UserContactNotFoundException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
 import com.codeit.moim.domain.*;
@@ -9,10 +10,7 @@ import com.codeit.moim.repository.*;
 import com.codeit.moim.service.meeting.MeetingService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
-import com.codeit.moim.web.dto.response.meeting.CreateMeetingResponse;
-import com.codeit.moim.web.dto.response.meeting.ReadMeetingDetailResponse;
-import com.codeit.moim.web.dto.response.meeting.ReadTopMeetingResponse;
-import com.codeit.moim.web.dto.response.meeting.SearchMeetingResponse;
+import com.codeit.moim.web.dto.response.meeting.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -122,6 +120,23 @@ public class MeetingServiceImpl implements MeetingService {
         boolean isLike = likesRepository.existsByUserAndMeeting(user, meeting);
         boolean isMember = memberRepository.existsByUserAndMeetingAndStatus(user, meeting, MemberStatus.APPROVED);
         return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember);
+    }
+
+    @Override
+    public ReadMeetingManagerResponse findMeetingManagerDetail(int meetingId, int userId) {
+        Meeting meeting = meetingRepository.findMeetingWithManagerAndSkill(meetingId)
+                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
+
+        User user = meeting.getUser();
+        if(user.getContact().getPhone() == null){
+            throw new UserContactNotFoundException(String.valueOf(user.getUserId()));
+        }
+        List<UserSkill> userSkillList = user.getUserSkillList();
+        String[] skillArray = userSkillList.stream()
+                .map(s-> s.getSkill().getSkillTitle())
+                .toArray(String[]::new);
+
+        return ReadMeetingManagerResponse.fromEntity(user, skillArray);
     }
 
 
