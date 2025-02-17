@@ -9,6 +9,7 @@ import com.codeit.moim.domain.enums.SortField;
 import com.codeit.moim.repository.*;
 import com.codeit.moim.service.meeting.MeetingService;
 import com.codeit.moim.service.member.impl.MemberServiceImpl;
+import com.codeit.moim.service.storage.StorageService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.response.meeting.*;
@@ -16,10 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.codeit.moim.domain.enums.MemberStatus.APPROVED;
@@ -34,10 +32,14 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingSkillRepository meetingSkillRepository;
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
+    private final StorageService storageService;
     @Override
     public CreateMeetingResponse saveMeeting(int userId, CreateMeetingRequest request) {
         // ⚡️image
         String uploadUrl = "";
+        if(Objects.nonNull(request.imageEncodedBase64()) && !request.imageEncodedBase64().isEmpty()){
+            uploadUrl = storageService.uploadFile(request.imageEncodedBase64(), request.imageName());
+        }
         //category
         Category category = categoryRepository.findByCategoryTitle(request.categoryTitle());
         //user
