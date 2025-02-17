@@ -76,4 +76,8 @@ public class User {
         this.location = location;
         this.age = age;
     }
+
+    public void updateProfilePic(String newProfilePicUrl) {
+        this.profilePic = newProfilePicUrl;
+    }
 }
