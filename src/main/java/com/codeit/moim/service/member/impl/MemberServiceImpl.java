@@ -53,18 +53,16 @@ public class MemberServiceImpl implements MemberService {
         //주최자의 승인이 필요
         if(meeting.isRequireApproval()){
             //member 생성
-            Member member = request.toEntity(user, meeting, MemberStatus.PENDING);
+            Member member =  Member.toEntity(user, meeting, MemberStatus.PENDING, request.message());
             Member savedMember = memberRepository.save(member);
             return CreateMemberResponse.fromEntity(savedMember);
         }else{
-            Member member = request.toEntity(user, meeting, MemberStatus.APPROVED);
+            Member member = Member.toEntity(user, meeting, MemberStatus.APPROVED, request.message());
             Member savedMember = memberRepository.save(member);
             //멤버수늘리기
             meeting.increaseMemberCount();
             meetingRepository.save(meeting);
-
             return CreateMemberResponse.fromEntity(savedMember);
         }
-
     }
 }

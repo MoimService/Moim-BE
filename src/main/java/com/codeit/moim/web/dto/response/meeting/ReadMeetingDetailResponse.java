@@ -18,6 +18,7 @@ public record ReadMeetingDetailResponse(
         String content,
 
         LocalDate startdate,
+        Boolean requireApproval,
         Boolean isLike,
         Boolean isMember
 ){
@@ -31,6 +32,7 @@ public record ReadMeetingDetailResponse(
             .maxMember(meeting.getMaxMember())
             .content(meeting.getContent())
             .startdate(meeting.getStartDate())
+                .requireApproval(meeting.isRequireApproval())
             .isLike(isLike)
             .isMember(isMember)
         .build();
