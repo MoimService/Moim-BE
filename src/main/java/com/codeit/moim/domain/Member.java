@@ -3,6 +3,7 @@ package com.codeit.moim.domain;
 import com.codeit.moim.domain.enums.MemberStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,13 @@ public class Member {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_id", nullable = false)
     private Meeting meeting;
+
+    @Builder
+    public Member(int memberId, MemberStatus status, String message, User user, Meeting meeting) {
+        this.memberId = memberId;
+        this.status = status;
+        this.message = message;
+        this.user = user;
+        this.meeting = meeting;
+    }
 }

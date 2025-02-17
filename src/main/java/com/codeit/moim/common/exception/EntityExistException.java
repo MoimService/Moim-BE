@@ -5,8 +5,8 @@ import com.codeit.moim.common.exception.payload.ErrorStatus;
 import java.time.LocalDateTime;
 
 public class EntityExistException extends ApplicationException{
-    private static final String ENTITY_NOT_FOUND_EXCEPTION_MESSAGE = "Entity already exists";
-    private static final int ENTITY_NOT_FOUND_EXCEPTION_STATUS_CODE = 409;
+    private static final String ENTITY_EXISTS_EXCEPTION_MESSAGE = "Entity already exists";
+    private static final int ENTITY_EXISTS_EXCEPTION_STATUS_CODE = 409;
 
     private final String request;
     private final String entityType;
@@ -17,8 +17,16 @@ public class EntityExistException extends ApplicationException{
      * @param entityType 엔티티 타입 (User 등)
      */
     public EntityExistException(String request, String entityType) {
-        super(new ErrorStatus(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE, ENTITY_NOT_FOUND_EXCEPTION_STATUS_CODE, LocalDateTime.now()));
+        super(new ErrorStatus(ENTITY_EXISTS_EXCEPTION_MESSAGE, ENTITY_EXISTS_EXCEPTION_STATUS_CODE, LocalDateTime.now()));
         this.request = request;
         this.entityType = entityType;
     }
+
+    public EntityExistException(String message, String request, String entityType) {
+        super(new ErrorStatus(message, ENTITY_EXISTS_EXCEPTION_STATUS_CODE, LocalDateTime.now()));
+        this.request = request;
+        this.entityType = entityType;
+    }
+
+
 }

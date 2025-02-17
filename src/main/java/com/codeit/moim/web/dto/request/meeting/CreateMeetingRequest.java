@@ -30,7 +30,7 @@ public record CreateMeetingRequest (
         @NotNull
         boolean isPublic,
         @NotNull
-        boolean enroll,
+        boolean requireApproval,
         String[] skillArray
 
 ){
@@ -44,7 +44,7 @@ public record CreateMeetingRequest (
                 .maxMember(this.maxMember)
                 .startDate(this.startDate)
                 .isPublic(this.isPublic)
-                .enroll(this.enroll)
+                .requireApproval(this.requireApproval)
                 .memberCount(0)
                 .likesCount(0)
                 .user(user)
