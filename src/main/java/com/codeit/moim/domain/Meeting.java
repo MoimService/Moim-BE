@@ -1,5 +1,7 @@
 package com.codeit.moim.domain;
 
+import com.codeit.moim.common.exception.meeting.AlreadyMemberException;
+import com.codeit.moim.common.exception.meeting.MemberCountExistException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -45,8 +47,8 @@ public class Meeting {
     @Column(name= "is_public", nullable = false)
     private boolean isPublic;
 
-    @Column(name= "enroll", nullable = false)
-    private boolean enroll;
+    @Column(name= "require_approval", nullable = false)
+    private boolean requireApproval;
 
     @Column(name= "member_count", nullable = false)
     private int memberCount;
@@ -76,7 +78,7 @@ public class Meeting {
 
 
     @Builder
-    public Meeting(int meetingId, String meetingTitle, LocalDateTime createdAt, String thumbnail, String content, String location, int maxMember, LocalDate startDate, boolean isPublic, boolean enroll, int memberCount, int likesCount, User user, Category category) {
+    public Meeting(int meetingId, String meetingTitle, LocalDateTime createdAt, String thumbnail, String content, String location, int maxMember, LocalDate startDate, boolean isPublic, boolean requireApproval, int memberCount, int likesCount, User user, Category category) {
         this.meetingId = meetingId;
         this.meetingTitle = meetingTitle;
         this.createdAt = createdAt;
@@ -86,14 +88,16 @@ public class Meeting {
         this.maxMember = maxMember;
         this.startDate = startDate;
         this.isPublic = isPublic;
-        this.enroll = enroll;
+        this.requireApproval = requireApproval;
         this.memberCount = memberCount;
         this.likesCount = likesCount;
         this.user = user;
         this.category = category;
     }
 
-    public void updateIsPublic(){
-        this.isPublic = false;
+    public void increaseMemberCount() {
+        if(this.memberCount < this.maxMember) this.memberCount++;
+        else throw new MemberCountExistException("Meeting member count is full", String.valueOf(meetingId), "member");
+
     }
 }

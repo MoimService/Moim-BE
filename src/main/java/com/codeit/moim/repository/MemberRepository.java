@@ -12,4 +12,8 @@ import org.springframework.stereotype.Repository;
 public interface MemberRepository extends JpaRepository<Member, Integer> {
 
     boolean existsByUserAndMeetingAndStatus(@Param("user") User user, @Param("meeting") Meeting meeting, @Param("status") MemberStatus status);
+
+    boolean existsByUserAndMeeting(User user, Meeting meeting);
+
+    Member findByUserAndMeeting(User user, Meeting meeting);
 }
