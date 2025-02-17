@@ -52,17 +52,16 @@ public class AuthController {
     })
     @GetMapping(value = "/signup/name")
     public Response<SignUpCheckResponse> nameCheck(@RequestParam String name){
-        return Response.ok( userService.userNameCheck(name) );
+        return Response.ok( userService.userNameCheck(name));
     }
 
     @Operation(summary = "email check", description = "Check if email already exists in DB")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Email check success")
     })
-    @GetMapping(value = "/signup/email" +
-            "")
+    @GetMapping(value = "/signup/email")
     public Response<SignUpCheckResponse> emailCheck(@RequestParam String email){
-        return Response.ok( userService.userEmailCheck(email) );
+        return Response.ok( userService.userEmailCheck(email));
     }
 
 

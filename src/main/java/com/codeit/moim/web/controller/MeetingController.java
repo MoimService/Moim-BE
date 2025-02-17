@@ -6,6 +6,7 @@ import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.meeting.CreateMeetingResponse;
+import com.codeit.moim.web.dto.response.meeting.ReadMeetingDetailResponse;
 import com.codeit.moim.web.dto.response.meeting.ReadTopMeetingResponse;
 import com.codeit.moim.web.dto.response.meeting.SearchMeetingResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,6 +73,22 @@ public class MeetingController {
     ){
         int userId = userDetails.getUserId();
         return Response.ok(meetingService.findMeetingList(userId, categoryTitle, request));
+    }
+
+    @Operation(
+            summary = "Get meeting details",
+            description = "Get detail of the meeting, including isLike, isMember"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get meeting detail success")
+    })
+    @GetMapping("/detail/{meetingId}")
+    public Response<ReadMeetingDetailResponse> getSearchedMeeting(
+            @PathVariable int meetingId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(meetingService.findMeetingDetail(meetingId, userId));
     }
 
 }
