@@ -6,10 +6,13 @@ import com.codeit.moim.web.dto.request.auth.SignUpCheckRequest;
 import com.codeit.moim.web.dto.request.auth.SignUpRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.auth.LoginResponse;
+import com.codeit.moim.web.dto.response.auth.SignUpCheckResponse;
+import com.codeit.moim.web.dto.response.auth.SignUpResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +27,8 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "SignUp success")
     })
     @PostMapping(value = "/signup")
-    public Response signUp(@RequestBody SignUpRequest signUpRequest){
+    public Response<SignUpResponse> signUp(
+            @Valid @RequestBody SignUpRequest signUpRequest){
         return Response.ok( userService.signUpUser(signUpRequest));
     }
 
@@ -33,7 +37,8 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Login success")
     })
     @PostMapping(value = "/login")
-    public Response login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
+    public Response<LoginResponse> login(
+            @Valid @RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         String token = userService.login(loginRequest);
         httpServletResponse.addHeader("Access-Control-Expose-Headers", "token");
         httpServletResponse.setHeader("token", token);
@@ -46,7 +51,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Name check success")
     })
     @GetMapping(value = "/signup/name")
-    public Response nameCheck(@RequestParam String name){
+    public Response<SignUpCheckResponse> nameCheck(@RequestParam String name){
         return Response.ok( userService.userNameCheck(name) );
     }
 
@@ -56,7 +61,7 @@ public class AuthController {
     })
     @GetMapping(value = "/signup/email" +
             "")
-    public Response emailCheck(@RequestParam String email){
+    public Response<SignUpCheckResponse> emailCheck(@RequestParam String email){
         return Response.ok( userService.userEmailCheck(email) );
     }
 
