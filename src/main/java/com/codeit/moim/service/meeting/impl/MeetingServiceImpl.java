@@ -42,6 +42,11 @@ public class MeetingServiceImpl implements MeetingService {
         //user
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+        //if user phone does not exist, throw exception
+        if(user.getContact().getPhone() == null ){
+            throw new UserContactNotFoundException(String.valueOf(userId));
+        }
+
 
         Meeting meeting = request.toEntity(uploadUrl, user, category);
         Meeting savedMeeting = meetingRepository.save(meeting);
