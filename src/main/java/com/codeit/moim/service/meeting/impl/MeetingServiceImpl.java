@@ -1,6 +1,7 @@
 package com.codeit.moim.service.meeting.impl;
 
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
+import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
 import com.codeit.moim.domain.*;
 import com.codeit.moim.domain.enums.MemberStatus;
 import com.codeit.moim.domain.enums.SortField;
@@ -9,6 +10,7 @@ import com.codeit.moim.service.meeting.MeetingService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.response.meeting.CreateMeetingResponse;
+import com.codeit.moim.web.dto.response.meeting.ReadMeetingDetailResponse;
 import com.codeit.moim.web.dto.response.meeting.ReadTopMeetingResponse;
 import com.codeit.moim.web.dto.response.meeting.SearchMeetingResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.codeit.moim.domain.enums.MemberStatus.APPROVED;
 
 @Service
 @RequiredArgsConstructor
@@ -107,7 +111,18 @@ public class MeetingServiceImpl implements MeetingService {
         return buildSearchResponse(sortedMeetingList);
     }
 
+    @Override
+    public ReadMeetingDetailResponse findMeetingDetail(int meetingId, int userId) {
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+
+        boolean isLike = likesRepository.existsByUserAndMeeting(user, meeting);
+        boolean isMember = memberRepository.existsByUserAndMeetingAndStatus(user, meeting, MemberStatus.APPROVED);
+        return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember);
+    }
 
 
     private List<Meeting> searchSkill(List<String> skillList, List<Meeting> meetingList) {

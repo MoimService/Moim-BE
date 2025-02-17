@@ -1,0 +1,38 @@
+package com.codeit.moim.web.dto.response.meeting;
+
+import com.codeit.moim.domain.Meeting;
+import com.codeit.moim.domain.Skill;
+import lombok.Builder;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Builder
+public record ReadMeetingDetailResponse(
+        int meetingId,
+        String title,
+        String thumbnail,
+        String location,
+        int memberCount,
+        int maxMember,
+        String content,
+
+        LocalDate startdate,
+        Boolean isLike,
+        Boolean isMember
+){
+    public static ReadMeetingDetailResponse fromEntity(Meeting meeting, boolean isLike, boolean isMember) {
+        return ReadMeetingDetailResponse.builder()
+            .meetingId(meeting.getMeetingId())
+            .title(meeting.getMeetingTitle())
+            .thumbnail(meeting.getThumbnail())
+            .location(meeting.getLocation())
+            .memberCount(meeting.getMemberCount())
+            .maxMember(meeting.getMaxMember())
+            .content(meeting.getContent())
+            .startdate(meeting.getStartDate())
+            .isLike(isLike)
+            .isMember(isMember)
+        .build();
+    }
+}
