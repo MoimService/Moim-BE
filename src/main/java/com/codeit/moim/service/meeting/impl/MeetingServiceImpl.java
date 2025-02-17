@@ -8,6 +8,7 @@ import com.codeit.moim.domain.enums.MemberStatus;
 import com.codeit.moim.domain.enums.SortField;
 import com.codeit.moim.repository.*;
 import com.codeit.moim.service.meeting.MeetingService;
+import com.codeit.moim.service.member.impl.MemberServiceImpl;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.response.meeting.*;
@@ -47,9 +48,13 @@ public class MeetingServiceImpl implements MeetingService {
             throw new UserContactNotFoundException(String.valueOf(userId));
         }
 
-
         Meeting meeting = request.toEntity(uploadUrl, user, category);
+        meeting.increaseMemberCount();
         Meeting savedMeeting = meetingRepository.save(meeting);
+
+        //create member
+        Member member = Member.toEntity(user, meeting, APPROVED, "모임 주최자 입니다");
+        memberRepository.save(member);
 
         //create meeting skills
         List<String> skillList = Arrays.asList(request.skillArray());

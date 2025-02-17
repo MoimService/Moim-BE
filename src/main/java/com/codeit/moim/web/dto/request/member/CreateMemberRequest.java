@@ -11,12 +11,4 @@ public record CreateMemberRequest (
         String message
 
 ){
-    public Member toEntity(User user, Meeting meeting, MemberStatus status){
-        return Member.builder()
-                .user(user)
-                .meeting(meeting)
-                .status(status)
-                .message(this.message)
-                .build();
-    }
 }

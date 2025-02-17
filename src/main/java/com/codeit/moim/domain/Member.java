@@ -40,4 +40,13 @@ public class Member {
         this.user = user;
         this.meeting = meeting;
     }
+
+    public static Member toEntity(User user, Meeting meeting, MemberStatus status, String message){
+        return Member.builder()
+                .user(user)
+                .meeting(meeting)
+                .status(status)
+                .message(message)
+                .build();
+    }
 }
