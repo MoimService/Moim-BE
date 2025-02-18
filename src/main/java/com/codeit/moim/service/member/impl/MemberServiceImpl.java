@@ -1,7 +1,7 @@
 package com.codeit.moim.service.member.impl;
 
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
-import com.codeit.moim.common.exception.meeting.AlreadyMemberException;
+import com.codeit.moim.common.exception.member.AlreadyMemberException;
 import com.codeit.moim.common.exception.meeting.MeetingAccessDeniedException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
 import com.codeit.moim.common.exception.meeting.MemberCountExistException;
@@ -16,7 +16,9 @@ import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.member.MemberService;
 import com.codeit.moim.web.dto.request.member.CreateMemberRequest;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
+import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,10 +32,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public CreateMemberResponse saveMember(int meetingId, int userId, CreateMemberRequest request) {
 
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+        Meeting meeting = getMeeting(meetingId);
+        User user = getUser(userId);
 
         //비공개 인지 아닌지 확인
         if(!meeting.isPublic()){
@@ -64,5 +64,30 @@ public class MemberServiceImpl implements MemberService {
             meetingRepository.save(meeting);
             return CreateMemberResponse.fromEntity(savedMember);
         }
+    }
+
+    @Override
+    public DeleteMemberResponse cancelMemberApply(int userId, int meetingId) {
+        Meeting meeting = getMeeting(meetingId);
+        User user = getUser(userId);
+        Member member = memberRepository.findByUserAndMeeting(user, meeting);
+        if(member != null && member.getStatus().equals(MemberStatus.PENDING)){
+            memberRepository.delete(member);
+            return new DeleteMemberResponse(userId);
+        }else{
+            throw new AccessDeniedException("Member");
+        }
+
+    }
+
+    private Meeting getMeeting(int meetingId){
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
+        return meeting;
+    }
+    private User getUser(int userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+        return user;
     }
 }
