@@ -37,11 +37,11 @@ public class MemberController {
     }
 
     @Operation(
-            summary = "Delete member apply",
-            description = "Cancel apply for meeting member"
+            summary = "Delete member application",
+            description = "Cancel application for meeting. Only possible when member status is 'PENDING'"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Delete member apply success")
+            @ApiResponse(responseCode = "200", description = "Delete member success")
     })
     @DeleteMapping("/{meetingId}")
     public Response<DeleteMemberResponse> deleteMeetingApply(
