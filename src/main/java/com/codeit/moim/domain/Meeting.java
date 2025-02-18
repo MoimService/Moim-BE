@@ -98,6 +98,9 @@ public class Meeting {
     public void increaseMemberCount() {
         if(this.memberCount < this.maxMember) this.memberCount++;
         else throw new MemberCountExistException("Meeting member count is full", String.valueOf(meetingId), "member");
+    }
 
+    public void decreaseMemberCount() {
+        this.memberCount--;
     }
 }

@@ -3,10 +3,9 @@ package com.codeit.moim.web.controller;
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
-import com.codeit.moim.web.dto.request.mypage.UpdateProfilePicRequest;
 import com.codeit.moim.web.dto.response.Response;
+import com.codeit.moim.web.dto.response.mymeeting.UpdateMemberToExpelResponse;
 import com.codeit.moim.web.dto.response.mymeeting.UpdateMemberStatusResponse;
-import com.codeit.moim.web.dto.response.mypage.UpdateProfilePicResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -40,5 +39,21 @@ public class MyMeetingController {
             ){
         int userId = userDetails.getUserId();
         return Response.ok(myMeetingService.updateMemberStatus(userId, request));
+    }
+
+    @Operation(
+            summary = "Update member status to EXPEL",
+            description = "Expel member from meeting, update member status to EXPEL"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update success")
+    })
+    @PutMapping("/expel")
+    public Response<UpdateMemberToExpelResponse> updateMemberStatusToExpel(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody UpdateMemberStatusRequest request
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(myMeetingService.expelMember(userId, request));
     }
 }
