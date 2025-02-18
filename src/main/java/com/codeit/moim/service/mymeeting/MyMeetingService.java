@@ -18,4 +18,6 @@ public interface MyMeetingService {
     UpdateMeetingIsPublicResponse updateIsPublic(int userId, int meetingId);
 
     DeleteMemberResponse cancelMemberApply(int userId, int meetingId);
+
+    DeleteMemberResponse quitMeeting(int userId, int meetingId);
 }

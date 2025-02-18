@@ -6,6 +6,6 @@ import lombok.Builder;
 
 @Builder
 public record DeleteMemberResponse(
-        int memberId
+        int userId
 ){
 }

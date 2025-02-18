@@ -1,5 +1,6 @@
 package com.codeit.moim.service.mymeeting.impl;
 
+import com.codeit.moim.common.exception.auth.MeetingManagerException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.meeting.AlreadyIsPublicException;
 import com.codeit.moim.common.exception.meeting.MeetingAccessDeniedException;
@@ -36,7 +37,8 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     public UpdateMemberStatusResponse updateMemberStatus(int userId, UpdateMemberStatusRequest request) {
         Meeting meeting = getMeeting(request.meetingId());
         //check if user is manager
-        validateMeetingManager(userId, meeting);
+        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
+
         //get member
         Member member = getMemberWithUserAndMeeting(request.userId(), meeting);
         //change member status, save
@@ -54,7 +56,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     public UpdateMemberToExpelResponse expelMember(int userId, UpdateMemberStatusRequest request) {
         Meeting meeting = getMeeting(request.meetingId());
         //check if user is manager
-        validateMeetingManager(userId, meeting);
+        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
         Member member = getMemberWithUserAndMeeting(request.userId(), meeting);
         if( !member.getStatus().equals(MemberStatus.APPROVED)) throw new MeetingAccessDeniedException(String.valueOf(request.userId()));
 
@@ -97,7 +99,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     @Override
     public UpdateMeetingIsPublicResponse updateIsPublic(int userId, int meetingId) {
         Meeting meeting = getMeeting(meetingId);
-        validateMeetingManager(userId, meeting);
+        if(validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
         if(meeting.isPublic()){
             meeting.updateIsPublic();
             meetingRepository.save(meeting);
@@ -122,6 +124,22 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         }
     }
 
+    @Override
+    public DeleteMemberResponse quitMeeting(int userId, int meetingId) {
+        Meeting meeting = getMeeting(meetingId);
+        User user = getUser(userId);
+        if(validateMeetingManager(userId, meeting)) throw new MeetingManagerException(ErrorStatus.toErrorStatus("Meeting manager cannot quit the meeting", BAD_REQUEST));
+        Member member = memberRepository.findByUserAndMeeting(user, meeting);
+        if(member != null && member.getStatus().equals(MemberStatus.APPROVED)){
+            memberRepository.delete(member);
+            meeting.decreaseMemberCount();
+            meetingRepository.save(meeting);
+            return new DeleteMemberResponse(userId);
+        }else{
+            throw new AccessDeniedException("Member");
+        }
+    }
+
     private User getUser(int userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
@@ -134,8 +152,9 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         return meeting;
     }
 
-    private void validateMeetingManager(int userId, Meeting meeting){
-        if(meeting.getUser().getUserId() != userId) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
+    private boolean validateMeetingManager(int userId, Meeting meeting){
+        if(meeting.getUser().getUserId() == userId) return true;
+        else return false;
     }
 
     private Member getMemberWithUserAndMeeting(int userId, Meeting meeting){
