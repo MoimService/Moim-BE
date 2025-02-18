@@ -49,4 +49,8 @@ public class Member {
                 .message(message)
                 .build();
     }
+
+    public void updateStatus(MemberStatus status){
+        this.status = status;
+    }
 }
