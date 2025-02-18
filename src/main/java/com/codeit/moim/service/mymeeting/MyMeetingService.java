@@ -1,10 +1,7 @@
 package com.codeit.moim.service.mymeeting;
 
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
-import com.codeit.moim.web.dto.response.mymeeting.ReadManageMeetingResponse;
-import com.codeit.moim.web.dto.response.mymeeting.ReadAllMeetingResponse;
-import com.codeit.moim.web.dto.response.mymeeting.UpdateMemberStatusResponse;
-import com.codeit.moim.web.dto.response.mymeeting.UpdateMemberToExpelResponse;
+import com.codeit.moim.web.dto.response.mymeeting.*;
 
 import java.util.List;
 
@@ -16,4 +13,6 @@ public interface MyMeetingService {
     List<ReadAllMeetingResponse> findAllMyMeeting(int userId);
 
     List<ReadManageMeetingResponse> findManageMeeting(int userId);
+
+    UpdateMeetingIsPublicResponse updateIsPublic(int userId, int meetingId);
 }
