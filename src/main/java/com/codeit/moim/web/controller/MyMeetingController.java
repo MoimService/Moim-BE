@@ -5,7 +5,7 @@ import com.codeit.moim.service.mymeeting.MyMeetingService;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.mymeeting.ReadManageMeetingResponse;
-import com.codeit.moim.web.dto.response.mymeeting.ReadMyMeetingResponse;
+import com.codeit.moim.web.dto.response.mymeeting.ReadAllMeetingResponse;
 import com.codeit.moim.web.dto.response.mymeeting.UpdateMemberToExpelResponse;
 import com.codeit.moim.web.dto.response.mymeeting.UpdateMemberStatusResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,7 +66,7 @@ public class MyMeetingController {
             @ApiResponse(responseCode = "200", description = "Get meetings success")
     })
     @GetMapping("/all")
-    public Response<List<ReadMyMeetingResponse>> getAllMyMeetingList(
+    public Response<List<ReadAllMeetingResponse>> getAllMyMeetingList(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         int userId = userDetails.getUserId();

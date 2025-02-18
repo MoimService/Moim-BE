@@ -4,13 +4,15 @@ import com.codeit.moim.domain.User;
 import lombok.Builder;
 
 @Builder
-public record ReadMeetingMemberResponse(
+public record ReadAllMeetingMemberResponse(
         int userId,
+        String profilePic,
         String name
 ){
-    public static ReadMeetingMemberResponse fromEntity(User user){
-        return ReadMeetingMemberResponse.builder()
+    public static ReadAllMeetingMemberResponse fromEntity(User user){
+        return ReadAllMeetingMemberResponse.builder()
                 .userId(user.getUserId())
+                .profilePic(user.getProfilePic())
                 .name(user.getName())
                 .build();
     }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -26,4 +27,11 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
                     "WHERE m.user = :user "
     )
     List<Meeting> findMeetingsByUser(User user);
+
+    @Query(
+            "SELECT m FROM Member m " +
+                    "JOIN FETCH m.user " +
+                    "WHERE m.meeting = :meeting "
+    )
+    List<Member> findByMeeting(Meeting meeting);
 }
