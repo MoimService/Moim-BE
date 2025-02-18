@@ -3,6 +3,8 @@ package com.codeit.moim.web.dto.response.mymeeting;
 import com.codeit.moim.domain.Meeting;
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
 public record ReadManageMeetingResponse(
         int meetingId,
@@ -10,10 +12,11 @@ public record ReadManageMeetingResponse(
         String thumbnail,
         String location,
         int memberCount,
-        int maxMember
+        int maxMember,
+        List<ReadManageMeetingMemberResponse> memberList
 
 ) {
-    public static ReadManageMeetingResponse fromEntity(Meeting meeting){
+    public static ReadManageMeetingResponse fromEntity(Meeting meeting, List<ReadManageMeetingMemberResponse> memberList){
         return ReadManageMeetingResponse.builder()
                 .meetingId(meeting.getMeetingId())
                 .title(meeting.getMeetingTitle())
@@ -21,6 +24,7 @@ public record ReadManageMeetingResponse(
                 .location(meeting.getLocation())
                 .memberCount(meeting.getMemberCount())
                 .maxMember(meeting.getMaxMember())
+                .memberList(memberList)
                 .build();
     }
 }

@@ -68,7 +68,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
                     List<ReadAllMeetingMemberResponse> memberResponseList = memberRepository.findByMeeting(meeting)
                             .stream()
                             .map(member -> ReadAllMeetingMemberResponse.fromEntity(member.getUser()))
-                            .collect(Collectors.toList());
+                            .toList();
                     return ReadAllMeetingResponse.fromEntity(meeting, status, memberResponseList);
                 }).toList();
     }
@@ -79,8 +79,14 @@ public class MyMeetingServiceImpl implements MyMeetingService {
                 .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
         List<Meeting> meetingList = meetingRepository.findByUser(user);
         return meetingList.stream()
-                .map(ReadManageMeetingResponse::fromEntity)
-                .collect(Collectors.toList());
+                .map(meeting-> {
+                    List<ReadManageMeetingMemberResponse> memberResponseList = memberRepository.findByMeeting(meeting)
+                            .stream()
+                            .map(member -> ReadManageMeetingMemberResponse.fromEntity(member.getUser(), member.getStatus().toString()))
+                            .toList();
+                    return ReadManageMeetingResponse.fromEntity(meeting, memberResponseList);
+                })
+                .toList();
     }
 
     private Meeting getMeeting(int meetingId){

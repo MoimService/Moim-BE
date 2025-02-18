@@ -13,12 +13,12 @@ public record ReadAllMeetingResponse(
         String location,
         int memberCount,
         int maxMember,
-        String memberStatus,
+        String myMemberStatus,
 
         List<ReadAllMeetingMemberResponse> memberList
 
 ) {
-    public static ReadAllMeetingResponse fromEntity(Meeting meeting, String memberStatus, List<ReadAllMeetingMemberResponse> memberList){
+    public static ReadAllMeetingResponse fromEntity(Meeting meeting, String myMemberStatus, List<ReadAllMeetingMemberResponse> memberList){
         return ReadAllMeetingResponse.builder()
                 .meetingId(meeting.getMeetingId())
                 .title(meeting.getMeetingTitle())
@@ -26,7 +26,7 @@ public record ReadAllMeetingResponse(
                 .location(meeting.getLocation())
                 .memberCount(meeting.getMemberCount())
                 .maxMember(meeting.getMaxMember())
-                .memberStatus(memberStatus)
+                .myMemberStatus(myMemberStatus)
                 .memberList(memberList)
                 .build();
     }
