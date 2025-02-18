@@ -12,10 +12,12 @@ import com.codeit.moim.repository.MemberRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
-import com.codeit.moim.web.dto.response.mymeeting.UpdateMemberStatusResponse;
-import com.codeit.moim.web.dto.response.mymeeting.UpdateMemberToExpelResponse;
+import com.codeit.moim.web.dto.response.mymeeting.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +54,39 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         meeting.decreaseMemberCount();
         meetingRepository.save(meeting);
         return saveUpdatedMember(member, MemberStatus.EXPEL);
+    }
+
+    @Override
+    public List<ReadAllMeetingResponse> findAllMyMeeting(int userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+        List<Meeting> meetingList = memberRepository.findMeetingsByUser(user);
+
+        return meetingList.stream()
+                .map(meeting -> {
+                    String status = memberRepository.findByUserAndMeeting(user, meeting).getStatus().toString();
+                    List<ReadAllMeetingMemberResponse> memberResponseList = memberRepository.findByMeeting(meeting)
+                            .stream()
+                            .map(member -> ReadAllMeetingMemberResponse.fromEntity(member.getUser()))
+                            .toList();
+                    return ReadAllMeetingResponse.fromEntity(meeting, status, memberResponseList);
+                }).toList();
+    }
+
+    @Override
+    public List<ReadManageMeetingResponse> findManageMeeting(int userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+        List<Meeting> meetingList = meetingRepository.findByUser(user);
+        return meetingList.stream()
+                .map(meeting-> {
+                    List<ReadManageMeetingMemberResponse> memberResponseList = memberRepository.findByMeeting(meeting)
+                            .stream()
+                            .map(member -> ReadManageMeetingMemberResponse.fromEntity(member.getUser(), member.getStatus().toString()))
+                            .toList();
+                    return ReadManageMeetingResponse.fromEntity(meeting, memberResponseList);
+                })
+                .toList();
     }
 
     private Meeting getMeeting(int meetingId){
