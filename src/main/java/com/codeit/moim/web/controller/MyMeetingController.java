@@ -4,6 +4,7 @@ import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
 import com.codeit.moim.web.dto.response.Response;
+import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import com.codeit.moim.web.dto.response.mymeeting.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -99,5 +100,21 @@ public class MyMeetingController {
     ){
         int userId = userDetails.getUserId();
         return Response.ok(myMeetingService.updateIsPublic(userId, meetingId));
+    }
+
+    @Operation(
+            summary = "Delete member application",
+            description = "Cancel application for meeting. Only possible when member status is 'PENDING'"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Delete member success")
+    })
+    @DeleteMapping("/{meetingId}")
+    public Response<DeleteMemberResponse> deleteMeetingApply(
+            @PathVariable int meetingId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(myMeetingService.cancelMemberApply(userId, meetingId));
     }
 }

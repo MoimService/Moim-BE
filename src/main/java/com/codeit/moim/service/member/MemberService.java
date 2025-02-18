@@ -7,5 +7,4 @@ import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 public interface MemberService {
     CreateMemberResponse saveMember(int meetingId, int userId, CreateMemberRequest request);
 
-    DeleteMemberResponse cancelMemberApply(int userId, int meetingId);
 }

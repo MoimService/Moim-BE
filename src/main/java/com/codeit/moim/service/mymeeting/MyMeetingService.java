@@ -1,6 +1,7 @@
 package com.codeit.moim.service.mymeeting;
 
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
+import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import com.codeit.moim.web.dto.response.mymeeting.*;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface MyMeetingService {
     List<ReadManageMeetingResponse> findManageMeeting(int userId);
 
     UpdateMeetingIsPublicResponse updateIsPublic(int userId, int meetingId);
+
+    DeleteMemberResponse cancelMemberApply(int userId, int meetingId);
 }

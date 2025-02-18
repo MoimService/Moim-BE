@@ -36,19 +36,4 @@ public class MemberController {
         return Response.ok(memberService.saveMember(meetingId, userId, request));
     }
 
-    @Operation(
-            summary = "Delete member application",
-            description = "Cancel application for meeting. Only possible when member status is 'PENDING'"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Delete member success")
-    })
-    @DeleteMapping("/{meetingId}")
-    public Response<DeleteMemberResponse> deleteMeetingApply(
-            @PathVariable int meetingId,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ){
-        int userId = userDetails.getUserId();
-        return Response.ok(memberService.cancelMemberApply(userId, meetingId));
-    }
 }

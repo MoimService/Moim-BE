@@ -66,19 +66,6 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    @Override
-    public DeleteMemberResponse cancelMemberApply(int userId, int meetingId) {
-        Meeting meeting = getMeeting(meetingId);
-        User user = getUser(userId);
-        Member member = memberRepository.findByUserAndMeeting(user, meeting);
-        if(member != null && member.getStatus().equals(MemberStatus.PENDING)){
-            memberRepository.delete(member);
-            return new DeleteMemberResponse(userId);
-        }else{
-            throw new AccessDeniedException("Member");
-        }
-
-    }
 
     private Meeting getMeeting(int meetingId){
         Meeting meeting = meetingRepository.findById(meetingId)
