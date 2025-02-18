@@ -1,8 +1,10 @@
 package com.codeit.moim.service.mymeeting.impl;
 
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
+import com.codeit.moim.common.exception.meeting.AlreadyIsPublicException;
 import com.codeit.moim.common.exception.meeting.MeetingAccessDeniedException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
+import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.Meeting;
 import com.codeit.moim.domain.Member;
 import com.codeit.moim.domain.User;
@@ -25,6 +27,9 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
     private final MemberRepository memberRepository;
+
+    private static final int BAD_REQUEST = 400;
+
     @Override
     public UpdateMemberStatusResponse updateMemberStatus(int userId, UpdateMemberStatusRequest request) {
         Meeting meeting = getMeeting(request.meetingId());
@@ -87,6 +92,21 @@ public class MyMeetingServiceImpl implements MyMeetingService {
                     return ReadManageMeetingResponse.fromEntity(meeting, memberResponseList);
                 })
                 .toList();
+    }
+
+    @Override
+    public UpdateMeetingIsPublicResponse updateIsPublic(int userId, int meetingId) {
+        Meeting meeting = getMeeting(meetingId);
+        validateMeetingManager(userId, meeting);
+        if(meeting.isPublic()){
+            meeting.updateIsPublic();
+            meetingRepository.save(meeting);
+
+            return new UpdateMeetingIsPublicResponse(meetingId);
+        }else{
+            throw new AlreadyIsPublicException(ErrorStatus.toErrorStatus("This meeting is already isPublic = false", BAD_REQUEST));
+        }
+
     }
 
     private Meeting getMeeting(int meetingId){

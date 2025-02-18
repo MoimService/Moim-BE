@@ -103,4 +103,8 @@ public class Meeting {
     public void decreaseMemberCount() {
         this.memberCount--;
     }
+
+    public void updateIsPublic(){
+        this.isPublic = false;
+    }
 }
