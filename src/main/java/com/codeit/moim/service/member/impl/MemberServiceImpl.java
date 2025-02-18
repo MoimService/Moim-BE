@@ -4,7 +4,7 @@ import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.member.AlreadyMemberException;
 import com.codeit.moim.common.exception.meeting.MeetingAccessDeniedException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
-import com.codeit.moim.common.exception.meeting.MemberCountExistException;
+import com.codeit.moim.common.exception.member.MemberCountException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.Meeting;
 import com.codeit.moim.domain.Member;
@@ -16,9 +16,7 @@ import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.member.MemberService;
 import com.codeit.moim.web.dto.request.member.CreateMemberRequest;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
-import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,7 +39,7 @@ public class MemberServiceImpl implements MemberService {
         }
         //정원 초과인지 아닌지 확인
         if(meeting.getMaxMember() <= meeting.getMemberCount()){
-            throw new MemberCountExistException("Meeting member count is full", String.valueOf(meetingId), "member");
+            throw new MemberCountException("Meeting member count is full", String.valueOf(meetingId), "member");
         }
 
         //이미 신청한 모임인지 아닌지

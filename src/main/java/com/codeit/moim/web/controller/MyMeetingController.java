@@ -109,12 +109,28 @@ public class MyMeetingController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Delete member success")
     })
-    @DeleteMapping("/{meetingId}")
+    @DeleteMapping("/cancel/{meetingId}")
     public Response<DeleteMemberResponse> deleteMeetingApply(
             @PathVariable int meetingId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         int userId = userDetails.getUserId();
         return Response.ok(myMeetingService.cancelMemberApply(userId, meetingId));
+    }
+
+    @Operation(
+            summary = "Update member to ",
+            description = "Cancel application for meeting. Only possible when member status is 'PENDING'"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Delete member success")
+    })
+    @DeleteMapping("/quit/{meetingId}")
+    public Response<DeleteMemberResponse> deleteMeetingMember(
+            @PathVariable int meetingId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(myMeetingService.quitMeeting(userId, meetingId));
     }
 }

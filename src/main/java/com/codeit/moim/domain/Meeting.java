@@ -1,6 +1,6 @@
 package com.codeit.moim.domain;
 
-import com.codeit.moim.common.exception.meeting.MemberCountExistException;
+import com.codeit.moim.common.exception.member.MemberCountException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -96,11 +96,12 @@ public class Meeting {
 
     public void increaseMemberCount() {
         if(this.memberCount < this.maxMember) this.memberCount++;
-        else throw new MemberCountExistException("Meeting member count is full", String.valueOf(meetingId), "member");
+        else throw new MemberCountException("Meeting member count is full", String.valueOf(meetingId), "member");
     }
 
     public void decreaseMemberCount() {
-        this.memberCount--;
+        if(this.memberCount == 0 ) throw new MemberCountException("Meeting member count is 0", String.valueOf(meetingId), "member");
+        else this.memberCount--;
     }
 
     public void updateIsPublic(){
