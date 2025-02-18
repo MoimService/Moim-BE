@@ -39,4 +39,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
                     "WHERE m.meetingId = :meetingId "
     )
     Optional<Meeting> findMeetingWithManagerAndSkill(@Param("meetingId") int meetingId);
+
+    List<Meeting> findByUser(User user);
 }
