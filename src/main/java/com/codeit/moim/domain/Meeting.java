@@ -1,6 +1,5 @@
 package com.codeit.moim.domain;
 
-import com.codeit.moim.common.exception.meeting.AlreadyMemberException;
 import com.codeit.moim.common.exception.meeting.MemberCountExistException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

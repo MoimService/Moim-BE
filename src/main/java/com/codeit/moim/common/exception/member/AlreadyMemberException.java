@@ -1,4 +1,4 @@
-package com.codeit.moim.common.exception.meeting;
+package com.codeit.moim.common.exception.member;
 
 import com.codeit.moim.common.exception.ApplicationException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;

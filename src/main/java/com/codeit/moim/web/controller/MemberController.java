@@ -6,6 +6,7 @@ import com.codeit.moim.service.member.MemberService;
 import com.codeit.moim.web.dto.request.member.CreateMemberRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
+import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -33,5 +34,21 @@ public class MemberController {
     ){
         int userId = userDetails.getUserId();
         return Response.ok(memberService.saveMember(meetingId, userId, request));
+    }
+
+    @Operation(
+            summary = "Delete member apply",
+            description = "Cancel apply for meeting member"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Delete member apply success")
+    })
+    @DeleteMapping("/{meetingId}")
+    public Response<DeleteMemberResponse> deleteMeetingApply(
+            @PathVariable int meetingId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(memberService.cancelMemberApply(userId, meetingId));
     }
 }
