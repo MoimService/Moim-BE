@@ -12,10 +12,13 @@ import com.codeit.moim.repository.MemberRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
+import com.codeit.moim.web.dto.response.mymeeting.ReadMyMeetingResponse;
 import com.codeit.moim.web.dto.response.mymeeting.UpdateMemberStatusResponse;
 import com.codeit.moim.web.dto.response.mymeeting.UpdateMemberToExpelResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +55,19 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         meeting.decreaseMemberCount();
         meetingRepository.save(meeting);
         return saveUpdatedMember(member, MemberStatus.EXPEL);
+    }
+
+    @Override
+    public List<ReadMyMeetingResponse> findAllMyMeeting(int userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+        List<Meeting> meetingList = memberRepository.findMeetingsByUser(user);
+
+        return meetingList.stream()
+                .map(meeting -> {
+                    String status = memberRepository.findByUserAndMeeting(user, meeting).getStatus().toString();
+                    return ReadMyMeetingResponse.fromEntity(meeting, status);
+                }).toList();
     }
 
     private Meeting getMeeting(int meetingId){

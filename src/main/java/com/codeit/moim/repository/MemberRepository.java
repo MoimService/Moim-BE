@@ -6,7 +6,10 @@ import com.codeit.moim.domain.User;
 import com.codeit.moim.domain.enums.MemberStatus;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Integer> {
@@ -16,4 +19,11 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     boolean existsByUserAndMeeting(User user, Meeting meeting);
 
     Member findByUserAndMeeting(User user, Meeting meeting);
+
+
+    @Query(
+            "SELECT m.meeting FROM Member m " +
+                    "WHERE m.user = :user "
+    )
+    List<Meeting> findMeetingsByUser(User user);
 }
