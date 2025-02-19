@@ -1,5 +1,6 @@
 package com.codeit.moim.domain;
 
+import com.codeit.moim.common.exception.likes.LikesCountException;
 import com.codeit.moim.common.exception.member.MemberCountException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -106,5 +107,14 @@ public class Meeting {
 
     public void updateIsPublic(){
         this.isPublic = false;
+    }
+
+    public void increaseLikesCount() {
+        this.likesCount++;
+    }
+
+    public void decreaseLikesCount() {
+        if(this.likesCount == 0 ) throw new LikesCountException("Likes count is 0", String.valueOf(meetingId), "likes");
+        else this.likesCount--;
     }
 }
