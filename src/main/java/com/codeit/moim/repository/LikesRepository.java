@@ -7,7 +7,11 @@ import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface LikesRepository extends JpaRepository<Likes, Integer> {
     Boolean existsByUserAndMeeting(@Param("user") User user, @Param("meeting") Meeting meeting);
+
+    Optional<Likes> findByUserAndMeeting(@Param("user") User user, @Param("meeting") Meeting meeting);
 }

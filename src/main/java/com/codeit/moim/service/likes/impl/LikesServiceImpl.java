@@ -2,6 +2,7 @@ package com.codeit.moim.service.likes.impl;
 
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.likes.LikeExistException;
+import com.codeit.moim.common.exception.likes.LikeNotFoundException;
 import com.codeit.moim.common.exception.meeting.MeetingAccessDeniedException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
 import com.codeit.moim.domain.Likes;
@@ -12,6 +13,7 @@ import com.codeit.moim.repository.MeetingRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.likes.LikesService;
 import com.codeit.moim.web.dto.response.likes.CreateLikeResponse;
+import com.codeit.moim.web.dto.response.likes.DeleteLikeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,18 @@ public class LikesServiceImpl implements LikesService {
         Likes likes  = Likes.toEntity(user, meeting);
         Likes createdLikes = likesRepository.save(likes);
         return CreateLikeResponse.fromEntity(createdLikes);
+    }
+
+    @Override
+    public DeleteLikeResponse deleteLikes(int userId, int meetingId) {
+        User user = getUser(userId);
+        Meeting meeting = getMeeting(meetingId);
+
+        Likes likes = likesRepository.findByUserAndMeeting(user, meeting)
+                .orElseThrow(()-> new LikeNotFoundException("Like does not exist"));
+        likesRepository.delete(likes);
+
+        return DeleteLikeResponse.fromEntity(meetingId);
     }
 
     private Meeting getMeeting(int meetingId){
