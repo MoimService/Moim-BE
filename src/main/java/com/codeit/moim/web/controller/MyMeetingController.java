@@ -2,6 +2,7 @@ package com.codeit.moim.web.controller;
 
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
+import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
@@ -9,7 +10,9 @@ import com.codeit.moim.web.dto.response.mymeeting.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -132,5 +135,22 @@ public class MyMeetingController {
     ){
         int userId = userDetails.getUserId();
         return Response.ok(myMeetingService.quitMeeting(userId, meetingId));
+    }
+
+    @Operation(
+            summary = "Get liked meetings",
+            description = "Get all meetings with my likes"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get meetings success")
+    })
+    @GetMapping("/likes")
+    public Response<Slice<ReadLikeMeetingResponse>> getLikeMeetingList(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @ModelAttribute ReadLikeMeetingRequest request
+
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(myMeetingService.findLikeMeetings(userId, request));
     }
 }

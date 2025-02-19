@@ -10,19 +10,27 @@ import com.codeit.moim.domain.Meeting;
 import com.codeit.moim.domain.Member;
 import com.codeit.moim.domain.User;
 import com.codeit.moim.domain.enums.MemberStatus;
+import com.codeit.moim.repository.LikesRepository;
 import com.codeit.moim.repository.MeetingRepository;
 import com.codeit.moim.repository.MemberRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
+import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
 import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import com.codeit.moim.web.dto.response.mymeeting.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import com.codeit.moim.web.dto.response.slice.CustomSlice;
+
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +38,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
     private final MemberRepository memberRepository;
+    private final LikesRepository likesRepository;
 
     private static final int BAD_REQUEST = 400;
 
@@ -138,6 +147,30 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         }else{
             throw new AccessDeniedException("Member");
         }
+    }
+
+    @Override
+    public Slice<ReadLikeMeetingResponse> findLikeMeetings(int userId, ReadLikeMeetingRequest request) {
+        int pageSize = request.size();
+        Pageable pageable = PageRequest.of(0, pageSize);
+
+        User user = getUser(userId);
+
+        Slice<Meeting> meetings;
+        if(Objects.isNull(request.lastMeetingId()) || request.lastMeetingId() <=0 ){
+            meetings = likesRepository.findLikedMeetings(user, pageable);
+       }else{
+            meetings = likesRepository.findLikeMeetingsGreaterThan(user, request.lastMeetingId(), pageable);
+        }
+
+        List<ReadLikeMeetingResponse> meetingResponses = meetings
+                .map(ReadLikeMeetingResponse::fromEntity)
+                .getContent();
+
+        Integer nextCursor = meetings.hasNext()
+                ? meetings.getContent().get(meetings.getContent().size() -1).getMeetingId()
+                : null;
+        return new CustomSlice<>(meetingResponses, pageable, meetings.hasNext(), nextCursor);
     }
 
     private User getUser(int userId){
