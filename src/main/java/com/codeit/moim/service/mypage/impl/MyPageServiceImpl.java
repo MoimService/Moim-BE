@@ -7,6 +7,7 @@ import com.codeit.moim.service.mypage.MyPageService;
 import com.codeit.moim.service.storage.StorageService;
 import com.codeit.moim.web.dto.request.mypage.UpdateProfilePicRequest;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
+import com.codeit.moim.web.dto.response.mypage.ReadLoggedInUserResponse;
 import com.codeit.moim.web.dto.response.mypage.UpdateProfilePicResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,5 +34,15 @@ public class MyPageServiceImpl implements MyPageService {
         userRepository.save(user);
 
         return new UpdateProfilePicResponse(userId);
+    }
+
+    @Override
+    public ReadLoggedInUserResponse getUserData(int userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+        String phone = (user.getContact() != null && user.getContact().getPhone() != null)
+                ? user.getContact().getPhone()
+                : null;
+        return ReadLoggedInUserResponse.fromEntity(user, phone);
     }
 }
