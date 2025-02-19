@@ -2,6 +2,7 @@ package com.codeit.moim.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,4 +34,19 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_id", nullable = false)
     private Meeting meeting;
+
+    @Builder
+    public Comment(int commentId, int score, String content, LocalDateTime createdAt, User user, Meeting meeting) {
+        this.commentId = commentId;
+        this.score = score;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.user = user;
+        this.meeting = meeting;
+    }
+
+    public void update(int score, String content) {
+        this.score = score;
+        this.content = content;
+    }
 }
