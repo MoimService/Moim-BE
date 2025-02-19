@@ -139,7 +139,8 @@ public class MyMeetingController {
 
     @Operation(
             summary = "Get liked meetings",
-            description = "Get all meetings with my likes"
+            description = "Get all meetings with my likes" +
+                    " Infinite scroll with nextCursor "
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Get meetings success")
@@ -148,7 +149,6 @@ public class MyMeetingController {
     public Response<Slice<ReadLikeMeetingResponse>> getLikeMeetingList(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @ModelAttribute ReadLikeMeetingRequest request
-
     ){
         int userId = userDetails.getUserId();
         return Response.ok(myMeetingService.findLikeMeetings(userId, request));
