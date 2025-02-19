@@ -17,6 +17,7 @@ import com.codeit.moim.service.comment.CommentService;
 import com.codeit.moim.web.dto.request.comment.CreateCommentRequest;
 import com.codeit.moim.web.dto.request.comment.UpdateCommentRequest;
 import com.codeit.moim.web.dto.response.comment.CreateCommentResponse;
+import com.codeit.moim.web.dto.response.comment.DeleteCommentResponse;
 import com.codeit.moim.web.dto.response.comment.UpdateCommentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,12 +53,29 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findByUserAndMeeting(user, meeting)
                 .orElseThrow(()-> new CommentNotFoundException("Comment not found"));
 
+        if (comment.getUser().getUserId() != userId) throw new CommentAccessDeniedException(String.valueOf(user.getUserId()));
+
         comment.update(request.score(), request.content());
         commentRepository.save(comment);
         return new UpdateCommentResponse(comment.getCommentId());
     }
 
-    //update, delete -> check if my comment
+    @Override
+    public DeleteCommentResponse deleteComment(int userId, int meetingId) {
+        User user = getUser(userId);
+        Meeting meeting = getMeeting(meetingId);
+        if( !memberRepository.existsByUserAndMeeting(user, meeting)
+                || memberRepository.findByUserAndMeeting(user, meeting).getStatus() == MemberStatus.PENDING
+                || memberRepository.findByUserAndMeeting(user, meeting).getStatus() == MemberStatus.REJECTED)  throw new CommentAccessDeniedException(String.valueOf(user.getUserId()));
+
+        Comment comment = commentRepository.findByUserAndMeeting(user, meeting)
+                .orElseThrow(()-> new CommentNotFoundException("Comment not found"));
+
+        if (comment.getUser().getUserId() != userId) throw new CommentAccessDeniedException(String.valueOf(user.getUserId()));
+
+        commentRepository.delete(comment);
+        return DeleteCommentResponse.fromEntity(userId, meetingId);
+    }
 
     private User getUser(int userId){
         User user = userRepository.findById(userId)
