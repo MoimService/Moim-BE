@@ -44,4 +44,9 @@ public class Comment {
         this.user = user;
         this.meeting = meeting;
     }
+
+    public void update(int score, String content) {
+        this.score = score;
+        this.content = content;
+    }
 }

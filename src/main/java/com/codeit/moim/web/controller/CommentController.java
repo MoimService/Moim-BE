@@ -3,9 +3,11 @@ package com.codeit.moim.web.controller;
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.comment.CommentService;
 import com.codeit.moim.web.dto.request.comment.CreateCommentRequest;
+import com.codeit.moim.web.dto.request.comment.UpdateCommentRequest;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.comment.CreateCommentResponse;
+import com.codeit.moim.web.dto.response.comment.UpdateCommentResponse;
 import com.codeit.moim.web.dto.response.meeting.CreateMeetingResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,5 +38,22 @@ public class CommentController {
     ) {
         int userId = userDetails.getUserId();
         return Response.ok(commentService.saveComment(userId, meetingId, request));
+    }
+
+    @Operation(
+            summary = "Update Comment",
+            description = "Update Comment API. Return commentId. Only member and user who wrote this comment can update comment"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update comment success")
+    })
+    @PutMapping
+    public Response<UpdateCommentResponse> updateComment(
+            @PathVariable int meetingId,
+            @Valid @RequestBody UpdateCommentRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(commentService.updateComment(userId, meetingId, request));
     }
 }
