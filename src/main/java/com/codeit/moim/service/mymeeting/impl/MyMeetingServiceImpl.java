@@ -84,6 +84,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
                     String status = memberRepository.findByUserAndMeeting(user, meeting).getStatus().toString();
                     List<ReadAllMeetingMemberResponse> memberResponseList = memberRepository.findByMeeting(meeting)
                             .stream()
+                            .filter(member -> member.getStatus().equals(MemberStatus.APPROVED))
                             .map(member -> ReadAllMeetingMemberResponse.fromEntity(member.getUser()))
                             .toList();
                     return ReadAllMeetingResponse.fromEntity(meeting, status, memberResponseList);
