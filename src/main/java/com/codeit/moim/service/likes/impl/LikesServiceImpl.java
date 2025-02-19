@@ -34,6 +34,8 @@ public class LikesServiceImpl implements LikesService {
 
         Likes likes  = Likes.toEntity(user, meeting);
         Likes createdLikes = likesRepository.save(likes);
+        meeting.increaseLikesCount();
+        meetingRepository.save(meeting);
         return CreateLikeResponse.fromEntity(createdLikes);
     }
 
@@ -45,7 +47,8 @@ public class LikesServiceImpl implements LikesService {
         Likes likes = likesRepository.findByUserAndMeeting(user, meeting)
                 .orElseThrow(()-> new LikeNotFoundException("Like does not exist"));
         likesRepository.delete(likes);
-
+        meeting.decreaseLikesCount();
+        meetingRepository.save(meeting);
         return DeleteLikeResponse.fromEntity(meetingId);
     }
 
