@@ -103,7 +103,7 @@ public class MyMeetingController {
     }
 
     @Operation(
-            summary = "Delete member application",
+            summary = "Delete member and cancel meeting application",
             description = "Cancel application for meeting. Only possible when member status is 'PENDING'"
     )
     @ApiResponses(value = {
@@ -119,8 +119,8 @@ public class MyMeetingController {
     }
 
     @Operation(
-            summary = "Update member to ",
-            description = "Cancel application for meeting. Only possible when member status is 'PENDING'"
+            summary = "Delete member and quit meeting",
+            description = "Delete member data from meeting. Only possible when member status is 'APPROVED'"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Delete member success")
