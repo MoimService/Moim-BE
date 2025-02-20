@@ -18,9 +18,12 @@ import com.codeit.moim.web.dto.request.comment.CreateCommentRequest;
 import com.codeit.moim.web.dto.request.comment.UpdateCommentRequest;
 import com.codeit.moim.web.dto.response.comment.CreateCommentResponse;
 import com.codeit.moim.web.dto.response.comment.DeleteCommentResponse;
+import com.codeit.moim.web.dto.response.comment.ReadCommentAverageResponse;
 import com.codeit.moim.web.dto.response.comment.UpdateCommentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -75,6 +78,20 @@ public class CommentServiceImpl implements CommentService {
 
         commentRepository.delete(comment);
         return DeleteCommentResponse.fromEntity(userId, meetingId);
+    }
+
+    @Override
+    public ReadCommentAverageResponse getCommentAverage(int userId, int meetingId) {
+        Meeting meeting = getMeeting(meetingId);
+        List<Comment> commentList = commentRepository.findByMeeting(meeting);
+
+        int scoreSum = commentList.stream()
+                .mapToInt(Comment::getScore)
+                .sum();
+        int scoreCount = commentList.size();
+        double scoreAvg = scoreCount == 0 ? 0.0: (double) scoreSum / scoreCount;
+        double roundedAvg = Math.round(scoreAvg * 10.0) / 10.0;
+        return new ReadCommentAverageResponse(roundedAvg);
     }
 
     private User getUser(int userId){
