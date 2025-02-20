@@ -31,5 +31,5 @@ public interface LikesRepository extends JpaRepository<Likes, Integer> {
                     "AND l.meeting.meetingId < :lastMeetingId " +
                     "ORDER BY l.meeting.meetingId DESC"
     )
-    Slice<Meeting> findLikeMeetingsGreaterThan(@Param("user") User user, @Param("lastLikeId") int lastMeetingId, Pageable pageable);
+    Slice<Meeting> findLikeMeetingsLessThan(@Param("user") User user, @Param("lastLikeId") int lastMeetingId, Pageable pageable);
 }

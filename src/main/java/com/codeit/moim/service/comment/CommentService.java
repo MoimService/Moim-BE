@@ -1,8 +1,13 @@
 package com.codeit.moim.service.comment;
 
 import com.codeit.moim.web.dto.request.comment.CreateCommentRequest;
+import com.codeit.moim.web.dto.request.comment.ReadMeetingCommentRequest;
+import com.codeit.moim.web.dto.request.comment.ReadMyCommentRequest;
 import com.codeit.moim.web.dto.request.comment.UpdateCommentRequest;
 import com.codeit.moim.web.dto.response.comment.*;
+import org.springframework.data.domain.Slice;
+
+import java.util.List;
 
 public interface CommentService {
     CreateCommentResponse saveComment(int userId, int meetingId, CreateCommentRequest request);
@@ -14,4 +19,8 @@ public interface CommentService {
     ReadCommentAverageResponse getCommentAverage(int userId, int meetingId);
 
     ReadCommentDistributionResponse getCommentDistribution(int userId, int meetingId);
+
+    Slice<ReadMeetingCommentResponse> getMeetingComments(int userId, int meetingId, ReadMeetingCommentRequest request);
+
+    Slice<ReadMyCommentResponse> getMyComments(int userId, ReadMyCommentRequest request);
 }
