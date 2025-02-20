@@ -8,6 +8,7 @@ import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.comment.CreateCommentResponse;
 import com.codeit.moim.web.dto.response.comment.DeleteCommentResponse;
+import com.codeit.moim.web.dto.response.comment.ReadCommentAverageResponse;
 import com.codeit.moim.web.dto.response.comment.UpdateCommentResponse;
 import com.codeit.moim.web.dto.response.meeting.CreateMeetingResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,5 +73,21 @@ public class CommentController {
     ) {
         int userId = userDetails.getUserId();
         return Response.ok(commentService.deleteComment(userId, meetingId));
+    }
+
+    @Operation(
+            summary = "Get comment average",
+            description = "Get comment average of meeting. Return until first decimal"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get success")
+    })
+    @GetMapping("/avg")
+    public Response<ReadCommentAverageResponse> readCommentAverage(
+            @PathVariable int meetingId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(commentService.getCommentAverage(userId, meetingId));
     }
 }
