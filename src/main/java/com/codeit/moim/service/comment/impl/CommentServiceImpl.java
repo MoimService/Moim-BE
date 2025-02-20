@@ -15,13 +15,19 @@ import com.codeit.moim.repository.MemberRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.comment.CommentService;
 import com.codeit.moim.web.dto.request.comment.CreateCommentRequest;
+import com.codeit.moim.web.dto.request.comment.ReadMeetingCommentRequest;
 import com.codeit.moim.web.dto.request.comment.UpdateCommentRequest;
 import com.codeit.moim.web.dto.response.comment.*;
+import com.codeit.moim.web.dto.response.slice.CustomSlice;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -106,6 +112,35 @@ public class CommentServiceImpl implements CommentService {
         long twos =  getScoreDistribution.getOrDefault(2, 0L);
         long ones =  getScoreDistribution.getOrDefault(1, 0L);
         return ReadCommentDistributionResponse.fromEntity(fives, fours, threes, twos, ones);
+    }
+
+    @Override
+    public Slice<ReadMeetingCommentResponse> getMeetingComments(int userId, int meetingId, ReadMeetingCommentRequest request) {
+        int pageSize = request.size();
+        Pageable pageable = PageRequest.of(0, pageSize);
+
+        Meeting meeting = getMeeting(meetingId);
+
+        Slice<Comment> comments;
+        if(Objects.isNull(request.lastCommentId()) || request.lastCommentId() <=0 ) {
+            comments = commentRepository.findByMeeting_MeetingIdOrderByCommentIdDesc(meetingId, pageable);
+            //comments = commentRepository.findByMeetingAndUser(meeting, pageable);
+
+        }else{
+            comments = commentRepository.findByMeeting_MeetingIdAndCommentIdLessThanOrderByCommentIdDesc(meetingId, request.lastCommentId(), pageable);
+            //comments = commentRepository.findByMeetingAndUserGreaterThan(meeting, request.lastCommentId(), pageable);
+        }
+
+        List<ReadMeetingCommentResponse> commentResponses = comments.stream()
+                .map(
+                        comment -> ReadMeetingCommentResponse.fromEntity(comment, meeting, comment.getUser().getName())
+                ).collect(Collectors.toList());
+
+        Integer nextCursor = comments.hasNext()
+                ? comments.getContent().get(comments.getContent().size() -1).getCommentId()
+                : null;
+
+        return new CustomSlice<>(commentResponses, pageable, comments.hasNext(), nextCursor);
     }
 
     private User getUser(int userId){

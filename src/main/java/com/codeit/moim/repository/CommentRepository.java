@@ -3,7 +3,10 @@ package com.codeit.moim.repository;
 import com.codeit.moim.domain.Comment;
 import com.codeit.moim.domain.Meeting;
 import com.codeit.moim.domain.User;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +20,25 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     Optional<Comment> findByUserAndMeeting(@Param("user") User user, @Param("meeting") Meeting meeting);
 
-    List<Comment> findByMeeting(Meeting meeting);
+    List<Comment> findByMeeting(@Param("meeting") Meeting meeting);
+
+
+    @Query(
+            "SELECT c FROM Comment c " +
+                    "JOIN FETCH c.user " +
+                    "WHERE c.meeting.meetingId = :meetingId " +
+                    "ORDER BY c.commentId DESC "
+    )
+    Slice<Comment> findByMeeting_MeetingIdOrderByCommentIdDesc(@Param("meetingId") int meetingId, Pageable pageable);
+
+
+    @Query(
+            "SELECT c FROM Comment c " +
+                    "JOIN FETCH c.user " +
+                    "WHERE c.meeting.meetingId = :meetingId " +
+                    "AND c.commentId < :lastCommentId " +
+                    "ORDER BY c.commentId DESC "
+    )
+    Slice<Comment> findByMeeting_MeetingIdAndCommentIdLessThanOrderByCommentIdDesc(@Param("meetingId") int meetingId, @Param("lastCommentId") int lastCommentId, Pageable pageable);
+
 }

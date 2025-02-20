@@ -161,7 +161,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         if(Objects.isNull(request.lastMeetingId()) || request.lastMeetingId() <=0 ){
             meetings = likesRepository.findLikedMeetings(user, pageable);
        }else{
-            meetings = likesRepository.findLikeMeetingsGreaterThan(user, request.lastMeetingId(), pageable);
+            meetings = likesRepository.findLikeMeetingsLessThan(user, request.lastMeetingId(), pageable);
         }
 
         List<ReadLikeMeetingResponse> meetingResponses = meetings
