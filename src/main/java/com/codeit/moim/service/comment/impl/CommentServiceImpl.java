@@ -16,6 +16,7 @@ import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.comment.CommentService;
 import com.codeit.moim.web.dto.request.comment.CreateCommentRequest;
 import com.codeit.moim.web.dto.request.comment.ReadMeetingCommentRequest;
+import com.codeit.moim.web.dto.request.comment.ReadMyCommentRequest;
 import com.codeit.moim.web.dto.request.comment.UpdateCommentRequest;
 import com.codeit.moim.web.dto.response.comment.*;
 import com.codeit.moim.web.dto.response.slice.CustomSlice;
@@ -135,6 +136,30 @@ public class CommentServiceImpl implements CommentService {
                 .map(
                         comment -> ReadMeetingCommentResponse.fromEntity(comment, meeting, comment.getUser().getName())
                 ).collect(Collectors.toList());
+
+        Integer nextCursor = comments.hasNext()
+                ? comments.getContent().get(comments.getContent().size() -1).getCommentId()
+                : null;
+
+        return new CustomSlice<>(commentResponses, pageable, comments.hasNext(), nextCursor);
+    }
+
+    @Override
+    public Slice<ReadMyCommentResponse> getMyComments(int userId, ReadMyCommentRequest request) {
+        int pageSize = request.size();
+        Pageable pageable = PageRequest.of(0, pageSize);
+
+        Slice<Comment> comments;
+        if(Objects.isNull(request.lastCommentId()) || request.lastCommentId() <=0 ) {
+            comments = commentRepository.findByUser_userIdOrderByCommentIdDesc(userId, pageable);
+        }else{
+            comments = commentRepository.findByUser_UserIdAndCommentIdLessThanOrderByCommentIdDesc(userId, request.lastCommentId(), pageable);
+        }
+
+        List<ReadMyCommentResponse> commentResponses = comments.stream()
+                .map(comment ->
+                                ReadMyCommentResponse.fromEntity(comment, comment.getMeeting())
+                        ).collect(Collectors.toList());
 
         Integer nextCursor = comments.hasNext()
                 ? comments.getContent().get(comments.getContent().size() -1).getCommentId()

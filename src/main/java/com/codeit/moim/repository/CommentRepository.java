@@ -41,4 +41,20 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     )
     Slice<Comment> findByMeeting_MeetingIdAndCommentIdLessThanOrderByCommentIdDesc(@Param("meetingId") int meetingId, @Param("lastCommentId") int lastCommentId, Pageable pageable);
 
+    @Query(
+            "SELECT c FROM Comment c " +
+                    "JOIN FETCH c.meeting " +
+                    "WHERE c.user.userId = :userId " +
+                    "ORDER BY c.commentId DESC "
+    )
+    Slice<Comment> findByUser_userIdOrderByCommentIdDesc(@Param("userId") int userId, Pageable pageable);
+
+    @Query(
+            "SELECT c FROM Comment c " +
+                    "JOIN FETCH c.meeting " +
+                    "WHERE c.user.userId = :userId " +
+                    "AND c.commentId < :lastCommentId " +
+                    "ORDER BY c.commentId DESC "
+    )
+    Slice<Comment> findByUser_UserIdAndCommentIdLessThanOrderByCommentIdDesc(@Param("userId") int userId, @Param("lastCommentId") int lastCommentId, Pageable pageable);
 }

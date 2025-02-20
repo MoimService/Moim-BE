@@ -8,30 +8,31 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
-public record ReadMeetingCommentResponse(
+public record ReadMyCommentResponse(
         int commentId,
-
         int score,
         String content,
         LocalDateTime createdAt,
         int meetingId,
         String meetingTitle,
+        String thumbnail,
         String location,
-        LocalDate startDate,
-        String userName
+        int memberCount,
+        int maxMember
 
 ){
-    public static ReadMeetingCommentResponse fromEntity(Comment comment , Meeting meeting, String userName){
-        return ReadMeetingCommentResponse.builder()
+    public static ReadMyCommentResponse fromEntity(Comment comment , Meeting meeting){
+        return ReadMyCommentResponse.builder()
                 .commentId(comment.getCommentId())
                 .score(comment.getScore())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .meetingId(meeting.getMeetingId())
                 .meetingTitle(meeting.getMeetingTitle())
+                .thumbnail(meeting.getThumbnail())
                 .location(meeting.getLocation())
-                .startDate(meeting.getStartDate())
-                .userName(userName)
+                .memberCount(meeting.getMemberCount())
+                .maxMember(meeting.getMaxMember())
                 .build();
     }
 }

@@ -4,6 +4,7 @@ import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.comment.CommentService;
 import com.codeit.moim.web.dto.request.comment.CreateCommentRequest;
 import com.codeit.moim.web.dto.request.comment.ReadMeetingCommentRequest;
+import com.codeit.moim.web.dto.request.comment.ReadMyCommentRequest;
 import com.codeit.moim.web.dto.request.comment.UpdateCommentRequest;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.response.Response;
@@ -123,5 +124,21 @@ public class CommentController {
     ) {
         int userId = userDetails.getUserId();
         return Response.ok(commentService.getMeetingComments(userId, meetingId, request));
+    }
+
+    @Operation(
+            summary = "Get my comments",
+            description = "Get my comment, infinite scroll applied with min size 3"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get success")
+    })
+    @GetMapping("/my")
+    public Response<Slice<ReadMyCommentResponse>> readMyComemnts(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @ModelAttribute ReadMyCommentRequest request
+            ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(commentService.getMyComments(userId, request));
     }
 }
