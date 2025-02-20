@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import com.codeit.moim.web.dto.response.slice.CustomSlice;
@@ -37,7 +36,6 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
     private final UserSkillRepository userSkillRepository;
-    private final ContactRepository contactRepository;
 
     private static final int BAD_REQUEST = 400;
 

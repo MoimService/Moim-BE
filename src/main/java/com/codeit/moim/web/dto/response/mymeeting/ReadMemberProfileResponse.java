@@ -1,9 +1,7 @@
 package com.codeit.moim.web.dto.response.mymeeting;
 
-        import com.codeit.moim.domain.Contact;
-        import com.codeit.moim.domain.Member;
-        import com.codeit.moim.domain.User;
-        import lombok.Builder;
+import com.codeit.moim.domain.User;
+import lombok.Builder;
 
 @Builder
 public record ReadMemberProfileResponse (
