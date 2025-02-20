@@ -6,10 +6,7 @@ import com.codeit.moim.web.dto.request.comment.CreateCommentRequest;
 import com.codeit.moim.web.dto.request.comment.UpdateCommentRequest;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.response.Response;
-import com.codeit.moim.web.dto.response.comment.CreateCommentResponse;
-import com.codeit.moim.web.dto.response.comment.DeleteCommentResponse;
-import com.codeit.moim.web.dto.response.comment.ReadCommentAverageResponse;
-import com.codeit.moim.web.dto.response.comment.UpdateCommentResponse;
+import com.codeit.moim.web.dto.response.comment.*;
 import com.codeit.moim.web.dto.response.meeting.CreateMeetingResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -89,5 +86,21 @@ public class CommentController {
     ) {
         int userId = userDetails.getUserId();
         return Response.ok(commentService.getCommentAverage(userId, meetingId));
+    }
+
+    @Operation(
+            summary = "Get comment distribution count",
+            description = "Get comment count per comment score"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get success")
+    })
+    @GetMapping("/count")
+    public Response<ReadCommentDistributionResponse> readCommentDistribution(
+            @PathVariable int meetingId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(commentService.getCommentDistribution(userId, meetingId));
     }
 }

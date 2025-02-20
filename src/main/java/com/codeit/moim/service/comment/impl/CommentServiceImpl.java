@@ -16,14 +16,13 @@ import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.comment.CommentService;
 import com.codeit.moim.web.dto.request.comment.CreateCommentRequest;
 import com.codeit.moim.web.dto.request.comment.UpdateCommentRequest;
-import com.codeit.moim.web.dto.response.comment.CreateCommentResponse;
-import com.codeit.moim.web.dto.response.comment.DeleteCommentResponse;
-import com.codeit.moim.web.dto.response.comment.ReadCommentAverageResponse;
-import com.codeit.moim.web.dto.response.comment.UpdateCommentResponse;
+import com.codeit.moim.web.dto.response.comment.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -92,6 +91,21 @@ public class CommentServiceImpl implements CommentService {
         double scoreAvg = scoreCount == 0 ? 0.0: (double) scoreSum / scoreCount;
         double roundedAvg = Math.round(scoreAvg * 10.0) / 10.0;
         return new ReadCommentAverageResponse(roundedAvg);
+    }
+
+    @Override
+    public ReadCommentDistributionResponse getCommentDistribution(int userId, int meetingId) {
+        Meeting meeting = getMeeting(meetingId);
+        List<Comment> commentList = commentRepository.findByMeeting(meeting);
+
+        Map<Integer, Long> getScoreDistribution = commentList.stream()
+                .collect(Collectors.groupingBy(Comment::getScore, Collectors.counting()));
+        long fives =  getScoreDistribution.getOrDefault(5, 0L);
+        long fours =  getScoreDistribution.getOrDefault(4, 0L);
+        long threes =  getScoreDistribution.getOrDefault(3, 0L);
+        long twos =  getScoreDistribution.getOrDefault(2, 0L);
+        long ones =  getScoreDistribution.getOrDefault(1, 0L);
+        return ReadCommentDistributionResponse.fromEntity(fives, fours, threes, twos, ones);
     }
 
     private User getUser(int userId){
