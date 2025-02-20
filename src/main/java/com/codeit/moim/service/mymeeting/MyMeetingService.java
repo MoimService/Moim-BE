@@ -1,6 +1,7 @@
 package com.codeit.moim.service.mymeeting;
 
 import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
+import com.codeit.moim.web.dto.request.mymeeting.ReadMemberProfileRequest;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
 import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import com.codeit.moim.web.dto.response.mymeeting.*;
@@ -24,4 +25,6 @@ public interface MyMeetingService {
     DeleteMemberResponse quitMeeting(int userId, int meetingId);
 
     Slice<ReadLikeMeetingResponse> findLikeMeetings(int userId, ReadLikeMeetingRequest request);
+
+    ReadMemberProfileResponse findMemberProfile(int userId, ReadMemberProfileRequest request);
 }

@@ -5,17 +5,14 @@ import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.meeting.AlreadyIsPublicException;
 import com.codeit.moim.common.exception.meeting.MeetingAccessDeniedException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
+import com.codeit.moim.common.exception.member.MemberNotFoundException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
-import com.codeit.moim.domain.Meeting;
-import com.codeit.moim.domain.Member;
-import com.codeit.moim.domain.User;
+import com.codeit.moim.domain.*;
 import com.codeit.moim.domain.enums.MemberStatus;
-import com.codeit.moim.repository.LikesRepository;
-import com.codeit.moim.repository.MeetingRepository;
-import com.codeit.moim.repository.MemberRepository;
-import com.codeit.moim.repository.UserRepository;
+import com.codeit.moim.repository.*;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
 import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
+import com.codeit.moim.web.dto.request.mymeeting.ReadMemberProfileRequest;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
 import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import com.codeit.moim.web.dto.response.mymeeting.*;
@@ -39,6 +36,8 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     private final MeetingRepository meetingRepository;
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
+    private final UserSkillRepository userSkillRepository;
+    private final ContactRepository contactRepository;
 
     private static final int BAD_REQUEST = 400;
 
@@ -172,6 +171,31 @@ public class MyMeetingServiceImpl implements MyMeetingService {
                 ? meetings.getContent().get(meetings.getContent().size() -1).getMeetingId()
                 : null;
         return new CustomSlice<>(meetingResponses, pageable, meetings.hasNext(), nextCursor);
+    }
+
+    @Override
+    public ReadMemberProfileResponse findMemberProfile(int userId, ReadMemberProfileRequest request) {
+        User requestedUser = getUser(request.userId());
+
+        List<UserSkill> skillList = userSkillRepository.findByUserWithSkill(requestedUser);
+        String[] skillArray = skillList.stream()
+                .map(userSkill -> userSkill.getSkill().getSkillTitle())
+                .toArray(String[]::new);
+
+        Meeting meeting = getMeeting(request.meetingId());
+
+        Contact requestedUserContact = requestedUser.getContact();
+
+        ReadMemberContactResponse contactResponse = (requestedUserContact != null)
+                ?  ReadMemberContactResponse.fromEntity(requestedUserContact)
+                : null;
+
+        Member requestedUserMember =  memberRepository.findByUserAndMeeting(requestedUser, meeting);
+        if(requestedUserMember == null) throw new MemberNotFoundException(String.valueOf(request.userId()));
+        ReadMemberMessageResponse memberResponse = ReadMemberMessageResponse.fromEntity(requestedUserMember);
+
+
+        return ReadMemberProfileResponse.fromEntity(requestedUser, skillArray, contactResponse, memberResponse);
     }
 
     private User getUser(int userId){
