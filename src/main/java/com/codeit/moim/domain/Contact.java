@@ -1,5 +1,6 @@
 package com.codeit.moim.domain;
 
+import com.codeit.moim.web.dto.request.mypage.UpdateContactRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -47,4 +48,11 @@ public class Contact {
                 .build();
     }
 
+    public void updateContact(UpdateContactRequest request) {
+        this.phone = request.phone();
+        this.kakao = request.kakao();
+        this.github = request.github();
+        this.blog = request.blog();
+
+    }
 }

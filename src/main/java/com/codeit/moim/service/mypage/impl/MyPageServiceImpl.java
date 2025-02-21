@@ -1,13 +1,17 @@
 package com.codeit.moim.service.mypage.impl;
 
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
+import com.codeit.moim.domain.Contact;
 import com.codeit.moim.domain.User;
+import com.codeit.moim.repository.ContactRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.mypage.MyPageService;
 import com.codeit.moim.service.storage.StorageService;
+import com.codeit.moim.web.dto.request.mypage.UpdateContactRequest;
 import com.codeit.moim.web.dto.request.mypage.UpdateProfilePicRequest;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
 import com.codeit.moim.web.dto.response.mypage.ReadLoggedInUserResponse;
+import com.codeit.moim.web.dto.response.mypage.UpdateContactResponse;
 import com.codeit.moim.web.dto.response.mypage.UpdateProfilePicResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,7 @@ import java.util.Objects;
 public class MyPageServiceImpl implements MyPageService {
     private final UserRepository userRepository;
     private final StorageService storageService;
+    private final ContactRepository contactRepository;
     @Override
     public UpdateProfilePicResponse updateProfilePic(int userId, UpdateProfilePicRequest request) {
         User user = userRepository.findById(userId)
@@ -44,5 +49,16 @@ public class MyPageServiceImpl implements MyPageService {
                 ? user.getContact().getPhone()
                 : null;
         return ReadLoggedInUserResponse.fromEntity(user, phone);
+    }
+
+    @Override
+    public UpdateContactResponse updateUserContact(int userId, UpdateContactRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+        Contact contact = contactRepository.findByUser(user);
+        contact.updateContact(request);
+        contactRepository.save(contact);
+
+        return new UpdateContactResponse(userId);
     }
 }
