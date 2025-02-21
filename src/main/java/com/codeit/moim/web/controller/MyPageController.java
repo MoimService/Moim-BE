@@ -2,9 +2,11 @@ package com.codeit.moim.web.controller;
 
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.mypage.MyPageService;
+import com.codeit.moim.web.dto.request.mypage.CreateUserSkillRequest;
 import com.codeit.moim.web.dto.request.mypage.UpdateContactRequest;
 import com.codeit.moim.web.dto.request.mypage.UpdateProfilePicRequest;
 import com.codeit.moim.web.dto.response.Response;
+import com.codeit.moim.web.dto.response.mypage.CreateUserSkillResponse;
 import com.codeit.moim.web.dto.response.mypage.ReadLoggedInUserResponse;
 import com.codeit.moim.web.dto.response.mypage.UpdateContactResponse;
 import com.codeit.moim.web.dto.response.mypage.UpdateProfilePicResponse;
@@ -67,6 +69,22 @@ public class MyPageController {
     ){
         int userId = userDetails.getUserId();
         return Response.ok(myPageService.updateUserContact(userId, request));
+    }
+
+    @Operation(
+            summary = "Create user skill",
+            description = "Create user contact with skill array request"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Create success")
+    })
+    @PostMapping("/skills")
+    public Response<CreateUserSkillResponse> createUserSkill(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody CreateUserSkillRequest request
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(myPageService.createUserSkill(userId, request));
     }
 
 }
