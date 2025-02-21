@@ -1,5 +1,6 @@
 package com.codeit.moim.domain;
 
+import com.codeit.moim.web.dto.request.mypage.UpdateUserRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -79,5 +80,15 @@ public class User {
 
     public void updateProfilePic(String newProfilePicUrl) {
         this.profilePic = newProfilePicUrl;
+    }
+
+
+    public void updateUser(UpdateUserRequest request){
+        this.name = (request.name() != null ) ? request.name() : this.name;
+        this.intro = (request.intro() != null ) ? request.intro()  : this.intro;
+        this.position = (request.position() != null ) ? request.position() : this.position;
+        this.gender = (request.gender() != null ) ? request.gender() : this.gender;
+        this.age = (request.age() != null )  ?request.age() : this.age;
+        this.location = (request.location() != null ) ? request.location() : this.location;
     }
 }

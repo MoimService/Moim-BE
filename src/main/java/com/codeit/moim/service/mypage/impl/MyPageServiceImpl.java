@@ -14,11 +14,9 @@ import com.codeit.moim.service.storage.StorageService;
 import com.codeit.moim.web.dto.request.mypage.CreateUserSkillRequest;
 import com.codeit.moim.web.dto.request.mypage.UpdateContactRequest;
 import com.codeit.moim.web.dto.request.mypage.UpdateProfilePicRequest;
+import com.codeit.moim.web.dto.request.mypage.UpdateUserRequest;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
-import com.codeit.moim.web.dto.response.mypage.CreateUserSkillResponse;
-import com.codeit.moim.web.dto.response.mypage.ReadLoggedInUserResponse;
-import com.codeit.moim.web.dto.response.mypage.UpdateContactResponse;
-import com.codeit.moim.web.dto.response.mypage.UpdateProfilePicResponse;
+import com.codeit.moim.web.dto.response.mypage.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,6 +90,14 @@ public class MyPageServiceImpl implements MyPageService {
         userSkillRepository.saveAll(userSkillList);
 
         return new CreateUserSkillResponse(userId);
+    }
+
+    @Override
+    public UpdateUserResponse updateUserInfo(int userId, UpdateUserRequest request) {
+        User user = getUser(userId);
+        user.updateUser(request);
+        userRepository.save(user);
+        return new UpdateUserResponse(userId);
     }
 
     private User getUser(int userId){
