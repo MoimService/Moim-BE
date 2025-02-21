@@ -92,7 +92,7 @@ public class MyPageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Update success")
     })
-    @PutMapping("/my")
+    @PutMapping("/profile")
     public Response<UpdateUserResponse> updateUserInfo(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody UpdateUserRequest request
