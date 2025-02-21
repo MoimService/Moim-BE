@@ -91,4 +91,8 @@ public class User {
         this.age = (request.age() != null )  ?request.age() : this.age;
         this.location = (request.location() != null ) ? request.location() : this.location;
     }
+
+    public void updatePassword(String newPassword){
+        this.password = newPassword;
+    }
 }

@@ -1,9 +1,6 @@
 package com.codeit.moim.service.mypage;
 
-import com.codeit.moim.web.dto.request.mypage.CreateUserSkillRequest;
-import com.codeit.moim.web.dto.request.mypage.UpdateContactRequest;
-import com.codeit.moim.web.dto.request.mypage.UpdateProfilePicRequest;
-import com.codeit.moim.web.dto.request.mypage.UpdateUserRequest;
+import com.codeit.moim.web.dto.request.mypage.*;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
 import com.codeit.moim.web.dto.response.mypage.*;
 
@@ -17,4 +14,6 @@ public interface MyPageService {
     CreateUserSkillResponse createUserSkill(int userId, CreateUserSkillRequest request);
 
     UpdateUserResponse updateUserInfo(int userId, UpdateUserRequest request);
+
+    UpdatePasswordResponse updateUserPassword(int userId, UpdatePasswordRequest request);
 }
