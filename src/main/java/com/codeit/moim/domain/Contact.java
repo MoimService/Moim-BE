@@ -2,6 +2,7 @@ package com.codeit.moim.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,6 +31,20 @@ public class Contact {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Builder
+    public Contact(int contactId, String phone, String kakao, String github, String blog, User user) {
+        this.contactId = contactId;
+        this.phone = phone;
+        this.kakao = kakao;
+        this.github = github;
+        this.blog = blog;
+        this.user = user;
+    }
 
+    public static Contact toEntity(User user){
+        return Contact.builder()
+                .user(user)
+                .build();
+    }
 
 }
