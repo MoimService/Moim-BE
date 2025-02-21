@@ -49,10 +49,10 @@ public class Contact {
     }
 
     public void updateContact(UpdateContactRequest request) {
-        this.phone = request.phone();
-        this.kakao = request.kakao();
-        this.github = request.github();
-        this.blog = request.blog();
+        this.phone = (request.phone() != null) ? request.phone() : this.phone;
+        this.kakao = (request.kakao() != null) ? request.kakao() : this.kakao;
+        this.github = (request.github() != null) ? request.github() : this.github;
+        this.blog = (request.blog() != null) ? request.blog() : this.blog;
 
     }
 }
