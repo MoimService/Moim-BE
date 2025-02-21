@@ -2,16 +2,14 @@ package com.codeit.moim.web.controller;
 
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.mypage.MyPageService;
-import com.codeit.moim.web.dto.request.mypage.CreateUserSkillRequest;
-import com.codeit.moim.web.dto.request.mypage.UpdateContactRequest;
-import com.codeit.moim.web.dto.request.mypage.UpdateProfilePicRequest;
-import com.codeit.moim.web.dto.request.mypage.UpdateUserRequest;
+import com.codeit.moim.web.dto.request.mypage.*;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.mypage.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -99,6 +97,22 @@ public class MyPageController {
     ){
         int userId = userDetails.getUserId();
         return Response.ok(myPageService.updateUserInfo(userId, request));
+    }
+
+    @Operation(
+            summary = "Update user password",
+            description = "Check user current password and update encoded password"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update success")
+    })
+    @PutMapping("/password")
+    public Response<UpdatePasswordResponse> updatePassword(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody UpdatePasswordRequest request
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(myPageService.updateUserPassword(userId, request));
     }
 
 }

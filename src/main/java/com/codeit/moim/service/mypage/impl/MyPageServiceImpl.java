@@ -1,6 +1,8 @@
 package com.codeit.moim.service.mypage.impl;
 
+import com.codeit.moim.common.exception.auth.PasswordInvlaidException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
+import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.Contact;
 import com.codeit.moim.domain.Skill;
 import com.codeit.moim.domain.User;
@@ -11,13 +13,12 @@ import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.repository.UserSkillRepository;
 import com.codeit.moim.service.mypage.MyPageService;
 import com.codeit.moim.service.storage.StorageService;
-import com.codeit.moim.web.dto.request.mypage.CreateUserSkillRequest;
-import com.codeit.moim.web.dto.request.mypage.UpdateContactRequest;
-import com.codeit.moim.web.dto.request.mypage.UpdateProfilePicRequest;
-import com.codeit.moim.web.dto.request.mypage.UpdateUserRequest;
+import com.codeit.moim.service.user.impl.UserServiceImpl;
+import com.codeit.moim.web.dto.request.mypage.*;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
 import com.codeit.moim.web.dto.response.mypage.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,11 @@ public class MyPageServiceImpl implements MyPageService {
     private final ContactRepository contactRepository;
     private final UserSkillRepository userSkillRepository;
     private final SkillRepository skillRepository;
+    private final UserServiceImpl userServiceImpl;
+    private final PasswordEncoder passwordEncoder;
+
+    private static final int BAD_REQUEST = 400;
+
     @Override
     public UpdateProfilePicResponse updateProfilePic(int userId, UpdateProfilePicRequest request) {
         User user = userRepository.findById(userId)
@@ -98,6 +104,21 @@ public class MyPageServiceImpl implements MyPageService {
         user.updateUser(request);
         userRepository.save(user);
         return new UpdateUserResponse(userId);
+    }
+
+    @Override
+    public UpdatePasswordResponse updateUserPassword(int userId, UpdatePasswordRequest request) {
+        User user = getUser(userId);
+        String dbPassword = user.getPassword();
+        String currentPasswordRequest = request.currentPassword();
+        if( ! passwordEncoder.matches(currentPasswordRequest, dbPassword)) throw new PasswordInvlaidException(ErrorStatus.toErrorStatus("Current password does not match",  BAD_REQUEST));
+
+        userServiceImpl.passwordMatchValidation(request.newPassword(), request.passwordCheck());
+        String encodedPassword= passwordEncoder.encode(request.newPassword());
+        user.updatePassword(encodedPassword);
+        userRepository.save(user);
+
+        return new UpdatePasswordResponse(userId);
     }
 
     private User getUser(int userId){

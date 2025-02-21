@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void passwordMatchValidation(String password, String passwordCheck){
+    public void passwordMatchValidation(String password, String passwordCheck){
         if(! password.equals(passwordCheck) ) throw new PasswordInvlaidException(ErrorStatus.toErrorStatus("Password does not match",  BAD_REQUEST));
     }
 
