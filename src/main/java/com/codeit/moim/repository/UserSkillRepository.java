@@ -17,4 +17,7 @@ public interface UserSkillRepository extends JpaRepository<UserSkill, Integer> {
                     "WHERE us.user = :requestedUser"
     )
     List<UserSkill> findByUserWithSkill(User requestedUser);
+
+
+    void deleteAllByUser(User user);
 }
