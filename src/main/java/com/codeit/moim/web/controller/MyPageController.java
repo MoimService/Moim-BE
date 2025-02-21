@@ -5,11 +5,9 @@ import com.codeit.moim.service.mypage.MyPageService;
 import com.codeit.moim.web.dto.request.mypage.CreateUserSkillRequest;
 import com.codeit.moim.web.dto.request.mypage.UpdateContactRequest;
 import com.codeit.moim.web.dto.request.mypage.UpdateProfilePicRequest;
+import com.codeit.moim.web.dto.request.mypage.UpdateUserRequest;
 import com.codeit.moim.web.dto.response.Response;
-import com.codeit.moim.web.dto.response.mypage.CreateUserSkillResponse;
-import com.codeit.moim.web.dto.response.mypage.ReadLoggedInUserResponse;
-import com.codeit.moim.web.dto.response.mypage.UpdateContactResponse;
-import com.codeit.moim.web.dto.response.mypage.UpdateProfilePicResponse;
+import com.codeit.moim.web.dto.response.mypage.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -73,7 +71,7 @@ public class MyPageController {
 
     @Operation(
             summary = "Create user skill",
-            description = "Create user contact with skill array request"
+            description = "Create user contact with skill array request. Existing skills will be deleted and be created again."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Create success")
@@ -85,6 +83,22 @@ public class MyPageController {
     ){
         int userId = userDetails.getUserId();
         return Response.ok(myPageService.createUserSkill(userId, request));
+    }
+
+    @Operation(
+            summary = "Update user info",
+            description = "Update user name, intro, position, gender, age and location. Update fields can be null"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update success")
+    })
+    @PutMapping("/profile")
+    public Response<UpdateUserResponse> updateUserInfo(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody UpdateUserRequest request
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(myPageService.updateUserInfo(userId, request));
     }
 
 }
