@@ -6,7 +6,10 @@ import com.codeit.moim.common.exception.auth.PasswordInvlaidException;
 import com.codeit.moim.common.exception.auth.SignUpExistException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
+import com.codeit.moim.domain.Contact;
 import com.codeit.moim.domain.User;
+import com.codeit.moim.domain.UserSkill;
+import com.codeit.moim.repository.ContactRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.user.UserService;
 import com.codeit.moim.web.dto.request.auth.LoginRequest;
@@ -31,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final ContactRepository contactRepository;
 
     private static final int BAD_REQUEST = 400;
 
@@ -50,6 +54,10 @@ public class UserServiceImpl implements UserService {
 
         User user = signUpRequest.toEntity(encodedPassword, profilePic, intro);
         User savedUser = userRepository.save(user);
+
+        //create contact
+        Contact contact = Contact.toEntity(user);
+        contactRepository.save(contact);
 
         return new SignUpResponse(savedUser.getUserId());
     }
