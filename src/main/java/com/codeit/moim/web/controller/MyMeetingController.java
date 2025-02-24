@@ -3,6 +3,7 @@ package com.codeit.moim.web.controller;
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
 import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
+import com.codeit.moim.web.dto.request.mymeeting.ReadAllMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.ReadMemberProfileRequest;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
 import com.codeit.moim.web.dto.response.Response;
@@ -68,11 +69,12 @@ public class MyMeetingController {
             @ApiResponse(responseCode = "200", description = "Get meetings success")
     })
     @GetMapping("/all")
-    public Response<List<ReadAllMeetingResponse>> getAllMyMeetingList(
-            @AuthenticationPrincipal CustomUserDetails userDetails
+    public Response<Slice<ReadAllMeetingResponse>> getAllMyMeetingList(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @ModelAttribute ReadAllMeetingRequest request
     ){
         int userId = userDetails.getUserId();
-        return Response.ok(myMeetingService.findAllMyMeeting(userId));
+        return Response.ok(myMeetingService.findAllMyMeeting(userId, request));
     }
 
     @Operation(

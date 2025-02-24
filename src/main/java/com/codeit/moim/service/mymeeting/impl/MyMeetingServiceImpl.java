@@ -12,6 +12,7 @@ import com.codeit.moim.domain.enums.MemberStatus;
 import com.codeit.moim.repository.*;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
 import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
+import com.codeit.moim.web.dto.request.mymeeting.ReadAllMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.ReadMemberProfileRequest;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
 import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
@@ -72,11 +73,21 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     }
 
     @Override
-    public List<ReadAllMeetingResponse> findAllMyMeeting(int userId) {
-        User user = getUser(userId);
-        List<Meeting> meetingList = memberRepository.findMeetingsByUser(user);
+    public Slice<ReadAllMeetingResponse> findAllMyMeeting(int userId, ReadAllMeetingRequest request) {
+        int pageSize = request.size();
+        Pageable pageable = PageRequest.of(0, pageSize);
 
-        return meetingList.stream()
+        User user = getUser(userId);
+        //List<Meeting> meetingList = memberRepository.findMeetingsByUser(user);
+
+        Slice<Meeting> meetings;
+        if(Objects.isNull(request.lastMeetingId()) || request.lastMeetingId() <=0 ){
+            meetings = memberRepository.findByUser_userOrderByMeetingIdDesc(user, pageable);
+        }else{
+            meetings = memberRepository.findByUser_userLessThanOrderByMeetingIdDesc(user, request.lastMeetingId(), pageable);
+        }
+
+        List<ReadAllMeetingResponse> meetingResponses = meetings.stream()
                 .map(meeting -> {
                     String status = memberRepository.findByUserAndMeeting(user, meeting).getStatus().toString();
                     List<ReadAllMeetingMemberResponse> memberResponseList = memberRepository.findByMeeting(meeting)
@@ -86,6 +97,12 @@ public class MyMeetingServiceImpl implements MyMeetingService {
                             .toList();
                     return ReadAllMeetingResponse.fromEntity(meeting, status, memberResponseList);
                 }).toList();
+
+        Integer nextCursor = meetings.hasNext()
+                ? meetings.getContent().get(meetings.getContent().size() -1).getMeetingId()
+                : null;
+
+        return new CustomSlice<>(meetingResponses, pageable, meetings.hasNext(), nextCursor);
     }
 
     @Override
