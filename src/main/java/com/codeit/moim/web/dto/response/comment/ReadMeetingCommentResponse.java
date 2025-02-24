@@ -2,6 +2,7 @@ package com.codeit.moim.web.dto.response.comment;
 
 import com.codeit.moim.domain.Comment;
 import com.codeit.moim.domain.Meeting;
+import com.codeit.moim.domain.User;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -15,23 +16,19 @@ public record ReadMeetingCommentResponse(
         String content,
         LocalDateTime createdAt,
         int meetingId,
-        String meetingTitle,
-        String location,
-        LocalDate startDate,
-        String userName
+        String userName,
+        String profilePic
 
 ){
-    public static ReadMeetingCommentResponse fromEntity(Comment comment , Meeting meeting, String userName){
+    public static ReadMeetingCommentResponse fromEntity(Comment comment , Meeting meeting, User user){
         return ReadMeetingCommentResponse.builder()
                 .commentId(comment.getCommentId())
                 .score(comment.getScore())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .meetingId(meeting.getMeetingId())
-                .meetingTitle(meeting.getMeetingTitle())
-                .location(meeting.getLocation())
-                .startDate(meeting.getStartDate())
-                .userName(userName)
+                .userName(user.getName())
+                .profilePic(user.getProfilePic())
                 .build();
     }
 }
