@@ -14,9 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -70,7 +69,7 @@ public class MeetingController {
             @ApiResponse(responseCode = "200", description = "Get meetings success")
     })
     @GetMapping("/search")
-    public Response<List<SearchMeetingResponse>> getSearchedMeeting(
+    public Response<Slice<SearchMeetingResponse>> getSearchedMeeting(
             @RequestParam String categoryTitle,
             @Valid @RequestBody SearchMeetingRequest request
     ){

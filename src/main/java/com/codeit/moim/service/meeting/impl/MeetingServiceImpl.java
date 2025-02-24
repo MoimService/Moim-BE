@@ -13,8 +13,10 @@ import com.codeit.moim.service.storage.StorageService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.response.meeting.*;
+import com.codeit.moim.web.dto.response.slice.CustomSlice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -104,8 +106,12 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public List<SearchMeetingResponse> findMeetingList(String categoryTitle, SearchMeetingRequest request) {
-       List<Meeting> meetingList = meetingRepository.findPublicMeetingsByCategory(categoryTitle, true);
+    public Slice<SearchMeetingResponse> findMeetingList(String categoryTitle, SearchMeetingRequest request) {
+        int pageSize = request.size();
+        Integer lastMeetingId = request.lastMeetingId();
+        Pageable pageable = PageRequest.of(0, pageSize);
+
+        List<Meeting> meetingList = meetingRepository.findPublicMeetingsByCategory(categoryTitle, true);
 
         List<String> skillList = Arrays.asList(request.skillArray());
         if( request.keyword() != null && !skillList.isEmpty() ){
@@ -121,7 +127,28 @@ public class MeetingServiceImpl implements MeetingService {
         //sort
         List<Meeting> sortedMeetingList = sortMeetings(meetingList, request.sortField());
 
-        return buildSearchResponse(sortedMeetingList);
+        //infinite scroll
+        List<Meeting> slicedList;
+        if(Objects.isNull(lastMeetingId) || lastMeetingId <=0 ) {
+            slicedList = sortedMeetingList.stream()
+                    .limit(pageSize)
+                    .collect(Collectors.toList());
+        }else{
+            slicedList = sortedMeetingList.stream()
+                    .dropWhile(meeting -> meeting.getMeetingId() != lastMeetingId)
+                    .skip(1)
+                    .limit(pageSize)
+                    .collect(Collectors.toList());
+        }
+
+        List<SearchMeetingResponse> meetingResponses = slicedList.stream()
+                .map(meeting -> SearchMeetingResponse.fromEntity(meeting, meeting.getUser()))
+                .collect(Collectors.toList());
+
+        Integer nextCursor = (meetingResponses.size() == pageSize)
+                ? meetingResponses.get(meetingResponses.size() -1).meetingId()
+                : null;
+        return new CustomSlice<>(meetingResponses, pageable, nextCursor != null, nextCursor);
     }
 
     @Override
