@@ -87,7 +87,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public ReadCommentAverageResponse getCommentAverage(int userId, int meetingId) {
+    public ReadCommentAverageResponse getCommentAverage(int meetingId) {
         Meeting meeting = getMeeting(meetingId);
         List<Comment> commentList = commentRepository.findByMeeting(meeting);
 
@@ -101,7 +101,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public ReadCommentDistributionResponse getCommentDistribution(int userId, int meetingId) {
+    public ReadCommentDistributionResponse getCommentDistribution(int meetingId) {
         Meeting meeting = getMeeting(meetingId);
         List<Comment> commentList = commentRepository.findByMeeting(meeting);
 
@@ -116,7 +116,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Slice<ReadMeetingCommentResponse> getMeetingComments(int userId, int meetingId, ReadMeetingCommentRequest request) {
+    public Slice<ReadMeetingCommentResponse> getMeetingComments(int meetingId, ReadMeetingCommentRequest request) {
         int pageSize = request.size();
         Pageable pageable = PageRequest.of(0, pageSize);
 

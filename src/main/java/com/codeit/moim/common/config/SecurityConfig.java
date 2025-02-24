@@ -4,6 +4,7 @@ import com.codeit.moim.web.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,10 +27,22 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/signup/**").permitAll()
-                                .requestMatchers("/login").permitAll()
-                                .requestMatchers("/swagger-ui/**").permitAll()
-                                .requestMatchers("/**").permitAll()
+                                .requestMatchers("/api/v1/auths/signup/**").permitAll()
+                                .requestMatchers("/api/v1/auths/login").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
+                                .requestMatchers(
+                                        HttpMethod.GET,
+                                        "/api/v1/comments/{meetingId}",
+                                        "/api/v1/comments/count/{meetingId}",
+                                        "/api/v1/comments/avg/{meetingId}"
+                                ).permitAll()
+                                .requestMatchers(
+                                        HttpMethod.GET,
+                                        "/api/v1/meetings/top",
+                                        "/api/v1/meetings/search",
+                                        "/api/v1/meetings/detail/{meetingId}",
+                                        "/api/v1/meetings/detail/manager/{meetingId}"
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
