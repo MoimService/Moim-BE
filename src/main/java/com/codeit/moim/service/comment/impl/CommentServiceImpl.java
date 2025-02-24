@@ -134,7 +134,7 @@ public class CommentServiceImpl implements CommentService {
 
         List<ReadMeetingCommentResponse> commentResponses = comments.stream()
                 .map(
-                        comment -> ReadMeetingCommentResponse.fromEntity(comment, meeting, comment.getUser().getName())
+                        comment -> ReadMeetingCommentResponse.fromEntity(comment, meeting, comment.getUser())
                 ).collect(Collectors.toList());
 
         Integer nextCursor = comments.hasNext()
