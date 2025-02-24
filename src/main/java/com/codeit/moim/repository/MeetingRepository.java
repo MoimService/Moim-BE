@@ -24,6 +24,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
 
     @Query(
             "SELECT DISTINCT m from Meeting m " +
+                    "JOIN FETCH m.user u " +
                     "LEFT JOIN FETCH m.meetingSkillList ms " +
                     "LEFT JOIN FETCH ms.skill " +
                     "WHERE m.category.categoryTitle = :categoryTitle " +

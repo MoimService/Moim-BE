@@ -6,6 +6,7 @@ import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.request.member.CreateMemberRequest;
 import com.codeit.moim.web.dto.response.meeting.*;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface MeetingService {
 
     List<ReadTopMeetingResponse> findTopMeetingList(User user, String category);
 
-    List<SearchMeetingResponse> findMeetingList(String categoryTitle, SearchMeetingRequest request);
+    Slice<SearchMeetingResponse> findMeetingList(String categoryTitle, SearchMeetingRequest request);
 
     //ReadMeetingDetailResponse findMeetingDetail(int meetingId, int userId);
     ReadMeetingDetailResponse findMeetingDetail(int meetingId);
