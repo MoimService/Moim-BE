@@ -3,6 +3,8 @@ package com.codeit.moim.web.controller;
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
 import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
+import com.codeit.moim.web.dto.request.mymeeting.ReadAllMeetingRequest;
+import com.codeit.moim.web.dto.request.mymeeting.ReadManageMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.ReadMemberProfileRequest;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
 import com.codeit.moim.web.dto.response.Response;
@@ -62,32 +64,36 @@ public class MyMeetingController {
 
     @Operation(
             summary = "Get all my meetings ",
-            description = "Get all meetings, including managing meetings and all status"
+            description = "Get all meetings, including managing meetings and all status. Infinite scroll min size is 6. " +
+                    "Get only APPROVED user, without status "
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Get meetings success")
     })
     @GetMapping("/all")
-    public Response<List<ReadAllMeetingResponse>> getAllMyMeetingList(
-            @AuthenticationPrincipal CustomUserDetails userDetails
+    public Response<Slice<ReadAllMeetingResponse>> getAllMyMeetingList(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @ModelAttribute ReadAllMeetingRequest request
     ){
         int userId = userDetails.getUserId();
-        return Response.ok(myMeetingService.findAllMyMeeting(userId));
+        return Response.ok(myMeetingService.findAllMyMeeting(userId, request));
     }
 
     @Operation(
             summary = "Get managing meetings ",
-            description = "Get meetings that user created"
+            description = "Get meetings that user created. Infinite scroll min size is 6." +
+                    "Get all user with all status"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Get meetings success")
     })
     @GetMapping("/manage")
-    public Response<List<ReadManageMeetingResponse>> getManageMeetingList(
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ){
+    public Response<Slice<ReadManageMeetingResponse>> getManageMeetingList(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @ModelAttribute ReadManageMeetingRequest request
+            ){
         int userId = userDetails.getUserId();
-        return Response.ok(myMeetingService.findManageMeeting(userId));
+        return Response.ok(myMeetingService.findManageMeeting(userId, request));
     }
 
     @Operation(

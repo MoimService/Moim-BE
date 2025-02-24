@@ -1,6 +1,8 @@
 package com.codeit.moim.service.mymeeting;
 
 import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
+import com.codeit.moim.web.dto.request.mymeeting.ReadAllMeetingRequest;
+import com.codeit.moim.web.dto.request.mymeeting.ReadManageMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.ReadMemberProfileRequest;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
 import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
@@ -14,9 +16,9 @@ public interface MyMeetingService {
 
     UpdateMemberToExpelResponse expelMember(int userId, UpdateMemberStatusRequest request);
 
-    List<ReadAllMeetingResponse> findAllMyMeeting(int userId);
+    Slice<ReadAllMeetingResponse> findAllMyMeeting(int userId, ReadAllMeetingRequest request);
 
-    List<ReadManageMeetingResponse> findManageMeeting(int userId);
+    Slice<ReadManageMeetingResponse> findManageMeeting(int userId, ReadManageMeetingRequest request);
 
     UpdateMeetingIsPublicResponse updateIsPublic(int userId, int meetingId);
 

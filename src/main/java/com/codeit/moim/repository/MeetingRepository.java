@@ -3,6 +3,8 @@ package com.codeit.moim.repository;
 import com.codeit.moim.domain.Category;
 import com.codeit.moim.domain.Meeting;
 import com.codeit.moim.domain.User;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -42,4 +44,8 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
     Optional<Meeting> findMeetingWithManagerAndSkill(@Param("meetingId") int meetingId);
 
     List<Meeting> findByUser(User user);
+
+    Slice<Meeting> findByUserOrderByMeetingIdDesc(User user, Pageable pageable);
+
+    Slice<Meeting> findByUserAndMeetingIdLessThanOrderByMeetingIdDesc(User user, Integer integer, Pageable pageable);
 }
