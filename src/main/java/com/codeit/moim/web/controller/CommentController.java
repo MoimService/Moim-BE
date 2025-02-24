@@ -86,11 +86,8 @@ public class CommentController {
     })
     @GetMapping("/avg/{meetingId}")
     public Response<ReadCommentAverageResponse> readCommentAverage(
-            @PathVariable int meetingId,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        int userId = userDetails.getUserId();
-        return Response.ok(commentService.getCommentAverage(userId, meetingId));
+            @PathVariable int meetingId) {
+        return Response.ok(commentService.getCommentAverage(meetingId));
     }
 
     @Operation(
@@ -102,11 +99,9 @@ public class CommentController {
     })
     @GetMapping("/count/{meetingId}")
     public Response<ReadCommentDistributionResponse> readCommentDistribution(
-            @PathVariable int meetingId,
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @PathVariable int meetingId
     ) {
-        int userId = userDetails.getUserId();
-        return Response.ok(commentService.getCommentDistribution(userId, meetingId));
+        return Response.ok(commentService.getCommentDistribution(meetingId));
     }
 
     @Operation(
@@ -119,11 +114,9 @@ public class CommentController {
     @GetMapping("/{meetingId}")
     public Response<Slice<ReadMeetingCommentResponse>> readMeetingComemnts(
             @PathVariable int meetingId,
-            @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @ModelAttribute ReadMeetingCommentRequest request
     ) {
-        int userId = userDetails.getUserId();
-        return Response.ok(commentService.getMeetingComments(userId, meetingId, request));
+        return Response.ok(commentService.getMeetingComments(meetingId, request));
     }
 
     @Operation(

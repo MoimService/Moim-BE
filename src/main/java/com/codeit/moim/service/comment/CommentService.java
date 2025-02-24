@@ -16,11 +16,11 @@ public interface CommentService {
 
     DeleteCommentResponse deleteComment(int userId, int meetingId);
 
-    ReadCommentAverageResponse getCommentAverage(int userId, int meetingId);
+    ReadCommentAverageResponse getCommentAverage(int meetingId);
 
-    ReadCommentDistributionResponse getCommentDistribution(int userId, int meetingId);
+    ReadCommentDistributionResponse getCommentDistribution(int meetingId);
 
-    Slice<ReadMeetingCommentResponse> getMeetingComments(int userId, int meetingId, ReadMeetingCommentRequest request);
+    Slice<ReadMeetingCommentResponse> getMeetingComments(int meetingId, ReadMeetingCommentRequest request);
 
     Slice<ReadMyCommentResponse> getMyComments(int userId, ReadMyCommentRequest request);
 }

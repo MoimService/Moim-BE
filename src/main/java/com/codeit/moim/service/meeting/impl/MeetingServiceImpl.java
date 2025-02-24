@@ -14,6 +14,9 @@ import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.response.meeting.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,6 +27,7 @@ import static com.codeit.moim.domain.enums.MemberStatus.APPROVED;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MeetingServiceImpl implements MeetingService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
@@ -76,13 +80,14 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public List<ReadTopMeetingResponse> findTopMeetingList(int userId, String categoryTitle) {
+    public List<ReadTopMeetingResponse> findTopMeetingList(User user, String categoryTitle) {
         List<Meeting> meetingList = meetingRepository.findPublicMeetingsByCategory(categoryTitle, true);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
-
         List<ReadTopMeetingResponse> meetingResponseList = new ArrayList<>();
+
+        //User user = (userId != null)
+        //        ? userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(String.valueOf(userId)))
+        //       : null;
 
         if( !meetingList.isEmpty() ){
             List<Meeting> topMeetingList = meetingList.stream()
@@ -91,7 +96,9 @@ public class MeetingServiceImpl implements MeetingService {
                     .collect(Collectors.toList());
 
             for( Meeting meeting : topMeetingList ){
-                Boolean isLike = likesRepository.existsByUserAndMeeting(user, meeting);
+                //Boolean isLike = likesRepository.existsByUserAndMeeting(user, meeting);
+                Boolean isLike = (user != null)
+                    ? likesRepository.existsByUserAndMeeting(user, meeting) : false;
 
                 ReadTopMeetingResponse response = ReadTopMeetingResponse.fromEntity(meeting, isLike);
                 meetingResponseList.add(response);
@@ -101,7 +108,7 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public List<SearchMeetingResponse> findMeetingList(int userId, String categoryTitle, SearchMeetingRequest request) {
+    public List<SearchMeetingResponse> findMeetingList(String categoryTitle, SearchMeetingRequest request) {
        List<Meeting> meetingList = meetingRepository.findPublicMeetingsByCategory(categoryTitle, true);
 
         List<String> skillList = Arrays.asList(request.skillArray());
@@ -122,20 +129,23 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public ReadMeetingDetailResponse findMeetingDetail(int meetingId, int userId) {
+    public ReadMeetingDetailResponse findMeetingDetail(int meetingId) {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+//
+//        boolean isLike = likesRepository.existsByUserAndMeeting(user, meeting);
+//        boolean isMember = memberRepository.existsByUserAndMeetingAndStatus(user, meeting, MemberStatus.APPROVED);
 
-        boolean isLike = likesRepository.existsByUserAndMeeting(user, meeting);
-        boolean isMember = memberRepository.existsByUserAndMeetingAndStatus(user, meeting, MemberStatus.APPROVED);
+        boolean isLike = false;
+        boolean isMember = false;
         return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember);
     }
 
     @Override
-    public ReadMeetingManagerResponse findMeetingManagerDetail(int meetingId, int userId) {
+    public ReadMeetingManagerResponse findMeetingManagerDetail(int meetingId) {
         Meeting meeting = meetingRepository.findMeetingWithManagerAndSkill(meetingId)
                 .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
 

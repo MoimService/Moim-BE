@@ -1,5 +1,7 @@
 package com.codeit.moim.web.controller;
 
+import com.codeit.moim.domain.User;
+import com.codeit.moim.repository.CurrentUser;
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.meeting.MeetingService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
@@ -11,11 +13,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/meetings")
@@ -48,11 +54,12 @@ public class MeetingController {
     })
     @GetMapping("/top")
     public Response<List<ReadTopMeetingResponse>> getTopMeetingList(
-            @RequestParam String categoryTitle,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ){
-        int userId = userDetails.getUserId();
-        return Response.ok(meetingService.findTopMeetingList(userId, categoryTitle));
+            @CurrentUser User user,
+            @RequestParam String categoryTitle
+            ){
+        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        //log.info("Authentication Principal: {}", authentication.getPrincipal());
+        return Response.ok(meetingService.findTopMeetingList(user, categoryTitle));
     }
 
     @Operation(
@@ -65,11 +72,9 @@ public class MeetingController {
     @GetMapping("/search")
     public Response<List<SearchMeetingResponse>> getSearchedMeeting(
             @RequestParam String categoryTitle,
-            @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody SearchMeetingRequest request
     ){
-        int userId = userDetails.getUserId();
-        return Response.ok(meetingService.findMeetingList(userId, categoryTitle, request));
+        return Response.ok(meetingService.findMeetingList(categoryTitle, request));
     }
 
     @Operation(
@@ -81,11 +86,12 @@ public class MeetingController {
     })
     @GetMapping("/detail/{meetingId}")
     public Response<ReadMeetingDetailResponse> getMeetingDetail(
-            @PathVariable int meetingId,
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @PathVariable int meetingId
     ){
-        int userId = userDetails.getUserId();
-        return Response.ok(meetingService.findMeetingDetail(meetingId, userId));
+        //int userId = userDetails.getUserId();
+        //return Response.ok(meetingService.findMeetingDetail(meetingId, userId));
+        return Response.ok(meetingService.findMeetingDetail(meetingId));
+
     }
 
     @Operation(
@@ -97,10 +103,7 @@ public class MeetingController {
     })
     @GetMapping("/detail/manager/{meetingId}")
     public Response<ReadMeetingManagerResponse> getMeetingManagerDetail(
-            @PathVariable int meetingId,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ){
-        int userId = userDetails.getUserId();
-        return Response.ok(meetingService.findMeetingManagerDetail(meetingId, userId));
+            @PathVariable int meetingId){
+        return Response.ok(meetingService.findMeetingManagerDetail(meetingId));
     }
 }

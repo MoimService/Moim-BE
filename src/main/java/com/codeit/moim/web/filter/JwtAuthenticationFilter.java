@@ -18,6 +18,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
@@ -70,19 +71,39 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String requestURI = request.getRequestURI();
+        String requestMethod = request.getMethod();
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+        log.info("Checking request URI for exclusion: " + requestURI);
+
+        Map<String, String> publicGetEndpoints = Map.of(
+                "/api/v1/comments/{meetingId}", "GET",
+                "/api/v1/comments/count/{meetingId}", "GET",
+                "/api/v1/comments/avg/{meetingId}", "GET",
+                "/api/v1/meetings/top", "GET",
+                "/api/v1/meetings/search", "GET",
+                "/api/v1/meetings/detail/{meetingId}", "GET",
+                "/api/v1/meetings/detail/manager/{meetingId}", "GET"
+        );
+
         String[] excludedPaths = {
                 "/api/v1/auths/signup/**",
                 "/api/v1/auths/login",
                 "/v3/**",
                 "/swagger-ui/**"
         };
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-        log.info("Checking request URI for exclusion: " + request.getRequestURI());
+        for (Map.Entry<String, String> entry : publicGetEndpoints.entrySet()) {
+            if (antPathMatcher.match(entry.getKey(), requestURI) && requestMethod.equals(entry.getValue())) {
+                log.info("Excluding publicEndpoint path from JWT filter: " +  requestURI);
+                return true;
+            }
+        }
 
         for (String excludedPath : excludedPaths) {
-            if (antPathMatcher.match(excludedPath, request.getRequestURI())) {
-                log.info("Excluding path from JWT filter: " +  request.getRequestURI());
+            if (antPathMatcher.match(excludedPath, requestURI)) {
+                log.info("Excluding excluded path from JWT filter: " +  requestURI);
                 return true;
             }
         }
