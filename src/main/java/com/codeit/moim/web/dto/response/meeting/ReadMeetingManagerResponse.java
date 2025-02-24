@@ -22,8 +22,7 @@ public record ReadMeetingManagerResponse(
             .name(user.getName())
             .profilePic(user.getProfilePic())
             .email(user.getEmail())
-            .intro(u
-                    ser.getIntro())
+            .intro(user.getIntro())
             .phone(phone)
                 .skillArray(skillArray)
         .build();
