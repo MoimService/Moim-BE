@@ -49,10 +49,6 @@ public class MeetingServiceImpl implements MeetingService {
         //user
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
-        //if user phone does not exist, throw exception
-        if(user.getContact().getPhone() == null ){
-            throw new UserContactNotFoundException(String.valueOf(userId));
-        }
 
         Meeting meeting = request.toEntity(uploadUrl, user, category);
         meeting.increaseMemberCount();
@@ -150,15 +146,16 @@ public class MeetingServiceImpl implements MeetingService {
                 .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
 
         User user = meeting.getUser();
-        if(user.getContact().getPhone() == null){
-            throw new UserContactNotFoundException(String.valueOf(user.getUserId()));
-        }
+        String phone = (user.getContact() != null && user.getContact().getPhone() != null )
+                ? user.getContact().getPhone()
+                : null;
+
         List<UserSkill> userSkillList = user.getUserSkillList();
         String[] skillArray = userSkillList.stream()
                 .map(s-> s.getSkill().getSkillTitle())
                 .toArray(String[]::new);
 
-        return ReadMeetingManagerResponse.fromEntity(user, skillArray);
+        return ReadMeetingManagerResponse.fromEntity(user, phone, skillArray);
     }
 
 

@@ -17,13 +17,13 @@ public record ReadMeetingManagerResponse(
 
         String[] skillArray
 ){
-    public static ReadMeetingManagerResponse fromEntity(User user, String[] skillArray) {
+    public static ReadMeetingManagerResponse fromEntity(User user, String phone, String[] skillArray) {
         return ReadMeetingManagerResponse.builder()
             .name(user.getName())
             .profilePic(user.getProfilePic())
             .email(user.getEmail())
             .intro(user.getIntro())
-            .phone(user.getContact().getPhone())
+            .phone(phone)
                 .skillArray(skillArray)
         .build();
     }
