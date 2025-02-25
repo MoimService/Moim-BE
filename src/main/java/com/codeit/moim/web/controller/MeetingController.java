@@ -53,12 +53,10 @@ public class MeetingController {
     })
     @GetMapping("/top")
     public Response<List<ReadTopMeetingResponse>> getTopMeetingList(
-            @CurrentUser User user,
+//            @CurrentUser User user,
             @RequestParam String categoryTitle
             ){
-        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        //log.info("Authentication Principal: {}", authentication.getPrincipal());
-        return Response.ok(meetingService.findTopMeetingList(user, categoryTitle));
+        return Response.ok(meetingService.findTopMeetingList(categoryTitle));
     }
 
     @Operation(

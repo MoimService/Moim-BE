@@ -1,8 +1,10 @@
 package com.codeit.moim.service.meeting.impl;
 
+import com.codeit.moim.common.exception.ApplicationException;
 import com.codeit.moim.common.exception.auth.UserContactNotFoundException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
+import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.*;
 import com.codeit.moim.domain.enums.MemberStatus;
 import com.codeit.moim.domain.enums.SortField;
@@ -17,6 +19,7 @@ import com.codeit.moim.web.dto.response.slice.CustomSlice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -78,31 +81,29 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public List<ReadTopMeetingResponse> findTopMeetingList(User user, String categoryTitle) {
+    public List<ReadTopMeetingResponse> findTopMeetingList(String categoryTitle) {
         List<Meeting> meetingList = meetingRepository.findPublicMeetingsByCategory(categoryTitle, true);
 
         List<ReadTopMeetingResponse> meetingResponseList = new ArrayList<>();
 
-        //User user = (userId != null)
-        //        ? userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(String.valueOf(userId)))
-        //       : null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = (authentication instanceof AnonymousAuthenticationToken) ? "no user" : authentication.getName();
 
-        if( !meetingList.isEmpty() ){
-            List<Meeting> topMeetingList = meetingList.stream()
-                    .sorted(Comparator.comparing(Meeting::getLikesCount).reversed())
+
+        if( meetingList.isEmpty() ) return meetingResponseList;
+
+
+        List<Meeting> topMeetingList = meetingList.stream()
+                   .sorted(Comparator.comparing(Meeting::getLikesCount).reversed())
                     .limit(4)
                     .collect(Collectors.toList());
 
-            for( Meeting meeting : topMeetingList ){
-                //Boolean isLike = likesRepository.existsByUserAndMeeting(user, meeting);
-                Boolean isLike = (user != null)
-                    ? likesRepository.existsByUserAndMeeting(user, meeting) : false;
-
-                ReadTopMeetingResponse response = ReadTopMeetingResponse.fromEntity(meeting, isLike);
-                meetingResponseList.add(response);
-            }
-        }
-        return meetingResponseList;
+        return topMeetingList.stream()
+                .map(meeting -> {
+                    Boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
+                    return ReadTopMeetingResponse.fromEntity(meeting, isLike);
+                }
+        ).toList();
     }
 
     @Override

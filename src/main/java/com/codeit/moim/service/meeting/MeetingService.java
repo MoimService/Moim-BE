@@ -13,7 +13,7 @@ import java.util.List;
 public interface MeetingService {
     CreateMeetingResponse saveMeeting(int userId, CreateMeetingRequest request);
 
-    List<ReadTopMeetingResponse> findTopMeetingList(User user, String category);
+    List<ReadTopMeetingResponse> findTopMeetingList(String category);
 
     Slice<SearchMeetingResponse> findMeetingList(String categoryTitle, SearchMeetingRequest request);
 

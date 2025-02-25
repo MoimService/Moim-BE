@@ -32,4 +32,7 @@ public interface LikesRepository extends JpaRepository<Likes, Integer> {
                     "ORDER BY l.meeting.meetingId DESC"
     )
     Slice<Meeting> findLikeMeetingsLessThan(@Param("user") User user, @Param("lastLikeId") int lastMeetingId, Pageable pageable);
+
+
+    Boolean existsByUserEmailAndMeeting(@Param("email") String email, @Param("meeting") Meeting meeting);
 }
