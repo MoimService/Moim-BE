@@ -100,7 +100,7 @@ public class MeetingServiceImpl implements MeetingService {
 
         return topMeetingList.stream()
                 .map(meeting -> {
-                    Boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
+                    boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
                     return ReadTopMeetingResponse.fromEntity(meeting, isLike);
                 }
         ).toList();
@@ -157,14 +157,11 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
 
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
-//
-//        boolean isLike = likesRepository.existsByUserAndMeeting(user, meeting);
-//        boolean isMember = memberRepository.existsByUserAndMeetingAndStatus(user, meeting, MemberStatus.APPROVED);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = (authentication instanceof AnonymousAuthenticationToken) ? "no user" : authentication.getName();
 
-        boolean isLike = false;
-        boolean isMember = false;
+        boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
+        boolean isMember = memberRepository.existsByUserEmailAndMeetingAndStatus(email, meeting, MemberStatus.APPROVED);
         return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember);
     }
 

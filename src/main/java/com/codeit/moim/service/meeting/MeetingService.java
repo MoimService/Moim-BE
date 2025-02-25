@@ -17,7 +17,6 @@ public interface MeetingService {
 
     Slice<SearchMeetingResponse> findMeetingList(String categoryTitle, SearchMeetingRequest request);
 
-    //ReadMeetingDetailResponse findMeetingDetail(int meetingId, int userId);
     ReadMeetingDetailResponse findMeetingDetail(int meetingId);
 
     ReadMeetingManagerResponse findMeetingManagerDetail(int meetingId);

@@ -85,8 +85,6 @@ public class MeetingController {
     public Response<ReadMeetingDetailResponse> getMeetingDetail(
             @PathVariable int meetingId
     ){
-        //int userId = userDetails.getUserId();
-        //return Response.ok(meetingService.findMeetingDetail(meetingId, userId));
         return Response.ok(meetingService.findMeetingDetail(meetingId));
 
     }
