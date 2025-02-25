@@ -1,5 +1,6 @@
 package com.codeit.moim.repository;
 
+import com.codeit.moim.domain.User;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

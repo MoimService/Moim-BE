@@ -25,18 +25,18 @@ import java.util.Map;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
-    private static final int UNAUTHORIZED = 401;
+//    private static final int UNAUTHORIZED = 401;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwtToken = jwtTokenProvider.resolveToken(request);
 
         try{
-            if(jwtToken == null){
-                throw new JwtException(ErrorStatus.toErrorStatus(
-                        "Header is empty. JWT token not found", UNAUTHORIZED
-                ));
-            }
-            if(jwtTokenProvider.validToken(jwtToken)){
+//            if(jwtToken == null){
+//                throw new JwtException(ErrorStatus.toErrorStatus(
+//                        "Header is empty. JWT token not found", UNAUTHORIZED
+//                ));
+//            }
+            if(jwtToken != null && jwtTokenProvider.validToken(jwtToken)){
                 Authentication auth = jwtTokenProvider.getAuthentication(jwtToken);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
@@ -81,9 +81,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "/api/v1/comments/{meetingId}", "GET",
                 "/api/v1/comments/count/{meetingId}", "GET",
                 "/api/v1/comments/avg/{meetingId}", "GET",
-                "/api/v1/meetings/top", "GET",
                 "/api/v1/meetings/search", "GET",
-                "/api/v1/meetings/detail/{meetingId}", "GET",
                 "/api/v1/meetings/detail/manager/{meetingId}", "GET"
         );
 

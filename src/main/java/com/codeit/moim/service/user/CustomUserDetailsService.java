@@ -2,6 +2,7 @@ package com.codeit.moim.service.user;
 
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.domain.User;
+import com.codeit.moim.repository.CustomUser;
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .build();
+//        return new CustomUser(user);
     }
 }

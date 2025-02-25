@@ -22,14 +22,7 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     boolean existsByUserAndMeeting(User user, Meeting meeting);
 
     Member findByUserAndMeeting(User user, Meeting meeting);
-
-
-//    @Query(
-//            "SELECT m.meeting FROM Member m " +
-//                    "WHERE m.user = :user "
-//    )
-//    List<Meeting> findMeetingsByUser(User user);
-
+    
     @Query(
             "SELECT m FROM Member m " +
                     "JOIN FETCH m.user " +
@@ -51,4 +44,6 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
                     "ORDER BY m.meeting.meetingId DESC "
     )
     Slice<Meeting> findByUser_userLessThanOrderByMeetingIdDesc(@Param("user") User user, Integer lastMeetingId, Pageable pageable);
+
+    boolean existsByUserEmailAndMeetingAndStatus(String email, Meeting meeting, MemberStatus memberStatus);
 }
