@@ -137,9 +137,19 @@ public class MeetingServiceImpl implements MeetingService {
                     .collect(Collectors.toList());
         }
 
+
         List<SearchMeetingResponse> meetingResponses = slicedList.stream()
-                .map(meeting -> SearchMeetingResponse.fromEntity(meeting, meeting.getUser()))
+                .map(meeting -> {
+                                List<ReadMeetingSkillResponse> meetingSkillResponses = meetingSkillRepository.findSkillByMeeting(meeting)
+                                        .stream()
+                                        .map(meetingSkill -> ReadMeetingSkillResponse.fromEntity(meetingSkill.getSkill()))
+                                        .toList();
+
+                        return SearchMeetingResponse.fromEntity(meeting, meetingSkillResponses, meeting.getUser());
+                })
                 .collect(Collectors.toList());
+
+
 
         Integer nextCursor = (meetingResponses.size() == pageSize)
                 ? meetingResponses.get(meetingResponses.size() -1).meetingId()
@@ -157,7 +167,10 @@ public class MeetingServiceImpl implements MeetingService {
 
         boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
         boolean isMember = memberRepository.existsByUserEmailAndMeetingAndStatus(email, meeting, MemberStatus.APPROVED);
-        return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember);
+        List<ReadMeetingSkillResponse> meetingSkillResponses = meetingSkillRepository.findSkillByMeeting(meeting)
+                .stream()
+                .map(meetingSkill -> ReadMeetingSkillResponse.fromEntity(meetingSkill.getSkill())).toList();
+        return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember, meetingSkillResponses);
     }
 
     @Override
@@ -215,14 +228,5 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingList;
     }
 
-    public List<SearchMeetingResponse> buildSearchResponse(List<Meeting> finalMeetingList){
-        List<SearchMeetingResponse> meetingResponseList = new ArrayList<>();
-        for (Meeting meeting : finalMeetingList) {
-            User user = meetingRepository.findUserByMeeting(meeting);
-            SearchMeetingResponse response = SearchMeetingResponse.fromEntity(meeting, user);
-            meetingResponseList.add(response);
-        }
-        return meetingResponseList;
-    }
 
 }
