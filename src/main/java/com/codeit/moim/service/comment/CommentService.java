@@ -22,5 +22,4 @@ public interface CommentService {
 
     Slice<ReadMeetingCommentResponse> getMeetingComments(int meetingId, ReadMeetingCommentRequest request);
 
-    Slice<ReadMyCommentResponse> getMyComments(int userId, ReadMyCommentRequest request);
 }
