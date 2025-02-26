@@ -1,16 +1,12 @@
 package com.codeit.moim.service.meeting.impl;
 
-import com.codeit.moim.common.exception.ApplicationException;
-import com.codeit.moim.common.exception.auth.UserContactNotFoundException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
-import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.*;
 import com.codeit.moim.domain.enums.MemberStatus;
 import com.codeit.moim.domain.enums.SortField;
 import com.codeit.moim.repository.*;
 import com.codeit.moim.service.meeting.MeetingService;
-import com.codeit.moim.service.member.impl.MemberServiceImpl;
 import com.codeit.moim.service.storage.StorageService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
@@ -24,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -114,7 +109,7 @@ public class MeetingServiceImpl implements MeetingService {
 
         List<Meeting> meetingList = meetingRepository.findPublicMeetingsByCategory(categoryTitle, true);
 
-        List<String> skillList = Arrays.asList(request.skillArray());
+        List<String> skillList = request.skillArray();
         if( request.keyword() != null && !skillList.isEmpty() ){
             meetingList = searchKeyword(request.keyword(), meetingList);
             meetingList = searchSkill(skillList, meetingList);

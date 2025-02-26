@@ -2,7 +2,6 @@ package com.codeit.moim.web.filter;
 
 import com.codeit.moim.common.config.JwtTokenProvider;
 import com.codeit.moim.common.exception.ApplicationException;
-import com.codeit.moim.common.exception.jwt.JwtException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -81,7 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "/api/v1/comments/{meetingId}", "GET",
                 "/api/v1/comments/count/{meetingId}", "GET",
                 "/api/v1/comments/avg/{meetingId}", "GET",
-                "/api/v1/meetings/search", "GET",
+                "/api/v1/meetings/search", "POST",
                 "/api/v1/meetings/detail/manager/{meetingId}", "GET"
         );
 

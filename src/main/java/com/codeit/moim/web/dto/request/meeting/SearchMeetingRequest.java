@@ -2,15 +2,15 @@ package com.codeit.moim.web.dto.request.meeting;
 
 import jakarta.validation.constraints.Min;
 
-public record SearchMeetingRequest (
+import java.util.List;
 
+public record SearchMeetingRequest (
         String keyword,
 
-        String[] skillArray,
-
+        List<String> skillArray,
         String sortField,
-        int lastMeetingId,
 
+        Integer lastMeetingId,
         @Min(4)
         int size
 ){

@@ -60,13 +60,13 @@ public class MeetingController {
     }
 
     @Operation(
-            summary = "Search Meetings with category, keyword, skillList, filterField",
+            summary = "Search Meetings with category, keyword, skillList, sortField",
             description = "Get meeting that match search fields API"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Get meetings success")
     })
-    @GetMapping("/search")
+    @PostMapping("/search")
     public Response<Slice<SearchMeetingResponse>> getSearchedMeeting(
             @RequestParam String categoryTitle,
             @Valid @RequestBody SearchMeetingRequest request
