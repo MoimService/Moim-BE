@@ -167,7 +167,10 @@ public class MeetingServiceImpl implements MeetingService {
 
         boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
         boolean isMember = memberRepository.existsByUserEmailAndMeetingAndStatus(email, meeting, MemberStatus.APPROVED);
-        return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember);
+        List<ReadMeetingSkillResponse> meetingSkillResponses = meetingSkillRepository.findSkillByMeeting(meeting)
+                .stream()
+                .map(meetingSkill -> ReadMeetingSkillResponse.fromEntity(meetingSkill.getSkill())).toList();
+        return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember, meetingSkillResponses);
     }
 
     @Override

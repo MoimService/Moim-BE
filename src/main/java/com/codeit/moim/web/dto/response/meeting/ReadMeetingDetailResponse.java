@@ -20,9 +20,10 @@ public record ReadMeetingDetailResponse(
         LocalDate startdate,
         Boolean requireApproval,
         Boolean isLike,
-        Boolean isMember
+        Boolean isMember,
+        List<ReadMeetingSkillResponse> meetingSkillResponse
 ){
-    public static ReadMeetingDetailResponse fromEntity(Meeting meeting, boolean isLike, boolean isMember) {
+    public static ReadMeetingDetailResponse fromEntity(Meeting meeting, boolean isLike, boolean isMember,   List<ReadMeetingSkillResponse> meetingSkillResponse) {
         return ReadMeetingDetailResponse.builder()
             .meetingId(meeting.getMeetingId())
             .title(meeting.getMeetingTitle())
@@ -35,6 +36,7 @@ public record ReadMeetingDetailResponse(
                 .requireApproval(meeting.isRequireApproval())
             .isLike(isLike)
             .isMember(isMember)
+                .meetingSkillResponse(meetingSkillResponse)
         .build();
     }
 }
