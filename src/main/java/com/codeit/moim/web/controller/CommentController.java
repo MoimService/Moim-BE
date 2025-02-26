@@ -119,19 +119,5 @@ public class CommentController {
         return Response.ok(commentService.getMeetingComments(meetingId, request));
     }
 
-    @Operation(
-            summary = "Get my comments",
-            description = "Get my comment, infinite scroll applied with min size 3"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Get success")
-    })
-    @GetMapping("/my")
-    public Response<Slice<ReadMyCommentResponse>> readMyComemnts(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @Valid @ModelAttribute ReadMyCommentRequest request
-            ) {
-        int userId = userDetails.getUserId();
-        return Response.ok(commentService.getMyComments(userId, request));
-    }
+
 }

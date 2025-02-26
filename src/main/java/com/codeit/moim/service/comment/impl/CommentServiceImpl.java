@@ -144,29 +144,7 @@ public class CommentServiceImpl implements CommentService {
         return new CustomSlice<>(commentResponses, pageable, comments.hasNext(), nextCursor);
     }
 
-    @Override
-    public Slice<ReadMyCommentResponse> getMyComments(int userId, ReadMyCommentRequest request) {
-        int pageSize = request.size();
-        Pageable pageable = PageRequest.of(0, pageSize);
 
-        Slice<Comment> comments;
-        if(Objects.isNull(request.lastCommentId()) || request.lastCommentId() <=0 ) {
-            comments = commentRepository.findByUser_userIdOrderByCommentIdDesc(userId, pageable);
-        }else{
-            comments = commentRepository.findByUser_UserIdAndCommentIdLessThanOrderByCommentIdDesc(userId, request.lastCommentId(), pageable);
-        }
-
-        List<ReadMyCommentResponse> commentResponses = comments.stream()
-                .map(comment ->
-                                ReadMyCommentResponse.fromEntity(comment, comment.getMeeting())
-                        ).collect(Collectors.toList());
-
-        Integer nextCursor = comments.hasNext()
-                ? comments.getContent().get(comments.getContent().size() -1).getCommentId()
-                : null;
-
-        return new CustomSlice<>(commentResponses, pageable, comments.hasNext(), nextCursor);
-    }
 
     private User getUser(int userId){
         User user = userRepository.findById(userId)

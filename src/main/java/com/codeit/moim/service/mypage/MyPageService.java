@@ -1,8 +1,11 @@
 package com.codeit.moim.service.mypage;
 
+import com.codeit.moim.web.dto.request.comment.ReadMyCommentRequest;
 import com.codeit.moim.web.dto.request.mypage.*;
+import com.codeit.moim.web.dto.response.comment.ReadMyCommentResponse;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
 import com.codeit.moim.web.dto.response.mypage.*;
+import org.springframework.data.domain.Slice;
 
 public interface MyPageService {
     UpdateProfilePicResponse updateProfilePic(int userId, UpdateProfilePicRequest request);
@@ -16,4 +19,7 @@ public interface MyPageService {
     UpdateUserResponse updateUserInfo(int userId, UpdateUserRequest request);
 
     UpdatePasswordResponse updateUserPassword(int userId, UpdatePasswordRequest request);
+
+    Slice<ReadMyCommentResponse> getMyComments(int userId, ReadMyCommentRequest request);
+
 }
