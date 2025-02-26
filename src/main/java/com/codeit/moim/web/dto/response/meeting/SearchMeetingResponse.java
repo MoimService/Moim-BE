@@ -5,6 +5,7 @@ import com.codeit.moim.domain.User;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Builder
 public record SearchMeetingResponse (
@@ -15,10 +16,11 @@ public record SearchMeetingResponse (
         int memberCount,
         int maxMember,
         LocalDate startDate,
+        List<ReadMeetingSkillResponse> meetingSkillResponse,
         String name,
         String profilePic
 ){
-    static public SearchMeetingResponse fromEntity(Meeting meeting, User user){
+    static public SearchMeetingResponse fromEntity(Meeting meeting, List<ReadMeetingSkillResponse> meetingSkillResponse, User user){
         return SearchMeetingResponse.builder()
                 .meetingId(meeting.getMeetingId())
                 .meetingTitle(meeting.getMeetingTitle())
@@ -27,6 +29,7 @@ public record SearchMeetingResponse (
                 .memberCount(meeting.getMemberCount())
                 .maxMember(meeting.getMaxMember())
                 .startDate(meeting.getStartDate())
+                .meetingSkillResponse(meetingSkillResponse)
                 .name(user.getName())
                 .profilePic(user.getProfilePic())
                 .build();
