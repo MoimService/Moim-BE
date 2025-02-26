@@ -1,0 +1,13 @@
+package com.codeit.moim.common.exception.jwt;
+
+import com.codeit.moim.common.exception.ApplicationException;
+import com.codeit.moim.common.exception.payload.ErrorStatus;
+
+public class TokenRefreshException extends ApplicationException {
+    /**
+     * @param errorStatus 상태 코드, 메세지, 발생시간을 저장한 객체
+     */
+    public TokenRefreshException(ErrorStatus errorStatus) {
+        super(errorStatus);
+    }
+}

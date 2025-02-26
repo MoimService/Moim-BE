@@ -21,7 +21,8 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private static final int UNAUTHORIZED = 401;
-    private static final long TOKEN_VALID_MILLI_SECONDS =1000L*60*60*24; //24h
+    private static final long TOKEN_VALID_MILLI_SECONDS =1000L*10; //10sec
+        //0*1; //1min
 
 
     @Value("${jwtpassword.source}")

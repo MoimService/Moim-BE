@@ -29,6 +29,7 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/api/v1/auths/signup/**").permitAll()
                                 .requestMatchers("/api/v1/auths/login").permitAll()
+                                .requestMatchers("/api/v1/auths/refresh").permitAll()
                                 .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
                                 .requestMatchers(
                                         HttpMethod.GET,
