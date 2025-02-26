@@ -13,6 +13,7 @@ import com.codeit.moim.service.meeting.MeetingService;
 import com.codeit.moim.service.member.impl.MemberServiceImpl;
 import com.codeit.moim.service.storage.StorageService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
+import com.codeit.moim.web.dto.request.meeting.ReadSearchMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.response.meeting.*;
 import com.codeit.moim.web.dto.response.slice.CustomSlice;
@@ -107,26 +108,26 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public Slice<SearchMeetingResponse> findMeetingList(String categoryTitle, SearchMeetingRequest request) {
-        int pageSize = request.size();
-        Integer lastMeetingId = request.lastMeetingId();
+    public Slice<SearchMeetingResponse> findMeetingList(String categoryTitle, SearchMeetingRequest searchRequest, ReadSearchMeetingRequest readRequest) {
+        int pageSize = readRequest.size();
+        Integer lastMeetingId = readRequest.lastMeetingId();
         Pageable pageable = PageRequest.of(0, pageSize);
 
         List<Meeting> meetingList = meetingRepository.findPublicMeetingsByCategory(categoryTitle, true);
 
-        List<String> skillList = Arrays.asList(request.skillArray());
-        if( request.keyword() != null && !skillList.isEmpty() ){
-            meetingList = searchKeyword(request.keyword(), meetingList);
+        List<String> skillList = Arrays.asList(searchRequest.skillArray());
+        if( searchRequest.keyword() != null && !skillList.isEmpty() ){
+            meetingList = searchKeyword(searchRequest.keyword(), meetingList);
             meetingList = searchSkill(skillList, meetingList);
         }
-        else if( request.keyword() != null && skillList.isEmpty()){
-            meetingList = searchKeyword(request.keyword(), meetingList);
-        }else if(request.keyword() == null && !skillList.isEmpty() ) {
+        else if( searchRequest.keyword() != null && skillList.isEmpty()){
+            meetingList = searchKeyword(searchRequest.keyword(), meetingList);
+        }else if(searchRequest.keyword() == null && !skillList.isEmpty() ) {
             meetingList = searchSkill(skillList, meetingList);
         }
 
         //sort
-        List<Meeting> sortedMeetingList = sortMeetings(meetingList, request.sortField());
+        List<Meeting> sortedMeetingList = sortMeetings(meetingList, searchRequest.sortField());
 
         //infinite scroll
         List<Meeting> slicedList;

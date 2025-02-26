@@ -2,6 +2,7 @@ package com.codeit.moim.service.meeting;
 
 import com.codeit.moim.domain.User;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
+import com.codeit.moim.web.dto.request.meeting.ReadSearchMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.request.member.CreateMemberRequest;
 import com.codeit.moim.web.dto.response.meeting.*;
@@ -15,7 +16,7 @@ public interface MeetingService {
 
     List<ReadTopMeetingResponse> findTopMeetingList(String category);
 
-    Slice<SearchMeetingResponse> findMeetingList(String categoryTitle, SearchMeetingRequest request);
+    Slice<SearchMeetingResponse> findMeetingList(String categoryTitle, SearchMeetingRequest searchRequest, ReadSearchMeetingRequest readRequest);
 
     ReadMeetingDetailResponse findMeetingDetail(int meetingId);
 
