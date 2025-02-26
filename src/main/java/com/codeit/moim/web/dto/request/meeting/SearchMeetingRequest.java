@@ -1,16 +1,17 @@
 package com.codeit.moim.web.dto.request.meeting;
 
 import jakarta.validation.constraints.Min;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 public record SearchMeetingRequest (
-        @RequestParam(required = false)
-
         String keyword,
-        @RequestParam(required = false)
 
-        String[] skillArray,
-        @RequestParam(required = false)
-        String sortField
+        List<String> skillArray,
+        String sortField,
+
+        Integer lastMeetingId,
+        @Min(4)
+        int size
 ){
 }

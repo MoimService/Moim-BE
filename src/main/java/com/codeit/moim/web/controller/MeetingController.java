@@ -5,7 +5,6 @@ import com.codeit.moim.repository.CurrentUser;
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.meeting.MeetingService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
-import com.codeit.moim.web.dto.request.meeting.ReadSearchMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.meeting.*;
@@ -67,13 +66,12 @@ public class MeetingController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Get meetings success")
     })
-    @GetMapping("/search")
+    @PostMapping("/search")
     public Response<Slice<SearchMeetingResponse>> getSearchedMeeting(
             @RequestParam String categoryTitle,
-            @Valid @ModelAttribute SearchMeetingRequest searchRequest,
-            @Valid @ModelAttribute ReadSearchMeetingRequest readRequest
+            @Valid @RequestBody SearchMeetingRequest request
     ){
-        return Response.ok(meetingService.findMeetingList(categoryTitle, searchRequest, readRequest));
+        return Response.ok(meetingService.findMeetingList(categoryTitle, request));
     }
 
     @Operation(
