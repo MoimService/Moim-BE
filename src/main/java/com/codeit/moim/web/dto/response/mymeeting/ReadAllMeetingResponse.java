@@ -13,6 +13,7 @@ public record ReadAllMeetingResponse(
         String location,
         int memberCount,
         int maxMember,
+        int likesCount,
         String myMemberStatus,
 
         List<ReadAllMeetingMemberResponse> memberList
@@ -26,6 +27,7 @@ public record ReadAllMeetingResponse(
                 .location(meeting.getLocation())
                 .memberCount(meeting.getMemberCount())
                 .maxMember(meeting.getMaxMember())
+                .likesCount(meeting.getLikesCount())
                 .myMemberStatus(myMemberStatus)
                 .memberList(memberList)
                 .build();

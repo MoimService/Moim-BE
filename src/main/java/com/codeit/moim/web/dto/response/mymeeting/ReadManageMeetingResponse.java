@@ -13,6 +13,7 @@ public record ReadManageMeetingResponse(
         String location,
         int memberCount,
         int maxMember,
+        int likesCount,
         List<ReadManageMeetingMemberResponse> memberList
 
 ) {
@@ -24,6 +25,7 @@ public record ReadManageMeetingResponse(
                 .location(meeting.getLocation())
                 .memberCount(meeting.getMemberCount())
                 .maxMember(meeting.getMaxMember())
+                .likesCount(meeting.getLikesCount())
                 .memberList(memberList)
                 .build();
     }
