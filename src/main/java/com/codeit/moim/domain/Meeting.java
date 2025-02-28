@@ -105,9 +105,13 @@ public class Meeting {
         else this.memberCount--;
     }
 
-    public void updateIsPublic(){
+    public void updateIsPublicToFalse(){
         this.isPublic = false;
     }
+    public void updateIsPublicToTrue(){
+        this.isPublic = true;
+    }
+
 
     public void increaseLikesCount() {
         this.likesCount++;
