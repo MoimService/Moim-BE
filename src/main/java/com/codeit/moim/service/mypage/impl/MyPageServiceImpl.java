@@ -12,6 +12,7 @@ import com.codeit.moim.web.dto.request.comment.ReadMyCommentRequest;
 import com.codeit.moim.web.dto.request.mypage.*;
 import com.codeit.moim.web.dto.response.comment.ReadMyCommentResponse;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
+import com.codeit.moim.web.dto.response.mymeeting.ReadMemberContactResponse;
 import com.codeit.moim.web.dto.response.mypage.*;
 import com.codeit.moim.web.dto.response.slice.CustomSlice;
 import lombok.RequiredArgsConstructor;
@@ -43,8 +44,7 @@ public class MyPageServiceImpl implements MyPageService {
 
     @Override
     public UpdateProfilePicResponse updateProfilePic(int userId, UpdateProfilePicRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+        User user = getUser(userId);
 
         String newProfilePicUrl = "";
         if(Objects.nonNull(request.profilePicBase64()) && !request.profilePicBase64().isEmpty()){
@@ -60,8 +60,7 @@ public class MyPageServiceImpl implements MyPageService {
 
     @Override
     public ReadLoggedInUserResponse getUserData(int userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+        User user = getUser(userId);
         String phone = (user.getContact() != null && user.getContact().getPhone() != null)
                 ? user.getContact().getPhone()
                 : null;
@@ -144,6 +143,22 @@ public class MyPageServiceImpl implements MyPageService {
                 : null;
 
         return new CustomSlice<>(commentResponses, pageable, comments.hasNext(), nextCursor);
+    }
+
+    @Override
+    public ReadUserResponse readUser(int userId) {
+        User user =getUser(userId);
+        String[] userSkillArray = userSkillRepository.findByUserWithSkill(user)
+                .stream().map(userSkill -> userSkill.getSkill().getSkillTitle())
+                .toArray(String[]::new);
+
+        Contact requestedUserContact = user.getContact();
+
+        ReadMemberContactResponse contactResponse = (requestedUserContact != null)
+                ?  ReadMemberContactResponse.fromEntity(requestedUserContact)
+                : null;
+
+        return ReadUserResponse.fromEntity(user, userSkillArray, contactResponse);
     }
 
     private User getUser(int userId){

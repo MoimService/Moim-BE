@@ -135,4 +135,18 @@ public class MyPageController {
         return Response.ok(myPageService.getMyComments(userId, request));
     }
 
+    @Operation(
+            summary = "Get my profile",
+            description = "Get user info, user skills and contact"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get success")
+    })
+    @GetMapping("/profile")
+    public Response<ReadUserResponse> readUserInfo(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(myPageService.readUser(userId));
+    }
 }
