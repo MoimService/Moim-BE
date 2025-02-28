@@ -43,14 +43,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return new JwtResponse(accessToken, requestRefreshToken);
     }
 
-    @Override
-    @Transactional
-    public void deleteOldRefreshToken(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(()-> new UserNotFoundException(email));
-        if(refreshTokenRepository.existsByUser(user)) refreshTokenRepository.deleteByUser(user);
-
-    }
 
     @Transactional
     @Override

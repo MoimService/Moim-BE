@@ -53,7 +53,6 @@ public class AuthController {
     public Response<LoginResponse> login(
             @Valid @RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse){
         String accessToken = userService.login(loginRequest);
-        //refreshTokenService.deleteOldRefreshToken(loginRequest.email());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginRequest.email());
         httpServletResponse.addHeader("Access-Control-Expose-Headers", "token");
         httpServletResponse.setHeader("token", accessToken);

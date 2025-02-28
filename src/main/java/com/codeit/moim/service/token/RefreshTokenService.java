@@ -9,13 +9,10 @@ import java.util.Optional;
 public interface RefreshTokenService {
     RefreshToken createRefreshToken(String email);
 
-     
-
     RefreshToken verifyExpiration(RefreshToken token);
 
     Optional<RefreshToken> findByToken(String requestRefreshToken);
 
     JwtResponse refreshToken(TokenRefreshRequest request);
 
-    void deleteOldRefreshToken(String email);
 }

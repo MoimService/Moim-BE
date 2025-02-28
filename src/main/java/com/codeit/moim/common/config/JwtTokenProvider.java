@@ -22,7 +22,6 @@ public class JwtTokenProvider {
 
     private static final int UNAUTHORIZED = 401;
     private static final long TOKEN_VALID_MILLI_SECONDS =1000L*60; //60sec
-        //0*1; //1min
 
 
     @Value("${jwtpassword.source}")
