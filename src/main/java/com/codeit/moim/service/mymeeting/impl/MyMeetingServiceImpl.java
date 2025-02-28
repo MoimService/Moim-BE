@@ -139,14 +139,17 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     @Override
     public UpdateMeetingIsPublicResponse updateIsPublic(int userId, int meetingId) {
         Meeting meeting = getMeeting(meetingId);
-        if(validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
+        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
         if(meeting.isPublic()){
-            meeting.updateIsPublic();
-            meetingRepository.save(meeting);
+            meeting.updateIsPublicToFalse();
+            Meeting savedMeeting = meetingRepository.save(meeting);
 
-            return new UpdateMeetingIsPublicResponse(meetingId);
+            return UpdateMeetingIsPublicResponse.fromEntity(savedMeeting);
         }else{
-            throw new AlreadyIsPublicException(ErrorStatus.toErrorStatus("This meeting is already isPublic = false", BAD_REQUEST));
+            meeting.updateIsPublicToTrue();
+            Meeting savedMeeting = meetingRepository.save(meeting);
+
+            return UpdateMeetingIsPublicResponse.fromEntity(savedMeeting);
         }
 
     }
