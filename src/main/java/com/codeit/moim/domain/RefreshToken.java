@@ -42,4 +42,9 @@ public class RefreshToken {
                 .user(user)
                 .build();
     }
+
+    public  void updateToken(String token, Instant expiryDate){
+       this.token = token;
+       this.expiryDate = expiryDate;
+    }
 }

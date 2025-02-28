@@ -48,7 +48,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public void deleteOldRefreshToken(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(()-> new UserNotFoundException(email));
-        refreshTokenRepository.deleteByUser(user);
+        if(refreshTokenRepository.existsByUser(user)) refreshTokenRepository.deleteByUser(user);
+
     }
 
     @Transactional
@@ -58,9 +59,16 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .orElseThrow(()-> new UserNotFoundException(email));
         String token = UUID.randomUUID().toString();
         Instant instant = Instant.now().plusMillis(REFRESH_TOKEN_VALID_MILLI_SECONDS);
-        RefreshToken refreshToken = RefreshToken.toEntity(token, instant, user);
-        refreshTokenRepository.save(refreshToken);
-        return refreshToken;
+        if(refreshTokenRepository.existsByUser(user)){
+            RefreshToken refreshToken = refreshTokenRepository.findByUser(user);
+            refreshToken.updateToken(token, instant);
+            RefreshToken newRefreshToken = refreshTokenRepository.save(refreshToken);
+            return newRefreshToken;
+        }else {
+            RefreshToken refreshToken = RefreshToken.toEntity(token, instant, user);
+            refreshTokenRepository.save(refreshToken);
+            return refreshToken;
+        }
     }
 
     @Override
