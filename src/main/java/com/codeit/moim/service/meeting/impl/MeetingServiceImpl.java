@@ -140,12 +140,14 @@ public class MeetingServiceImpl implements MeetingService {
 
         List<SearchMeetingResponse> meetingResponses = slicedList.stream()
                 .map(meeting -> {
-                                List<ReadMeetingSkillResponse> meetingSkillResponses = meetingSkillRepository.findSkillByMeeting(meeting)
-                                        .stream()
-                                        .map(meetingSkill -> ReadMeetingSkillResponse.fromEntity(meetingSkill.getSkill()))
-                                        .toList();
+                    List<String> meetingSkillList = meetingSkillRepository.findSkillByMeeting(meeting)
+                            .stream()
+                            .map(meetingSkill -> meetingSkill.getSkill().getSkillTitle())
+                            .collect(Collectors.toList());
 
-                        return SearchMeetingResponse.fromEntity(meeting, meetingSkillResponses, meeting.getUser());
+                    String[] meetingSkillArray = meetingSkillList.stream().toArray(String[]::new);
+                    return SearchMeetingResponse.fromEntity(meeting, meetingSkillArray, meeting.getUser());
+
                 })
                 .collect(Collectors.toList());
 
