@@ -15,7 +15,10 @@ public record SearchMeetingResponse (
         String location,
         int memberCount,
         int maxMember,
+        int likesCount,
+
         LocalDate startDate,
+
         String[] meetingSkillArray,
         String name,
         String profilePic
@@ -28,6 +31,7 @@ public record SearchMeetingResponse (
                 .location(meeting.getLocation())
                 .memberCount(meeting.getMemberCount())
                 .maxMember(meeting.getMaxMember())
+                .likesCount(meeting.getLikesCount())
                 .startDate(meeting.getStartDate())
                 .meetingSkillArray(meetingSkillArray)
                 .name(user.getName())
