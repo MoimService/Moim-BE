@@ -7,7 +7,8 @@ import lombok.Builder;
 public record ReadMemberContactResponse (
         String phone,
         String github,
-        String kakao
+        String kakao,
+        String blog
 ){
     public static ReadMemberContactResponse fromEntity(Contact contact){
         return ReadMemberContactResponse
@@ -15,6 +16,7 @@ public record ReadMemberContactResponse (
                 .phone(contact.getPhone())
                 .github(contact.getGithub())
                 .kakao(contact.getKakao())
+                .blog(contact.getBlog())
                 .build();
 
     }
