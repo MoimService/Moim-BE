@@ -137,7 +137,8 @@ public class MeetingServiceImpl implements MeetingService {
                     .collect(Collectors.toList());
         }
 
-
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = (authentication instanceof AnonymousAuthenticationToken) ? "no user" : authentication.getName();
         List<SearchMeetingResponse> meetingResponses = slicedList.stream()
                 .map(meeting -> {
                     List<String> meetingSkillList = meetingSkillRepository.findSkillByMeeting(meeting)
@@ -146,7 +147,8 @@ public class MeetingServiceImpl implements MeetingService {
                             .collect(Collectors.toList());
 
                     String[] meetingSkillArray = meetingSkillList.stream().toArray(String[]::new);
-                    return SearchMeetingResponse.fromEntity(meeting, meetingSkillArray, meeting.getUser());
+                    boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
+                    return SearchMeetingResponse.fromEntity(meeting, meetingSkillArray, meeting.getUser(), isLike);
 
                 })
                 .collect(Collectors.toList());

@@ -80,7 +80,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "/api/v1/comments/{meetingId}", "GET",
                 "/api/v1/comments/count/{meetingId}", "GET",
                 "/api/v1/comments/avg/{meetingId}", "GET",
-                "/api/v1/meetings/search", "POST",
                 "/api/v1/meetings/detail/manager/{meetingId}", "GET"
         );
 

@@ -21,9 +21,10 @@ public record SearchMeetingResponse (
 
         String[] meetingSkillArray,
         String name,
-        String profilePic
+        String profilePic,
+        boolean isLike
 ){
-    static public SearchMeetingResponse fromEntity(Meeting meeting, String[] meetingSkillArray, User user){
+    static public SearchMeetingResponse fromEntity(Meeting meeting, String[] meetingSkillArray, User user, boolean isLike){
         return SearchMeetingResponse.builder()
                 .meetingId(meeting.getMeetingId())
                 .meetingTitle(meeting.getMeetingTitle())
@@ -36,6 +37,7 @@ public record SearchMeetingResponse (
                 .meetingSkillArray(meetingSkillArray)
                 .name(user.getName())
                 .profilePic(user.getProfilePic())
+                .isLike(isLike)
                 .build();
     }
 }
