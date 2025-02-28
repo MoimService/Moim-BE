@@ -16,11 +16,11 @@ public record SearchMeetingResponse (
         int memberCount,
         int maxMember,
         LocalDate startDate,
-        List<ReadMeetingSkillResponse> meetingSkillResponse,
+        String[] meetingSkillArray,
         String name,
         String profilePic
 ){
-    static public SearchMeetingResponse fromEntity(Meeting meeting, List<ReadMeetingSkillResponse> meetingSkillResponse, User user){
+    static public SearchMeetingResponse fromEntity(Meeting meeting, String[] meetingSkillArray, User user){
         return SearchMeetingResponse.builder()
                 .meetingId(meeting.getMeetingId())
                 .meetingTitle(meeting.getMeetingTitle())
@@ -29,7 +29,7 @@ public record SearchMeetingResponse (
                 .memberCount(meeting.getMemberCount())
                 .maxMember(meeting.getMaxMember())
                 .startDate(meeting.getStartDate())
-                .meetingSkillResponse(meetingSkillResponse)
+                .meetingSkillArray(meetingSkillArray)
                 .name(user.getName())
                 .profilePic(user.getProfilePic())
                 .build();
