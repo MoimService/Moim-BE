@@ -22,4 +22,5 @@ public interface MyPageService {
 
     Slice<ReadMyCommentResponse> getMyComments(int userId, ReadMyCommentRequest request);
 
+    ReadUserResponse readUser(int userId);
 }
