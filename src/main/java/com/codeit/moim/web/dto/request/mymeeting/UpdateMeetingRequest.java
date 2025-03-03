@@ -1,13 +1,9 @@
 package com.codeit.moim.web.dto.request.mymeeting;
 
-import com.codeit.moim.domain.Category;
-import com.codeit.moim.domain.Meeting;
-import com.codeit.moim.domain.User;
+import com.codeit.moim.domain.*;
 import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public record UpdateMeetingRequest(
 
@@ -21,7 +17,14 @@ public record UpdateMeetingRequest(
         @FutureOrPresent
         LocalDate startDate,
         boolean isPublic,
-        boolean requireApproval
+        boolean requireApproval,
+        String[] skillArray
 
 ){
+        public MeetingSkill toEntity(Meeting meeting, Skill skill) {
+                return MeetingSkill.builder()
+                        .meeting(meeting)
+                        .skill(skill)
+                        .build();
+        }
 }

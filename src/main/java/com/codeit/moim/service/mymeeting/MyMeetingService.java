@@ -28,5 +28,4 @@ public interface MyMeetingService {
 
     UpdateMeetingResponse updateMeetingInfo(int userId, int meetingId, UpdateMeetingRequest request);
 
-    UpdateMeetingSkillResponse updateMeetingSkill(int userId, int meetingId, UpdateMeetingSkillRequest request);
 }

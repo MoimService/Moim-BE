@@ -193,21 +193,5 @@ public class MyMeetingController {
         return Response.ok(myMeetingService.updateMeetingInfo(userId, meetingId, request));
     }
 
-    @Operation(
-            summary = "Update meeting skill",
-            description = "Create meeting skill with skill array request. Existing skills will be deleted and be created again."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Update success")
-    })
-    @PutMapping("/skills/{meetingId}")
-    public Response<UpdateMeetingSkillResponse> updateMeetingSkill(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable int meetingId,
-            @RequestBody UpdateMeetingSkillRequest request
-            ){
-        int userId = userDetails.getUserId();
-        return Response.ok(myMeetingService.updateMeetingSkill(userId, meetingId, request));
-    }
 
 }

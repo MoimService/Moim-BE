@@ -240,6 +240,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     }
 
     @Override
+    @Transactional
     public UpdateMeetingResponse updateMeetingInfo(int userId, int meetingId, UpdateMeetingRequest request) {
         Meeting meeting = meetingRepository.findByIdWithUser(meetingId);
         if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
@@ -259,14 +260,6 @@ public class MyMeetingServiceImpl implements MyMeetingService {
 
         meeting.updateMeeting(request, uploadUrl, category);
         meetingRepository.save(meeting);
-        return new UpdateMeetingResponse(meetingId);
-    }
-
-    @Override
-    @Transactional
-    public UpdateMeetingSkillResponse updateMeetingSkill(int userId, int meetingId, UpdateMeetingSkillRequest request) {
-        Meeting meeting = getMeeting(meetingId);
-        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
 
         meetingSkillRepository.deleteAllByMeeting(meeting);
 
@@ -280,8 +273,9 @@ public class MyMeetingServiceImpl implements MyMeetingService {
 
         meetingSkillRepository.saveAll(meetingSkillList);
 
-        return new UpdateMeetingSkillResponse(meetingId);
+        return new UpdateMeetingResponse(meetingId);
     }
+
 
     private User getUser(int userId){
         User user = userRepository.findById(userId)
