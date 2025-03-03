@@ -1,17 +1,11 @@
 package com.codeit.moim.service.mymeeting;
 
 import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
-import com.codeit.moim.web.dto.request.meeting.UpdateMeetingRequest;
-import com.codeit.moim.web.dto.request.mymeeting.ReadAllMeetingRequest;
-import com.codeit.moim.web.dto.request.mymeeting.ReadManageMeetingRequest;
-import com.codeit.moim.web.dto.request.mymeeting.ReadMemberProfileRequest;
-import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
+import com.codeit.moim.web.dto.request.mymeeting.*;
 import com.codeit.moim.web.dto.response.meeting.UpdateMeetingResponse;
 import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import com.codeit.moim.web.dto.response.mymeeting.*;
 import org.springframework.data.domain.Slice;
-
-import java.util.List;
 
 public interface MyMeetingService {
     UpdateMemberStatusResponse updateMemberStatus(int userId, UpdateMemberStatusRequest request);
@@ -33,4 +27,6 @@ public interface MyMeetingService {
     ReadMemberProfileResponse findMemberProfile(int userId, ReadMemberProfileRequest request);
 
     UpdateMeetingResponse updateMeetingInfo(int userId, int meetingId, UpdateMeetingRequest request);
+
+    UpdateMeetingSkillResponse updateMeetingSkill(int userId, int meetingId, UpdateMeetingSkillRequest request);
 }

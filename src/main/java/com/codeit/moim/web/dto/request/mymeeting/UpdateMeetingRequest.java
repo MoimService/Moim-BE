@@ -1,4 +1,4 @@
-package com.codeit.moim.web.dto.request.meeting;
+package com.codeit.moim.web.dto.request.mymeeting;
 
 import com.codeit.moim.domain.Category;
 import com.codeit.moim.domain.Meeting;

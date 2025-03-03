@@ -2,7 +2,7 @@ package com.codeit.moim.domain;
 
 import com.codeit.moim.common.exception.likes.LikesCountException;
 import com.codeit.moim.common.exception.member.MemberCountException;
-import com.codeit.moim.web.dto.request.meeting.UpdateMeetingRequest;
+import com.codeit.moim.web.dto.request.mymeeting.UpdateMeetingRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -2,7 +2,6 @@ package com.codeit.moim.service.mymeeting.impl;
 
 import com.codeit.moim.common.exception.auth.MeetingManagerException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
-import com.codeit.moim.common.exception.meeting.AlreadyIsPublicException;
 import com.codeit.moim.common.exception.meeting.MaxMemberUpdateException;
 import com.codeit.moim.common.exception.meeting.MeetingAccessDeniedException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
@@ -14,11 +13,7 @@ import com.codeit.moim.repository.*;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
 import com.codeit.moim.service.storage.StorageService;
 import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
-import com.codeit.moim.web.dto.request.meeting.UpdateMeetingRequest;
-import com.codeit.moim.web.dto.request.mymeeting.ReadAllMeetingRequest;
-import com.codeit.moim.web.dto.request.mymeeting.ReadManageMeetingRequest;
-import com.codeit.moim.web.dto.request.mymeeting.ReadMemberProfileRequest;
-import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
+import com.codeit.moim.web.dto.request.mymeeting.*;
 import com.codeit.moim.web.dto.response.meeting.UpdateMeetingResponse;
 import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import com.codeit.moim.web.dto.response.mymeeting.*;
@@ -29,10 +24,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import com.codeit.moim.web.dto.response.slice.CustomSlice;
+import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +42,8 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     private final UserSkillRepository userSkillRepository;
     private final CategoryRepository categoryRepository;
     private final StorageService storageService;
+    private final MeetingSkillRepository meetingSkillRepository;
+    private final SkillRepository skillRepository;
 
 
     private static final int BAD_REQUEST = 400;
@@ -242,7 +242,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     @Override
     public UpdateMeetingResponse updateMeetingInfo(int userId, int meetingId, UpdateMeetingRequest request) {
         Meeting meeting = meetingRepository.findByIdWithUser(meetingId);
-        if(meeting.getUser().getUserId() != userId) throw new MeetingAccessDeniedException(String.valueOf(meetingId));
+        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
 
         Category category = null;
         if(Objects.nonNull(request.categoryTitle())  && !request.categoryTitle().isEmpty()) {
@@ -260,6 +260,27 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         meeting.updateMeeting(request, uploadUrl, category);
         meetingRepository.save(meeting);
         return new UpdateMeetingResponse(meetingId);
+    }
+
+    @Override
+    @Transactional
+    public UpdateMeetingSkillResponse updateMeetingSkill(int userId, int meetingId, UpdateMeetingSkillRequest request) {
+        Meeting meeting = getMeeting(meetingId);
+        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
+
+        meetingSkillRepository.deleteAllByMeeting(meeting);
+
+        List<Skill> skillList = Arrays.stream(request.skillArray())
+                .map(skillRepository::findBySkillTitle)
+                .collect(Collectors.toList());
+
+        List<MeetingSkill> meetingSkillList = skillList.stream()
+                .map(skill -> request.toEntity(meeting, skill))
+                .collect(Collectors.toList());
+
+        meetingSkillRepository.saveAll(meetingSkillList);
+
+        return new UpdateMeetingSkillResponse(meetingId);
     }
 
     private User getUser(int userId){
