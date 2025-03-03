@@ -3,13 +3,17 @@ package com.codeit.moim.web.controller;
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
 import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
+import com.codeit.moim.web.dto.request.meeting.UpdateMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.ReadAllMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.ReadManageMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.ReadMemberProfileRequest;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
+import com.codeit.moim.web.dto.request.mypage.UpdateUserRequest;
 import com.codeit.moim.web.dto.response.Response;
+import com.codeit.moim.web.dto.response.meeting.UpdateMeetingResponse;
 import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import com.codeit.moim.web.dto.response.mymeeting.*;
+import com.codeit.moim.web.dto.response.mypage.UpdateUserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -176,6 +180,23 @@ public class MyMeetingController {
     ){
         int userId = userDetails.getUserId();
         return Response.ok(myMeetingService.findMemberProfile(userId, request));
+    }
+
+    @Operation(
+            summary = "Update meeting detail",
+            description = "Update meeting detail info. Update fields can be null"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update success")
+    })
+    @PutMapping("/manage/{meetingId}")
+    public Response<UpdateMeetingResponse> updateMeetingDetail(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable int meetingId,
+            @Valid @RequestBody UpdateMeetingRequest request
+            ){
+        int userId = userDetails.getUserId();
+        return Response.ok(myMeetingService.updateMeetingInfo(userId, meetingId, request));
     }
 
 }

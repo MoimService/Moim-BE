@@ -3,6 +3,7 @@ package com.codeit.moim.service.mymeeting.impl;
 import com.codeit.moim.common.exception.auth.MeetingManagerException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.meeting.AlreadyIsPublicException;
+import com.codeit.moim.common.exception.meeting.MaxMemberUpdateException;
 import com.codeit.moim.common.exception.meeting.MeetingAccessDeniedException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
 import com.codeit.moim.common.exception.member.MemberNotFoundException;
@@ -11,11 +12,14 @@ import com.codeit.moim.domain.*;
 import com.codeit.moim.domain.enums.MemberStatus;
 import com.codeit.moim.repository.*;
 import com.codeit.moim.service.mymeeting.MyMeetingService;
+import com.codeit.moim.service.storage.StorageService;
 import com.codeit.moim.web.dto.request.likes.ReadLikeMeetingRequest;
+import com.codeit.moim.web.dto.request.meeting.UpdateMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.ReadAllMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.ReadManageMeetingRequest;
 import com.codeit.moim.web.dto.request.mymeeting.ReadMemberProfileRequest;
 import com.codeit.moim.web.dto.request.mymeeting.UpdateMemberStatusRequest;
+import com.codeit.moim.web.dto.response.meeting.UpdateMeetingResponse;
 import com.codeit.moim.web.dto.response.member.DeleteMemberResponse;
 import com.codeit.moim.web.dto.response.mymeeting.*;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +42,9 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
     private final UserSkillRepository userSkillRepository;
+    private final CategoryRepository categoryRepository;
+    private final StorageService storageService;
+
 
     private static final int BAD_REQUEST = 400;
 
@@ -230,6 +237,29 @@ public class MyMeetingServiceImpl implements MyMeetingService {
 
 
         return ReadMemberProfileResponse.fromEntity(requestedUser, skillArray, contactResponse, memberResponse);
+    }
+
+    @Override
+    public UpdateMeetingResponse updateMeetingInfo(int userId, int meetingId, UpdateMeetingRequest request) {
+        Meeting meeting = meetingRepository.findByIdWithUser(meetingId);
+        if(meeting.getUser().getUserId() != userId) throw new MeetingAccessDeniedException(String.valueOf(meetingId));
+
+        Category category = null;
+        if(Objects.nonNull(request.categoryTitle())  && !request.categoryTitle().isEmpty()) {
+            category = categoryRepository.findByCategoryTitle(request.categoryTitle());
+        }
+
+        String uploadUrl = "";
+        if(request.imageName() == null || request.imageName().isEmpty()) uploadUrl = meeting.getThumbnail();
+        if(Objects.nonNull(request.imageEncodedBase64()) && !request.imageEncodedBase64().isEmpty()){
+            uploadUrl = storageService.uploadFile(request.imageEncodedBase64(), request.imageName());
+        }
+
+        if(!Objects.nonNull(request.maxMember()) && request.maxMember() < meeting.getMaxMember()) throw new MaxMemberUpdateException(ErrorStatus.toErrorStatus("Max member should be bigger than current member count", BAD_REQUEST));
+
+        meeting.updateMeeting(request, uploadUrl, category);
+        meetingRepository.save(meeting);
+        return new UpdateMeetingResponse(meetingId);
     }
 
     private User getUser(int userId){
