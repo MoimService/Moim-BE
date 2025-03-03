@@ -20,6 +20,7 @@ public record ReadMeetingDetailResponse(
 
         LocalDate startdate,
         Boolean requireApproval,
+        Boolean isPublic,
         Boolean isLike,
         Boolean isMember,
         String[] meetingSkillArray
@@ -36,6 +37,7 @@ public record ReadMeetingDetailResponse(
             .content(meeting.getContent())
             .startdate(meeting.getStartDate())
                 .requireApproval(meeting.isRequireApproval())
+                .isPublic(meeting.isPublic())
             .isLike(isLike)
             .isMember(isMember)
                 .meetingSkillArray(meetingSkillArray)
