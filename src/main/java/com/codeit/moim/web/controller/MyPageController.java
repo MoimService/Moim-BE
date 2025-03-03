@@ -73,7 +73,7 @@ public class MyPageController {
 
     @Operation(
             summary = "Create user skill",
-            description = "Create user contact with skill array request. Existing skills will be deleted and be created again."
+            description = "Create user skill with skill array request. Existing skills will be deleted and be created again."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Create success")

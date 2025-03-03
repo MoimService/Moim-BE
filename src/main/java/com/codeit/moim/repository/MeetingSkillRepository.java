@@ -18,4 +18,6 @@ public interface MeetingSkillRepository extends JpaRepository<MeetingSkill, Inte
                     "WHERE ms.meeting = :meeting "
     )
     List<MeetingSkill> findSkillByMeeting(Meeting meeting);
+
+    void deleteAllByMeeting(Meeting meeting);
 }
