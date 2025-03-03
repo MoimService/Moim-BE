@@ -1,6 +1,7 @@
 package com.codeit.moim.service.meeting.impl;
 
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
+import com.codeit.moim.common.exception.meeting.MeetingAccessDeniedException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
 import com.codeit.moim.domain.*;
 import com.codeit.moim.domain.enums.MemberStatus;
@@ -163,11 +164,12 @@ public class MeetingServiceImpl implements MeetingService {
 
     @Override
     public ReadMeetingDetailResponse findMeetingDetail(int meetingId) {
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
+        Meeting meeting = meetingRepository.findByIdWithUser(meetingId);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (authentication instanceof AnonymousAuthenticationToken) ? "no user" : authentication.getName();
+
+        if(!meeting.isPublic() && !meeting.getUser().getEmail().equals(email)) throw new MeetingAccessDeniedException(String.valueOf(meetingId));
 
         boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
         boolean isMember = memberRepository.existsByUserEmailAndMeetingAndStatus(email, meeting, MemberStatus.APPROVED);
