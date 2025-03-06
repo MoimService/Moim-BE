@@ -1,7 +1,9 @@
 package com.codeit.moim.common.handler;
 
-import com.codeit.moim.common.exception.ApplicationException;
+import com.codeit.moim.common.exception.global.*;
+import com.codeit.moim.common.exception.payload.ErrorResponse;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
+import com.codeit.moim.web.dto.response.Response;
 import jakarta.servlet.ServletException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,10 +22,26 @@ public class GlobalRestControllerAdvice {
      * @return 해당 HTTP 상태 코드와 오류 정보를 반환
      */
     @ExceptionHandler(ApplicationException.class)
-    public ResponseEntity<ErrorStatus> handleApplicationException(ApplicationException e) {
+    public Response<ErrorResponse> handleApplicationException(ApplicationException e) {
         ErrorStatus errorStatus = e.getErrorStatus();
 
-        return new ResponseEntity<>(errorStatus, errorStatus.toHttpStatus());
+
+        ErrorResponse errorResponse;
+        if (e instanceof EntityExistException exception) {
+            errorResponse = ErrorResponse.fromError(errorStatus, exception);
+        } else if (e instanceof AccessDeniedException exception) {
+            errorResponse = ErrorResponse.fromError(errorStatus, exception);
+        } else if (e instanceof EntityNotFoundException exception) {
+            errorResponse = ErrorResponse.fromError(errorStatus, exception);
+        } else if (e instanceof BadRequestException exception) {
+            errorResponse = ErrorResponse.fromError(errorStatus, exception);
+        } else if (e instanceof JwtException exception) {
+            errorResponse = ErrorResponse.fromError(errorStatus, exception);
+        } else {
+            errorResponse = new ErrorResponse(errorStatus.message());
+        }
+
+        return new Response<>(errorStatus.statusCode(), errorResponse);
     }
 
     @ExceptionHandler(ServletException.class)

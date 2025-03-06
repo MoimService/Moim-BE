@@ -1,19 +1,17 @@
 package com.codeit.moim.service.user.impl;
 
 import com.codeit.moim.common.config.JwtTokenProvider;
-import com.codeit.moim.common.exception.ApplicationException;
+import com.codeit.moim.common.exception.global.ApplicationException;
 import com.codeit.moim.common.exception.auth.PasswordInvlaidException;
 import com.codeit.moim.common.exception.auth.SignUpExistException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.Contact;
 import com.codeit.moim.domain.User;
-import com.codeit.moim.domain.UserSkill;
 import com.codeit.moim.repository.ContactRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.user.UserService;
 import com.codeit.moim.web.dto.request.auth.LoginRequest;
-import com.codeit.moim.web.dto.request.auth.SignUpCheckRequest;
 import com.codeit.moim.web.dto.request.auth.SignUpRequest;
 import com.codeit.moim.web.dto.response.auth.SignUpCheckResponse;
 import com.codeit.moim.web.dto.response.auth.SignUpResponse;
@@ -71,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new UserNotFoundException(email));
+                    .orElseThrow(() -> new UserNotFoundException("email: "+ email));
 
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -90,7 +88,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public SignUpCheckResponse userNameCheck(String name) {
         if(userRepository.existsByName(name)){
-            throw new SignUpExistException("This name already exists in the DB", "name");
+            throw new SignUpExistException("user name: " + name);
         }
         else{
             return new SignUpCheckResponse(true);
@@ -100,7 +98,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public SignUpCheckResponse userEmailCheck(String email) {
         if(userRepository.existsByEmail(email)){
-            throw new SignUpExistException("This email already exists in the DB", "email");
+            throw new SignUpExistException("user email: " + email);
         }
         else{
             return new SignUpCheckResponse(true);
@@ -108,7 +106,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void passwordMatchValidation(String password, String passwordCheck){
-        if(! password.equals(passwordCheck) ) throw new PasswordInvlaidException(ErrorStatus.toErrorStatus("Password does not match",  BAD_REQUEST));
+        if(! password.equals(passwordCheck) ) throw new PasswordInvlaidException("Password does not match");
     }
 
 

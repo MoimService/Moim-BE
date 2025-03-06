@@ -52,13 +52,13 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     public UpdateMemberStatusResponse updateMemberStatus(int userId, UpdateMemberStatusRequest request) {
         Meeting meeting = getMeeting(request.meetingId());
         //check if user is manager
-        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
+        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException("Only meeting manager can update member status. UserId: "+ userId);
 
         //get member
         Member member = getMemberWithUserAndMeeting(request.userId(), meeting);
         //change member status, save
         MemberStatus status = MemberStatus.valueOf(request.setMemberStatus());
-        if(!member.getStatus().equals(MemberStatus.PENDING)) throw new MeetingAccessDeniedException(String.valueOf(request.userId()));
+        if(!member.getStatus().equals(MemberStatus.PENDING)) throw new MeetingAccessDeniedException("Only member status PENDING can be updated. Current member status: "+ status);
 
         if(status.equals(MemberStatus.APPROVED)){
             meeting.increaseMemberCount();
@@ -71,9 +71,9 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     public UpdateMemberToExpelResponse expelMember(int userId, UpdateMemberStatusRequest request) {
         Meeting meeting = getMeeting(request.meetingId());
         //check if user is manager
-        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
+        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException("Only meeting manager can expel member. UserId: "+ userId);
         Member member = getMemberWithUserAndMeeting(request.userId(), meeting);
-        if( !member.getStatus().equals(MemberStatus.APPROVED)) throw new MeetingAccessDeniedException(String.valueOf(request.userId()));
+        if( !member.getStatus().equals(MemberStatus.APPROVED)) throw new MeetingAccessDeniedException("Only member status APPROVED can be expelled. Current member status: "+ member.getStatus());
 
         meeting.decreaseMemberCount();
         meetingRepository.save(meeting);
@@ -146,7 +146,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     @Override
     public UpdateMeetingIsPublicResponse updateIsPublic(int userId, int meetingId) {
         Meeting meeting = getMeeting(meetingId);
-        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
+        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException("Only meeting manager can update meeting isPublic. UserId: "+ userId);
         if(meeting.isPublic()){
             meeting.updateIsPublicToFalse();
             Meeting savedMeeting = meetingRepository.save(meeting);
@@ -178,15 +178,16 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     public DeleteMemberResponse quitMeeting(int userId, int meetingId) {
         Meeting meeting = getMeeting(meetingId);
         User user = getUser(userId);
-        if(validateMeetingManager(userId, meeting)) throw new MeetingManagerException(ErrorStatus.toErrorStatus("Meeting manager cannot quit the meeting", BAD_REQUEST));
+        if(validateMeetingManager(userId, meeting)) throw new MeetingManagerException("Meeting manager cannot quit meeting. UserId: " + userId);
         Member member = memberRepository.findByUserAndMeeting(user, meeting);
-        if(member != null && member.getStatus().equals(MemberStatus.APPROVED)){
+        if(member == null) throw new MemberNotFoundException("Member not found by user and meeting. UserId: "+ userId + " MeetingId: "+ meetingId);
+        if(member.getStatus().equals(MemberStatus.APPROVED)){
             memberRepository.delete(member);
             meeting.decreaseMemberCount();
             meetingRepository.save(meeting);
             return new DeleteMemberResponse(userId);
         }else{
-            throw new AccessDeniedException("Member");
+            throw new MeetingAccessDeniedException("Member status : " + member.getStatus());
         }
     }
 
@@ -232,7 +233,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
                 : null;
 
         Member requestedUserMember =  memberRepository.findByUserAndMeeting(requestedUser, meeting);
-        if(requestedUserMember == null) throw new MemberNotFoundException(String.valueOf(request.userId()));
+        if(requestedUserMember == null) throw new MemberNotFoundException("UserId: "+ userId );
         ReadMemberMessageResponse memberResponse = ReadMemberMessageResponse.fromEntity(requestedUserMember);
 
 
@@ -243,7 +244,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     @Transactional
     public UpdateMeetingResponse updateMeetingInfo(int userId, int meetingId, UpdateMeetingRequest request) {
         Meeting meeting = meetingRepository.findByIdWithUser(meetingId);
-        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException(String.valueOf(meeting.getMeetingId()));
+        if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException("Only meeting manager can update meeting detail. UserId: "+ userId);
 
         Category category = null;
         if(Objects.nonNull(request.categoryTitle())  && !request.categoryTitle().isEmpty()) {
@@ -256,7 +257,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
             uploadUrl = storageService.uploadFile(request.imageEncodedBase64(), request.imageName());
         }
 
-        if(!Objects.nonNull(request.maxMember()) && request.maxMember() < meeting.getMaxMember()) throw new MaxMemberUpdateException(ErrorStatus.toErrorStatus("Max member should be bigger than current member count", BAD_REQUEST));
+        if(!Objects.nonNull(request.maxMember()) && request.maxMember() < meeting.getMaxMember()) throw new MaxMemberUpdateException("Max member should be bigger than current member count");
 
         meeting.updateMeeting(request, uploadUrl, category);
         meetingRepository.save(meeting);
@@ -279,13 +280,13 @@ public class MyMeetingServiceImpl implements MyMeetingService {
 
     private User getUser(int userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+                .orElseThrow(()-> new UserNotFoundException("UserId: "+ userId));
         return user;
     }
 
     private Meeting getMeeting(int meetingId){
         Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
+                .orElseThrow(()-> new MeetingNotFoundException("MeetingId: "+ meetingId));
         return meeting;
     }
 

@@ -1,11 +1,11 @@
-package com.codeit.moim.common.exception;
+package com.codeit.moim.common.exception.global;
 
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 
 import java.time.LocalDateTime;
 
-public class EntityExistException extends ApplicationException{
-    private static final String ENTITY_EXISTS_EXCEPTION_MESSAGE = "Entity already exists";
+public class EntityExistException extends ApplicationException {
+    private static final String ENTITY_EXISTS_EXCEPTION_MESSAGE = "ENTITY ALREADY EXISTS";
     private static final int ENTITY_EXISTS_EXCEPTION_STATUS_CODE = 409;
 
     private final String request;
@@ -22,11 +22,11 @@ public class EntityExistException extends ApplicationException{
         this.entityType = entityType;
     }
 
-    public EntityExistException(String message, String request, String entityType) {
-        super(new ErrorStatus(message, ENTITY_EXISTS_EXCEPTION_STATUS_CODE, LocalDateTime.now()));
-        this.request = request;
-        this.entityType = entityType;
+    public String getRequest() {
+        return request;
     }
 
-
+    public String getEntityType() {
+        return entityType;
+    }
 }

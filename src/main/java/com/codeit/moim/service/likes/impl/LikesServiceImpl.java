@@ -28,8 +28,8 @@ public class LikesServiceImpl implements LikesService {
         User user = getUser(userId);
         Meeting meeting = getMeeting(meetingId);
 
-        if(likesRepository.existsByUserAndMeeting(user, meeting)) throw new LikeExistException("Already liked this meeting");
-        if(meeting.getUser().getUserId() == userId) throw new MeetingAccessDeniedException("Cannot like my managing meeting");
+        if(likesRepository.existsByUserAndMeeting(user, meeting)) throw new LikeExistException("Like exists by user and meeting. UserId: " + userId + " MeetingId: "+ meetingId);
+        if(meeting.getUser().getUserId() == userId) throw new MeetingAccessDeniedException("This user is meeting manager. UserId: " + userId);
 
 
         Likes likes  = Likes.toEntity(user, meeting);
@@ -45,7 +45,7 @@ public class LikesServiceImpl implements LikesService {
         Meeting meeting = getMeeting(meetingId);
 
         Likes likes = likesRepository.findByUserAndMeeting(user, meeting)
-                .orElseThrow(()-> new LikeNotFoundException("Like does not exist"));
+                .orElseThrow(()-> new LikeNotFoundException("Like does not exist by user and meeting. UserId: "+ userId + " MeetingId: "+ meetingId));
         likesRepository.delete(likes);
         meeting.decreaseLikesCount();
         meetingRepository.save(meeting);
@@ -54,12 +54,12 @@ public class LikesServiceImpl implements LikesService {
 
     private Meeting getMeeting(int meetingId){
         Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
+                .orElseThrow(()-> new MeetingNotFoundException("MeetingId: "+ meetingId));
         return meeting;
     }
     private User getUser(int userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+                .orElseThrow(()-> new UserNotFoundException("UserId: "+ userId));
         return user;
     }
 }

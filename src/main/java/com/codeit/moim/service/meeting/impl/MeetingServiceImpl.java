@@ -49,7 +49,7 @@ public class MeetingServiceImpl implements MeetingService {
         Category category = categoryRepository.findByCategoryTitle(request.categoryTitle());
         //user
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+                .orElseThrow(()-> new UserNotFoundException("UserId: "+ userId));
 
         Meeting meeting = request.toEntity(uploadUrl, user, category);
         meeting.increaseMemberCount();
@@ -169,7 +169,7 @@ public class MeetingServiceImpl implements MeetingService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (authentication instanceof AnonymousAuthenticationToken) ? "no user" : authentication.getName();
 
-        if(!meeting.isPublic() && !meeting.getUser().getEmail().equals(email)) throw new MeetingAccessDeniedException(String.valueOf(meetingId));
+        if(!meeting.isPublic() && !meeting.getUser().getEmail().equals(email)) throw new MeetingAccessDeniedException("Only meeting manager can access isPublic = false meeting. UserId: " + meeting.getUser().getEmail());
 
         boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
         boolean isMember = memberRepository.existsByUserEmailAndMeetingAndStatus(email, meeting, MemberStatus.APPROVED);
@@ -186,7 +186,7 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     public ReadMeetingManagerResponse findMeetingManagerDetail(int meetingId) {
         Meeting meeting = meetingRepository.findMeetingWithManagerAndSkill(meetingId)
-                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
+                .orElseThrow(()-> new MeetingNotFoundException("MeetingId: "+ meetingId));
 
         User user = meeting.getUser();
         String phone = (user.getContact() != null && user.getContact().getPhone() != null )

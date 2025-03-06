@@ -2,7 +2,7 @@ package com.codeit.moim.service.storage.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.codeit.moim.common.exception.ApplicationException;
+import com.codeit.moim.common.exception.global.ApplicationException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.service.storage.StorageService;
 import lombok.RequiredArgsConstructor;
