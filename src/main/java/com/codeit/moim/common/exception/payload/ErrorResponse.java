@@ -54,5 +54,13 @@ public record ErrorResponse (
                 .build();
     }
 
+    public static ErrorResponse fromError(ErrorStatus errorStatus, StorageException exception){
+        return ErrorResponse.builder()
+                .errorMessage(errorStatus.message())
+                .request(exception.getRequest())
+                .entityType(exception.getEntityType())
+                .build();
+    }
+
 
 }

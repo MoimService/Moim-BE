@@ -170,7 +170,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
             memberRepository.delete(member);
             return new DeleteMemberResponse(userId);
         }else{
-            throw new AccessDeniedException("Member");
+            throw new MeetingAccessDeniedException("Meeting access denied. UserId: " + userId);
         }
     }
 
@@ -187,7 +187,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
             meetingRepository.save(meeting);
             return new DeleteMemberResponse(userId);
         }else{
-            throw new MeetingAccessDeniedException("Member status : " + member.getStatus());
+            throw new MeetingAccessDeniedException("Member status: " + member.getStatus());
         }
     }
 

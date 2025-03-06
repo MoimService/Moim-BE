@@ -62,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findByUserAndMeeting(user, meeting)
                 .orElseThrow(()-> new CommentNotFoundException("Comment not found by user and meeting. UserId: "+ userId+ " MeetingId: "+ meetingId));
 
-        if (comment.getUser().getUserId() != userId) throw new CommentAccessDeniedException("Only creator of this comment can update" + userId);
+        if (comment.getUser().getUserId() != userId) throw new CommentAccessDeniedException("Only creator of this comment can update. UserId: " + userId);
 
         comment.update(request.score(), request.content());
         commentRepository.save(comment);

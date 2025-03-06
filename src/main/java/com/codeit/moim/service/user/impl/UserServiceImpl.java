@@ -1,6 +1,7 @@
 package com.codeit.moim.service.user.impl;
 
 import com.codeit.moim.common.config.JwtTokenProvider;
+import com.codeit.moim.common.exception.auth.LoginException;
 import com.codeit.moim.common.exception.global.ApplicationException;
 import com.codeit.moim.common.exception.auth.PasswordInvlaidException;
 import com.codeit.moim.common.exception.auth.SignUpExistException;
@@ -34,7 +35,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final ContactRepository contactRepository;
 
-    private static final int BAD_REQUEST = 400;
 
     @Override
     public SignUpResponse signUpUser(SignUpRequest signUpRequest) {
@@ -77,11 +77,7 @@ public class UserServiceImpl implements UserService {
 
         }catch(Exception e) {
             e.printStackTrace();
-            throw new ApplicationException(new ErrorStatus(
-                    "Error while logging in",
-                    500,
-                    LocalDateTime.now()
-            ));
+            throw new LoginException("Error while logging in. Email: " + email);
         }
     }
 
