@@ -4,6 +4,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.codeit.moim.common.exception.global.ApplicationException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
+import com.codeit.moim.common.exception.storage.FileNameEmptyException;
+import com.codeit.moim.common.exception.storage.FileUploadException;
+import com.codeit.moim.common.exception.storage.UnsupportedMediaTypeException;
 import com.codeit.moim.service.storage.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,13 +25,10 @@ public class S3ServiceImpl implements StorageService {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
-    private static final int BAD_REQUEST = 400;
     @Override
     public String uploadFile(String fileEncodedBase64, String fileName) {
         if (Objects.isNull(fileName) || fileName.isEmpty()) {
-            throw new ApplicationException(
-                    ErrorStatus.toErrorStatus("File name is empty", BAD_REQUEST)
-            );
+            throw new FileNameEmptyException(400, "File name is empty");
         }
 
         try{
@@ -53,13 +53,9 @@ public class S3ServiceImpl implements StorageService {
             amazonS3.putObject(bucket, uploadFileName, input, metadata);
             return getPublicUrl(uploadFileName);
         }catch(IllegalArgumentException e){
-            throw new ApplicationException(
-                    ErrorStatus.toErrorStatus("File decoding fail", BAD_REQUEST)
-            );
+            throw new FileUploadException(400, "File decoding fail: "+ e.getMessage());
         }catch(Exception e){
-            throw new ApplicationException(
-                    ErrorStatus.toErrorStatus("Error while S3 upload: " + e.getMessage(), BAD_REQUEST)
-            );
+            throw new FileUploadException(500, "Error while S3 upload: " + e.getMessage());
         }
 
 
@@ -77,9 +73,7 @@ public class S3ServiceImpl implements StorageService {
             };
         }
 
-        throw new ApplicationException(
-                ErrorStatus.toErrorStatus("File name is invlaid", BAD_REQUEST)
-        );
+        throw new UnsupportedMediaTypeException(415, "File name is invlaid. Only PNG, JPG, JPEG are supported.");
     }
 
     private String getPublicUrl(String uploadFileName) {

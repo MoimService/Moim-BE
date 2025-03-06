@@ -37,7 +37,9 @@ public class GlobalRestControllerAdvice {
             errorResponse = ErrorResponse.fromError(errorStatus, exception);
         } else if (e instanceof JwtException exception) {
             errorResponse = ErrorResponse.fromError(errorStatus, exception);
-        } else {
+        } else if (e instanceof StorageException exception) {
+            errorResponse = ErrorResponse.fromError(errorStatus, exception);
+        }else {
             errorResponse = new ErrorResponse(errorStatus.message());
         }
 
