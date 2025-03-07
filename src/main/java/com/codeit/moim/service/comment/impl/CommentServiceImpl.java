@@ -46,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
         validateApprovedMember(user, meeting);
 
         //check if exists
-        if(commentRepository.existsByUserAndMeeting(user, meeting)) throw new CommentExistException("Comment already exists");
+        if(commentRepository.existsByUserAndMeeting(user, meeting)) throw new CommentExistException("Comment exists by user and meeting. UserId: " + userId + " MeetingId: "+ meetingId);
 
         Comment comment = request.toEntity(user, meeting);
         Comment savedComment = commentRepository.save(comment);
@@ -60,9 +60,9 @@ public class CommentServiceImpl implements CommentService {
         validateApprovedMember(user, meeting);
 
         Comment comment = commentRepository.findByUserAndMeeting(user, meeting)
-                .orElseThrow(()-> new CommentNotFoundException("Comment not found"));
+                .orElseThrow(()-> new CommentNotFoundException("Comment not found by user and meeting. UserId: "+ userId+ " MeetingId: "+ meetingId));
 
-        if (comment.getUser().getUserId() != userId) throw new CommentAccessDeniedException(String.valueOf(user.getUserId()));
+        if (comment.getUser().getUserId() != userId) throw new CommentAccessDeniedException("Only creator of this comment can update. UserId: " + userId);
 
         comment.update(request.score(), request.content());
         commentRepository.save(comment);
@@ -75,12 +75,12 @@ public class CommentServiceImpl implements CommentService {
         Meeting meeting = getMeeting(meetingId);
         if( !memberRepository.existsByUserAndMeeting(user, meeting)
                 || memberRepository.findByUserAndMeeting(user, meeting).getStatus() == MemberStatus.PENDING
-                || memberRepository.findByUserAndMeeting(user, meeting).getStatus() == MemberStatus.REJECTED)  throw new CommentAccessDeniedException(String.valueOf(user.getUserId()));
+                || memberRepository.findByUserAndMeeting(user, meeting).getStatus() == MemberStatus.REJECTED)  throw new CommentAccessDeniedException("Only APPROVED/QUIT/EXPEL user can delete. UserId: "+ userId);
 
         Comment comment = commentRepository.findByUserAndMeeting(user, meeting)
-                .orElseThrow(()-> new CommentNotFoundException("Comment not found"));
+                .orElseThrow(()-> new CommentNotFoundException("Comment not found by user and meeting. UserId: "+ userId+ " MeetingId: "+ meetingId));
 
-        if (comment.getUser().getUserId() != userId) throw new CommentAccessDeniedException(String.valueOf(user.getUserId()));
+        if (comment.getUser().getUserId() != userId) throw new CommentAccessDeniedException("Only creator of this comment can delete. UserId: " + userId);
 
         commentRepository.delete(comment);
         return DeleteCommentResponse.fromEntity(userId, meetingId);
@@ -148,17 +148,17 @@ public class CommentServiceImpl implements CommentService {
 
     private User getUser(int userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+                .orElseThrow(()-> new UserNotFoundException("UserId: "+ userId));
         return user;
     }
 
     private Meeting getMeeting(int meetingId){
         Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
+                .orElseThrow(()-> new MeetingNotFoundException("MeetingId: "+ meetingId));
         return meeting;
     }
 
     private void validateApprovedMember(User user, Meeting meeting){
-        if(!memberRepository.existsByUserAndMeetingAndStatus(user, meeting, MemberStatus.APPROVED)) throw new CommentAccessDeniedException(String.valueOf(user.getUserId()));
+        if(!memberRepository.existsByUserAndMeetingAndStatus(user, meeting, MemberStatus.APPROVED)) throw new CommentAccessDeniedException("Only approved member of this meeting can create comment. UserId: " + user.getUserId());
     }
 }

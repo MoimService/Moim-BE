@@ -1,9 +1,13 @@
 package com.codeit.moim.web.filter;
 
 import com.codeit.moim.common.config.JwtTokenProvider;
-import com.codeit.moim.common.exception.ApplicationException;
+import com.codeit.moim.common.exception.global.ApplicationException;
+import com.codeit.moim.common.exception.global.JwtException;
+import com.codeit.moim.common.exception.payload.ErrorResponse;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
+import com.codeit.moim.web.dto.response.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +28,6 @@ import java.util.Map;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
-//    private static final int UNAUTHORIZED = 401;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwtToken = jwtTokenProvider.resolveToken(request);
@@ -39,9 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Authentication auth = jwtTokenProvider.getAuthentication(jwtToken);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-        }catch(ApplicationException e){
+        }catch(JwtException e){
             e.printStackTrace();
-            processExceptionHandle(response, e.getErrorStatus());
+            processExceptionHandle(response, e, e.getErrorStatus());
             return;
         }
         filterChain.doFilter(request, response);
@@ -52,14 +55,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @param response HttpServletResponse
      * @param errorStatus catch에서 받은 ApplicationException의 ErrorStatus
      */
-    private void processExceptionHandle(HttpServletResponse response, ErrorStatus errorStatus) {
+    private void processExceptionHandle(HttpServletResponse response, JwtException e,  ErrorStatus errorStatus) {
         response.setStatus(errorStatus.statusCode());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
+        ErrorResponse errorResponse = ErrorResponse.fromError(errorStatus, e);
+
+        Response<ErrorResponse> finalResponse = new Response<>(errorStatus.statusCode(), errorResponse);
         try {
-            String json = new ObjectMapper().writeValueAsString(errorStatus);
+            //String json = new ObjectMapper().writeValueAsString(errorStatus);
+            //String json = new ObjectMapper().writeValueAsString(errorResponse);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+
+            String json = objectMapper.writeValueAsString(finalResponse);
             response.getWriter().write(json);
+
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }

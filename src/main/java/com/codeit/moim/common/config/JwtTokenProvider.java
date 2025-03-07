@@ -1,7 +1,7 @@
 package com.codeit.moim.common.config;
 
-import com.codeit.moim.common.exception.jwt.JwtException;
-import com.codeit.moim.common.exception.payload.ErrorStatus;
+import com.codeit.moim.common.exception.global.JwtException;
+import com.codeit.moim.common.exception.jwt.JwtNotValidException;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,6 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private static final int UNAUTHORIZED = 401;
     private static final long TOKEN_VALID_MILLI_SECONDS =1000L*60*60*24; //24h
 
 
@@ -62,15 +61,15 @@ public class JwtTokenProvider {
             Date now = new Date();
             return claims.getExpiration().after(now);
         } catch (ExpiredJwtException e) {
-            throw new JwtException(ErrorStatus.toErrorStatus("JWT token expired", UNAUTHORIZED));
+            throw new JwtNotValidException("JWT token expired");
         } catch (SignatureException e) {
-            throw new JwtException(ErrorStatus.toErrorStatus("JWT token secret key is not valid.", UNAUTHORIZED));
+            throw new JwtNotValidException("JWT token secret key is not valid.");
         } catch (MalformedJwtException e) {
-            throw new JwtException(ErrorStatus.toErrorStatus("Malformed JWT token format", UNAUTHORIZED));
+            throw new JwtNotValidException("Malformed JWT token format");
         } catch (UnsupportedJwtException e) {
-            throw new JwtException(ErrorStatus.toErrorStatus("This JWT format is not supported", UNAUTHORIZED));
+            throw new JwtNotValidException("This JWT format is not supported");
         } catch (Exception e) {
-            throw new JwtException(ErrorStatus.toErrorStatus("JWT token is not valid", UNAUTHORIZED));
+            throw new JwtNotValidException("JWT token is not valid");
         }
     }
 

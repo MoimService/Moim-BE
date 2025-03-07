@@ -111,7 +111,7 @@ public class MyPageServiceImpl implements MyPageService {
         User user = getUser(userId);
         String dbPassword = user.getPassword();
         String currentPasswordRequest = request.currentPassword();
-        if( ! passwordEncoder.matches(currentPasswordRequest, dbPassword)) throw new PasswordInvlaidException(ErrorStatus.toErrorStatus("Current password does not match",  BAD_REQUEST));
+        if( ! passwordEncoder.matches(currentPasswordRequest, dbPassword)) throw new PasswordInvlaidException("Current password does not match");
 
         userServiceImpl.passwordMatchValidation(request.newPassword(), request.passwordCheck());
         String encodedPassword= passwordEncoder.encode(request.newPassword());
@@ -163,7 +163,7 @@ public class MyPageServiceImpl implements MyPageService {
 
     private User getUser(int userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+                .orElseThrow(()-> new UserNotFoundException("UserId: "+ userId));
         return user;
     }
 }

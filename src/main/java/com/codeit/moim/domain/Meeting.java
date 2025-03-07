@@ -99,11 +99,11 @@ public class Meeting {
 
     public void increaseMemberCount() {
         if(this.memberCount < this.maxMember) this.memberCount++;
-        else throw new MemberCountException("Meeting member count is full", String.valueOf(meetingId), "member");
+        else throw new MemberCountException("Meeting member count is full. Meeting max member: " + this.maxMember);
     }
 
     public void decreaseMemberCount() {
-        if(this.memberCount == 0 ) throw new MemberCountException("Meeting member count is 0", String.valueOf(meetingId), "member");
+        if(this.memberCount == 0 ) throw new MemberCountException("Meeting member count: 0");
         else this.memberCount--;
     }
 
@@ -120,7 +120,7 @@ public class Meeting {
     }
 
     public void decreaseLikesCount() {
-        if(this.likesCount == 0 ) throw new LikesCountException("Likes count is 0", String.valueOf(meetingId), "likes");
+        if(this.likesCount == 0 ) throw new LikesCountException("Likes count: 0");
         else this.likesCount--;
     }
 
