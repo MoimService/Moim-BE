@@ -3,7 +3,6 @@ package com.codeit.moim.service.token.impl;
 import com.codeit.moim.common.config.JwtTokenProvider;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.jwt.TokenRefreshException;
-import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.RefreshToken;
 import com.codeit.moim.domain.User;
 import com.codeit.moim.repository.RefreshTokenRepository;
@@ -26,7 +25,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private static final long REFRESH_TOKEN_VALID_MILLI_SECONDS =1000L*60*60*12; //12h
-    private static final int FORBIDDEN = 403;
 
 
     public Optional<RefreshToken> findByToken(String token) {
@@ -38,7 +36,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         String requestRefreshToken = request.refreshToken();
         RefreshToken verifiedToken = findByToken(requestRefreshToken)
                 .map(token -> verifyExpiration(token))
-                .orElseThrow(()-> new TokenRefreshException(ErrorStatus.toErrorStatus("Refresh token is not in database!", FORBIDDEN)));
+                .orElseThrow(()-> new TokenRefreshException("Refresh token is not in database."));
         String accessToken = jwtTokenProvider.createToken(verifiedToken.getUser().getEmail());
         return new JwtResponse(accessToken, requestRefreshToken);
     }
@@ -67,7 +65,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token){
         if(token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(ErrorStatus.toErrorStatus("Refresh token expired. Please make a new login request", FORBIDDEN));
+            throw new TokenRefreshException("Refresh token expired. Please make a new login request. Refresh token expired at: " + token.getExpiryDate());
         }
         return token;
     }

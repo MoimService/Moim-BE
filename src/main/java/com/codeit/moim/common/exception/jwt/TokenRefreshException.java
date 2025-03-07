@@ -1,13 +1,11 @@
 package com.codeit.moim.common.exception.jwt;
 
-import com.codeit.moim.common.exception.ApplicationException;
-import com.codeit.moim.common.exception.payload.ErrorStatus;
+import com.codeit.moim.common.exception.global.JwtException;
 
-public class TokenRefreshException extends ApplicationException {
-    /**
-     * @param errorStatus 상태 코드, 메세지, 발생시간을 저장한 객체
-     */
-    public TokenRefreshException(ErrorStatus errorStatus) {
-        super(errorStatus);
+public class TokenRefreshException extends JwtException {
+    private static final String ENTITY_TYPE = "JWT";
+
+    public TokenRefreshException(String request) {
+        super(request, ENTITY_TYPE);
     }
 }
