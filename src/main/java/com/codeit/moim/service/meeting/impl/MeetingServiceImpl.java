@@ -1,16 +1,13 @@
 package com.codeit.moim.service.meeting.impl;
 
-import com.codeit.moim.common.exception.ApplicationException;
-import com.codeit.moim.common.exception.auth.UserContactNotFoundException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
+import com.codeit.moim.common.exception.meeting.MeetingAccessDeniedException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
-import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.*;
 import com.codeit.moim.domain.enums.MemberStatus;
 import com.codeit.moim.domain.enums.SortField;
 import com.codeit.moim.repository.*;
 import com.codeit.moim.service.meeting.MeetingService;
-import com.codeit.moim.service.member.impl.MemberServiceImpl;
 import com.codeit.moim.service.storage.StorageService;
 import com.codeit.moim.web.dto.request.meeting.CreateMeetingRequest;
 import com.codeit.moim.web.dto.request.meeting.SearchMeetingRequest;
@@ -24,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,7 +49,7 @@ public class MeetingServiceImpl implements MeetingService {
         Category category = categoryRepository.findByCategoryTitle(request.categoryTitle());
         //user
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+                .orElseThrow(()-> new UserNotFoundException("UserId: "+ userId));
 
         Meeting meeting = request.toEntity(uploadUrl, user, category);
         meeting.increaseMemberCount();
@@ -114,7 +110,7 @@ public class MeetingServiceImpl implements MeetingService {
 
         List<Meeting> meetingList = meetingRepository.findPublicMeetingsByCategory(categoryTitle, true);
 
-        List<String> skillList = Arrays.asList(request.skillArray());
+        List<String> skillList = request.skillArray();
         if( request.keyword() != null && !skillList.isEmpty() ){
             meetingList = searchKeyword(request.keyword(), meetingList);
             meetingList = searchSkill(skillList, meetingList);
@@ -142,9 +138,23 @@ public class MeetingServiceImpl implements MeetingService {
                     .collect(Collectors.toList());
         }
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = (authentication instanceof AnonymousAuthenticationToken) ? "no user" : authentication.getName();
         List<SearchMeetingResponse> meetingResponses = slicedList.stream()
-                .map(meeting -> SearchMeetingResponse.fromEntity(meeting, meeting.getUser()))
+                .map(meeting -> {
+                    List<String> meetingSkillList = meetingSkillRepository.findSkillByMeeting(meeting)
+                            .stream()
+                            .map(meetingSkill -> meetingSkill.getSkill().getSkillTitle())
+                            .collect(Collectors.toList());
+
+                    String[] meetingSkillArray = meetingSkillList.stream().toArray(String[]::new);
+                    boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
+                    return SearchMeetingResponse.fromEntity(meeting, meetingSkillArray, meeting.getUser(), isLike);
+
+                })
                 .collect(Collectors.toList());
+
+
 
         Integer nextCursor = (meetingResponses.size() == pageSize)
                 ? meetingResponses.get(meetingResponses.size() -1).meetingId()
@@ -154,21 +164,29 @@ public class MeetingServiceImpl implements MeetingService {
 
     @Override
     public ReadMeetingDetailResponse findMeetingDetail(int meetingId) {
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
+        Meeting meeting = meetingRepository.findByIdWithUser(meetingId);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (authentication instanceof AnonymousAuthenticationToken) ? "no user" : authentication.getName();
 
+        if(!meeting.isPublic() && !meeting.getUser().getEmail().equals(email)) throw new MeetingAccessDeniedException("Only meeting manager can access isPublic = false meeting. UserId: " + meeting.getUser().getEmail());
+
         boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
         boolean isMember = memberRepository.existsByUserEmailAndMeetingAndStatus(email, meeting, MemberStatus.APPROVED);
-        return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember);
+
+        List<String> meetingSkillList = meetingSkillRepository.findSkillByMeeting(meeting)
+                .stream()
+                .map(meetingSkill -> meetingSkill.getSkill().getSkillTitle())
+                .collect(Collectors.toList());
+
+        String[] meetingSkillArray = meetingSkillList.stream().toArray(String[]::new);
+        return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember, meetingSkillArray);
     }
 
     @Override
     public ReadMeetingManagerResponse findMeetingManagerDetail(int meetingId) {
         Meeting meeting = meetingRepository.findMeetingWithManagerAndSkill(meetingId)
-                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
+                .orElseThrow(()-> new MeetingNotFoundException("MeetingId: "+ meetingId));
 
         User user = meeting.getUser();
         String phone = (user.getContact() != null && user.getContact().getPhone() != null )
@@ -220,14 +238,5 @@ public class MeetingServiceImpl implements MeetingService {
         return meetingList;
     }
 
-    public List<SearchMeetingResponse> buildSearchResponse(List<Meeting> finalMeetingList){
-        List<SearchMeetingResponse> meetingResponseList = new ArrayList<>();
-        for (Meeting meeting : finalMeetingList) {
-            User user = meetingRepository.findUserByMeeting(meeting);
-            SearchMeetingResponse response = SearchMeetingResponse.fromEntity(meeting, user);
-            meetingResponseList.add(response);
-        }
-        return meetingResponseList;
-    }
 
 }

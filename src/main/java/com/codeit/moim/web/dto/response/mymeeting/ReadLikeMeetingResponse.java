@@ -12,7 +12,8 @@ public record ReadLikeMeetingResponse(
         String thumbnail,
         String location,
         int memberCount,
-        int maxMember
+        int maxMember,
+        int likesCount
 ) {
     public static ReadLikeMeetingResponse fromEntity(Meeting meeting){
         return ReadLikeMeetingResponse.builder()
@@ -22,6 +23,7 @@ public record ReadLikeMeetingResponse(
                 .location(meeting.getLocation())
                 .memberCount(meeting.getMemberCount())
                 .maxMember(meeting.getMaxMember())
+                .likesCount(meeting.getLikesCount())
                 .build();
     }
 }

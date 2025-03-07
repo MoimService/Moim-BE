@@ -87,12 +87,12 @@ public class User {
 
 
     public void updateUser(UpdateUserRequest request){
-        this.name = (request.name() != null ) ? request.name() : this.name;
-        this.intro = (request.intro() != null ) ? request.intro()  : this.intro;
-        this.position = (request.position() != null ) ? request.position() : this.position;
-        this.gender = (request.gender() != null ) ? request.gender() : this.gender;
-        this.age = (request.age() != null )  ?request.age() : this.age;
-        this.location = (request.location() != null ) ? request.location() : this.location;
+        this.name = (request.name() != null && !request.name().isEmpty()) ? request.name() : this.name;
+        this.intro = (request.intro() != null && !request.intro().isEmpty()) ? request.intro()  : this.intro;
+        this.position = (request.position() != null && !request.position().isEmpty()) ? request.position() : this.position;
+        this.gender = (request.gender() != null && !request.gender().isEmpty()) ? request.gender() : this.gender;
+        this.age = (request.age() != null && !request.age().isEmpty())  ?request.age() : this.age;
+        this.location = (request.location() != null && !request.location().isEmpty()) ? request.location() : this.location;
     }
 
     public void updatePassword(String newPassword){

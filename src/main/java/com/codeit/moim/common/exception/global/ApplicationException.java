@@ -1,4 +1,4 @@
-package com.codeit.moim.common.exception;
+package com.codeit.moim.common.exception.global;
 
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import lombok.Getter;

@@ -15,13 +15,6 @@ import java.util.Optional;
 
 @Repository
 public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
-    @Query(
-            "SELECT m.user FROM Meeting m " +
-                    "WHERE m = :meeting "
-    )
-
-    User findUserByMeeting(@Param("meeting") Meeting meeting);
-
 
 
     @Query(
@@ -43,9 +36,15 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
     )
     Optional<Meeting> findMeetingWithManagerAndSkill(@Param("meetingId") int meetingId);
 
-    List<Meeting> findByUser(User user);
 
     Slice<Meeting> findByUserOrderByMeetingIdDesc(User user, Pageable pageable);
 
     Slice<Meeting> findByUserAndMeetingIdLessThanOrderByMeetingIdDesc(User user, Integer integer, Pageable pageable);
+
+    @Query(
+            "SELECT m FROM Meeting m " +
+                    "JOIN FETCH m.user u " +
+                    "WHERE m.meetingId = :meetingId "
+    )
+    Meeting findByIdWithUser(int meetingId);
 }

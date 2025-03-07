@@ -15,6 +15,8 @@ public class CorsConfig {
         configuration.addAllowedOrigin("https://localhost:3000");
         configuration.addAllowedOrigin("https://deving.shop");
         configuration.addAllowedOrigin("https://moim-fe-1kc6.vercel.app");
+        configuration.addAllowedOrigin("https://deving-together.vercel.app");
+        configuration.addAllowedOrigin("https://deving-together.netlify.app");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);

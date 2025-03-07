@@ -15,14 +15,17 @@ public record ReadMeetingDetailResponse(
         String location,
         int memberCount,
         int maxMember,
+        int likesCount,
         String content,
 
         LocalDate startdate,
         Boolean requireApproval,
+        Boolean isPublic,
         Boolean isLike,
-        Boolean isMember
+        Boolean isMember,
+        String[] meetingSkillArray
 ){
-    public static ReadMeetingDetailResponse fromEntity(Meeting meeting, boolean isLike, boolean isMember) {
+    public static ReadMeetingDetailResponse fromEntity(Meeting meeting, boolean isLike, boolean isMember, String[] meetingSkillArray) {
         return ReadMeetingDetailResponse.builder()
             .meetingId(meeting.getMeetingId())
             .title(meeting.getMeetingTitle())
@@ -30,11 +33,14 @@ public record ReadMeetingDetailResponse(
             .location(meeting.getLocation())
             .memberCount(meeting.getMemberCount())
             .maxMember(meeting.getMaxMember())
+                .likesCount(meeting.getLikesCount())
             .content(meeting.getContent())
             .startdate(meeting.getStartDate())
                 .requireApproval(meeting.isRequireApproval())
+                .isPublic(meeting.isPublic())
             .isLike(isLike)
             .isMember(isMember)
+                .meetingSkillArray(meetingSkillArray)
         .build();
     }
 }

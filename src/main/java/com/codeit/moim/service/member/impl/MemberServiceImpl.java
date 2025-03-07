@@ -1,7 +1,7 @@
 package com.codeit.moim.service.member.impl;
 
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
-import com.codeit.moim.common.exception.member.AlreadyMemberException;
+import com.codeit.moim.common.exception.member.MemberExistException;
 import com.codeit.moim.common.exception.meeting.MeetingAccessDeniedException;
 import com.codeit.moim.common.exception.meeting.MeetingNotFoundException;
 import com.codeit.moim.common.exception.member.MemberCountException;
@@ -35,17 +35,17 @@ public class MemberServiceImpl implements MemberService {
 
         //비공개 인지 아닌지 확인
         if(!meeting.isPublic()){
-            throw new MeetingAccessDeniedException(String.valueOf(meetingId));
+            throw new MeetingAccessDeniedException("This meeting is isPublic=false. MeetingId: " + meetingId);
         }
         //정원 초과인지 아닌지 확인
         if(meeting.getMaxMember() <= meeting.getMemberCount()){
-            throw new MemberCountException("Meeting member count is full", String.valueOf(meetingId), "member");
+            throw new MemberCountException("Meeting member count is full. Meeting max member: " + meeting.getMaxMember());
         }
 
         //이미 신청한 모임인지 아닌지
         if(memberRepository.existsByUserAndMeeting(user, meeting)){
             Member member = memberRepository.findByUserAndMeeting(user, meeting);
-            throw new AlreadyMemberException(ErrorStatus.toErrorStatus("User is already member of meeting : " + member.getStatus(), BAD_REQUEST));
+            throw new MemberExistException("MemberId: " + member.getMemberId());
         }
 
         //주최자의 승인이 필요
@@ -67,12 +67,12 @@ public class MemberServiceImpl implements MemberService {
 
     private Meeting getMeeting(int meetingId){
         Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(()-> new MeetingNotFoundException(String.valueOf(meetingId)));
+                .orElseThrow(()-> new MeetingNotFoundException("MeetingId: "+ meetingId));
         return meeting;
     }
     private User getUser(int userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException(String.valueOf(userId)));
+                .orElseThrow(()-> new UserNotFoundException("UserId: "+ userId));
         return user;
     }
 }

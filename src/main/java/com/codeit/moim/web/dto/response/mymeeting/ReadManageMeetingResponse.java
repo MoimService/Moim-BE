@@ -13,6 +13,8 @@ public record ReadManageMeetingResponse(
         String location,
         int memberCount,
         int maxMember,
+        int likesCount,
+        boolean isPublic,
         List<ReadManageMeetingMemberResponse> memberList
 
 ) {
@@ -24,6 +26,8 @@ public record ReadManageMeetingResponse(
                 .location(meeting.getLocation())
                 .memberCount(meeting.getMemberCount())
                 .maxMember(meeting.getMaxMember())
+                .likesCount(meeting.getLikesCount())
+                .isPublic(meeting.isPublic())
                 .memberList(memberList)
                 .build();
     }

@@ -1,14 +1,15 @@
-package com.codeit.moim.common.exception;
+package com.codeit.moim.common.exception.global;
 
+import com.codeit.moim.common.exception.global.ApplicationException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
-public class EntityNotFoundException extends ApplicationException{
+public class EntityNotFoundException extends ApplicationException {
 
-    private static final String ENTITY_NOT_FOUND_EXCEPTION_MESSAGE = "해당하는 엔티티를 찾을 수 없습니다.";
+    private static final String ENTITY_NOT_FOUND_EXCEPTION_MESSAGE = "ENTITY NOT FOUND";
     private static final int ENTITY_NOT_FOUND_EXCEPTION_STATUS_CODE = 404;
 
     private final String request;

@@ -11,6 +11,7 @@ public record ReadTopMeetingResponse(
         String location,
         int memberCount,
         int maxMember,
+        int likesCount,
         Boolean isLike
 
 ) {
@@ -22,6 +23,7 @@ public record ReadTopMeetingResponse(
                 .location(meeting.getLocation())
                 .maxMember(meeting.getMaxMember())
                 .memberCount(meeting.getMemberCount())
+                .likesCount(meeting.getLikesCount())
                 .isLike(isLike)
                 .build();
     }

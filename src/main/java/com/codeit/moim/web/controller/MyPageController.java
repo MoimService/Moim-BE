@@ -2,14 +2,18 @@ package com.codeit.moim.web.controller;
 
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.mypage.MyPageService;
+import com.codeit.moim.web.dto.request.comment.ReadMyCommentRequest;
 import com.codeit.moim.web.dto.request.mypage.*;
 import com.codeit.moim.web.dto.response.Response;
+import com.codeit.moim.web.dto.response.comment.ReadMyCommentResponse;
 import com.codeit.moim.web.dto.response.mypage.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.sql.Update;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,7 +73,7 @@ public class MyPageController {
 
     @Operation(
             summary = "Create user skill",
-            description = "Create user contact with skill array request. Existing skills will be deleted and be created again."
+            description = "Create user skill with skill array request. Existing skills will be deleted and be created again."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Create success")
@@ -115,4 +119,34 @@ public class MyPageController {
         return Response.ok(myPageService.updateUserPassword(userId, request));
     }
 
+    @Operation(
+            summary = "Get my comments",
+            description = "Get my comment, infinite scroll applied with min size 3"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get success")
+    })
+    @GetMapping("/comments")
+    public Response<Slice<ReadMyCommentResponse>> readMyComemnts(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @ModelAttribute ReadMyCommentRequest request
+    ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(myPageService.getMyComments(userId, request));
+    }
+
+    @Operation(
+            summary = "Get my profile",
+            description = "Get user info, user skills and contact"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get success")
+    })
+    @GetMapping("/profile")
+    public Response<ReadUserResponse> readUserInfo(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(myPageService.readUser(userId));
+    }
 }
