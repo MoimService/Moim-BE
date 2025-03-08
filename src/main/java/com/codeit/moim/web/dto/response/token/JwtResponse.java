@@ -4,10 +4,10 @@ import lombok.Builder;
 
 public record JwtResponse (
         String accessToken,
-        String responseToken
+        String refreshToken
 ){
-    public JwtResponse(String accessToken, String responseToken) {
+    public JwtResponse(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
-        this.responseToken = responseToken;
+        this.refreshToken = refreshToken;
     }
 }

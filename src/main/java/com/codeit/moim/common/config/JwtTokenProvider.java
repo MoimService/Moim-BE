@@ -1,9 +1,9 @@
 package com.codeit.moim.common.config;
 
-import com.codeit.moim.common.exception.global.JwtException;
 import com.codeit.moim.common.exception.jwt.JwtNotValidException;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private static final long TOKEN_VALID_MILLI_SECONDS =1000L*60*60*24; //24h
+    private static final long TOKEN_VALID_MILLI_SECONDS = 1000L*60*1; //1min //1000L*60*60*24; //24h
 
 
     @Value("${jwtpassword.source}")
@@ -46,9 +46,29 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public Cookie createCookie(String name, String value, int maxAge){
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(maxAge);
+        return cookie;
+    }
+
 
     public String resolveToken(HttpServletRequest request){
-        String token = request.getHeader("token");
+//        String token = request.getHeader("token");
+//        return token;
+
+        String token = null;
+
+        if(request.getCookies() != null){
+            for(Cookie cookie : request.getCookies()){
+                if(cookie.getName().equals("access_token")) {
+                    token = cookie.getValue();
+                }
+            }
+        }
         return token;
     }
 

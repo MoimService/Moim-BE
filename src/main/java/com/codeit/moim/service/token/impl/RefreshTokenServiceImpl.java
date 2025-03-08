@@ -8,8 +8,6 @@ import com.codeit.moim.domain.User;
 import com.codeit.moim.repository.RefreshTokenRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.token.RefreshTokenService;
-import com.codeit.moim.web.dto.request.token.TokenRefreshRequest;
-import com.codeit.moim.web.dto.response.token.JwtResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +22,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private static final long REFRESH_TOKEN_VALID_MILLI_SECONDS =1000L*60*60*12; //12h
+    private static final long REFRESH_TOKEN_VALID_MILLI_SECONDS = 1000L*60*5; //5mins //1000L*60*60*24; //24h
 
 
     public Optional<RefreshToken> findByToken(String token) {
@@ -32,14 +30,28 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public JwtResponse refreshToken(TokenRefreshRequest request) {
-        String requestRefreshToken = request.refreshToken();
-        RefreshToken verifiedToken = findByToken(requestRefreshToken)
+    public String refreshToken(String refreshToken) {
+        RefreshToken verifiedToken = findByToken(refreshToken)
                 .map(token -> verifyExpiration(token))
                 .orElseThrow(()-> new TokenRefreshException("Refresh token is not in database."));
         String accessToken = jwtTokenProvider.createToken(verifiedToken.getUser().getEmail());
-        return new JwtResponse(accessToken, requestRefreshToken);
+
+        return accessToken;
     }
+
+//    @Override
+//    public String refreshToken(TokenRefreshRequest request) {
+//        String requestRefreshToken = request.refreshToken();
+//        RefreshToken verifiedToken = findByToken(requestRefreshToken)
+//                .map(token -> verifyExpiration(token))
+//                .orElseThrow(()-> new TokenRefreshException("Refresh token is not in database."));
+//        String accessToken = jwtTokenProvider.createToken(verifiedToken.getUser().getEmail());
+//
+//
+//        return accessToken;
+//    }
+
+
 
 
     @Transactional
@@ -69,5 +81,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         }
         return token;
     }
+
+
 
 }

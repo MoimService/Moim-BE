@@ -1,7 +1,6 @@
 package com.codeit.moim.web.filter;
 
 import com.codeit.moim.common.config.JwtTokenProvider;
-import com.codeit.moim.common.exception.global.ApplicationException;
 import com.codeit.moim.common.exception.global.JwtException;
 import com.codeit.moim.common.exception.payload.ErrorResponse;
 import com.codeit.moim.common.exception.payload.ErrorStatus;

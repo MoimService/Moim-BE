@@ -3,6 +3,7 @@ package com.codeit.moim.service.token;
 import com.codeit.moim.domain.RefreshToken;
 import com.codeit.moim.web.dto.request.token.TokenRefreshRequest;
 import com.codeit.moim.web.dto.response.token.JwtResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Optional;
 
@@ -13,6 +14,7 @@ public interface RefreshTokenService {
 
     Optional<RefreshToken> findByToken(String requestRefreshToken);
 
-    JwtResponse refreshToken(TokenRefreshRequest request);
+    //String refreshToken(TokenRefreshRequest request);
+    String refreshToken(String refreshToken);
 
 }
