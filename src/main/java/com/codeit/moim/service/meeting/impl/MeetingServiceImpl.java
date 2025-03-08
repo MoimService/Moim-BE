@@ -170,10 +170,31 @@ public class MeetingServiceImpl implements MeetingService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (authentication instanceof AnonymousAuthenticationToken) ? "no user" : authentication.getName();
 
-        if(!meeting.isPublic() && !meeting.getUser().getEmail().equals(email)) throw new MeetingAccessDeniedException("Only meeting manager can access isPublic = false meeting. UserId: " + meeting.getUser().getEmail());
 
-        boolean isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
-        boolean isMember = memberRepository.existsByUserEmailAndMeetingAndStatus(email, meeting, MemberStatus.APPROVED);
+
+        boolean isLike;
+        boolean isMember;
+        String memberStatus;
+
+        if(!email.equals("no user")){
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(()-> new UserNotFoundException("user email: " + email));
+
+            if(!meeting.isPublic() && !meeting.getUser().getEmail().equals(email)) throw new MeetingAccessDeniedException("Only meeting manager can access isPublic = false meeting. UserId: " + meeting.getUser().getEmail());
+
+            isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
+            isMember = memberRepository.existsByUserEmailAndMeetingAndStatus(email, meeting, MemberStatus.APPROVED);
+            if(memberRepository.existsByUserAndMeeting(user, meeting)){
+                memberStatus = memberRepository.findByUserAndMeeting(user, meeting).getStatus().toString();
+            }else{
+                memberStatus = "new user";
+            }
+
+        }else{
+            isLike = false;
+            isMember = false;
+            memberStatus = "false";
+        }
 
         List<String> meetingSkillList = meetingSkillRepository.findSkillByMeeting(meeting)
                 .stream()
@@ -181,7 +202,7 @@ public class MeetingServiceImpl implements MeetingService {
                 .collect(Collectors.toList());
 
         String[] meetingSkillArray = meetingSkillList.stream().toArray(String[]::new);
-        return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember, meetingSkillArray);
+        return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember, memberStatus, meetingSkillArray);
     }
 
     @Override
