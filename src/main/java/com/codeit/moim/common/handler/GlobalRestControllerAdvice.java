@@ -22,7 +22,7 @@ public class GlobalRestControllerAdvice {
      * @return 해당 HTTP 상태 코드와 오류 정보를 반환
      */
     @ExceptionHandler(ApplicationException.class)
-    public Response<ErrorResponse> handleApplicationException(ApplicationException e) {
+    public ResponseEntity<Response<ErrorResponse>> handleApplicationException(ApplicationException e) {
         ErrorStatus errorStatus = e.getErrorStatus();
 
 
@@ -43,7 +43,9 @@ public class GlobalRestControllerAdvice {
             errorResponse = new ErrorResponse(errorStatus.message());
         }
 
-        return new Response<>(errorStatus.statusCode(), errorResponse);
+        return ResponseEntity
+                .status(errorStatus.statusCode())
+                .body(new Response<>(errorStatus.statusCode(), errorResponse));
     }
 
     @ExceptionHandler(ServletException.class)

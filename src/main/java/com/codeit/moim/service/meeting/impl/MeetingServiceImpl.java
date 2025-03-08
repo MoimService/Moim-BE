@@ -165,6 +165,7 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     public ReadMeetingDetailResponse findMeetingDetail(int meetingId) {
         Meeting meeting = meetingRepository.findByIdWithUser(meetingId);
+        if( meeting == null ) throw new MeetingNotFoundException("MeetingId: " + meetingId);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (authentication instanceof AnonymousAuthenticationToken) ? "no user" : authentication.getName();
