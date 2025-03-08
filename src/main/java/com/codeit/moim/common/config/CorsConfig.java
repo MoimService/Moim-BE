@@ -21,6 +21,8 @@ public class CorsConfig {
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
         configuration.addExposedHeader("token");
+        configuration.addExposedHeader("Access-Token-Cookie");
+        configuration.addExposedHeader("Refresh-Token-Cookie");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

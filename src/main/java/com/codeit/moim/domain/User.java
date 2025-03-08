@@ -49,6 +49,9 @@ public class User {
     @OneToOne(mappedBy= "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Contact contact;
 
+    @OneToOne(mappedBy= "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private RefreshToken refreshToken;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserSkill> userSkillList = new ArrayList<>();
 

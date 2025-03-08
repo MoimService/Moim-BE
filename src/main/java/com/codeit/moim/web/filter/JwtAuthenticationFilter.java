@@ -1,7 +1,6 @@
 package com.codeit.moim.web.filter;
 
 import com.codeit.moim.common.config.JwtTokenProvider;
-import com.codeit.moim.common.exception.global.ApplicationException;
 import com.codeit.moim.common.exception.global.JwtException;
 import com.codeit.moim.common.exception.payload.ErrorResponse;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
@@ -99,6 +98,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String[] excludedPaths = {
                 "/api/v1/auths/signup/**",
                 "/api/v1/auths/login",
+                "/api/v1/auths/refresh",
                 "/v3/**",
                 "/swagger-ui/**"
         };
