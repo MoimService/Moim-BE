@@ -2,6 +2,7 @@ package com.codeit.moim.web.dto.response.meeting;
 
 import com.codeit.moim.domain.Meeting;
 import com.codeit.moim.domain.Skill;
+import com.codeit.moim.domain.enums.MemberStatus;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -23,9 +24,10 @@ public record ReadMeetingDetailResponse(
         Boolean isPublic,
         Boolean isLike,
         Boolean isMember,
+        String memberStatus,
         String[] meetingSkillArray
 ){
-    public static ReadMeetingDetailResponse fromEntity(Meeting meeting, boolean isLike, boolean isMember, String[] meetingSkillArray) {
+    public static ReadMeetingDetailResponse fromEntity(Meeting meeting, boolean isLike, boolean isMember, String memberStatus,String[] meetingSkillArray) {
         return ReadMeetingDetailResponse.builder()
             .meetingId(meeting.getMeetingId())
             .title(meeting.getMeetingTitle())
@@ -40,6 +42,7 @@ public record ReadMeetingDetailResponse(
                 .isPublic(meeting.isPublic())
             .isLike(isLike)
             .isMember(isMember)
+                .memberStatus(memberStatus)
                 .meetingSkillArray(meetingSkillArray)
         .build();
     }
