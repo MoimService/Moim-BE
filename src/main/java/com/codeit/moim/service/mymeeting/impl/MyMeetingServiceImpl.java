@@ -244,6 +244,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     @Transactional
     public UpdateMeetingResponse updateMeetingInfo(int userId, int meetingId, UpdateMeetingRequest request) {
         Meeting meeting = meetingRepository.findByIdWithUser(meetingId);
+        if( meeting == null ) throw new MeetingNotFoundException("MeetingId: " + meetingId);
         if(!validateMeetingManager(userId, meeting)) throw new MeetingAccessDeniedException("Only meeting manager can update meeting detail. UserId: "+ userId);
 
         Category category = null;
