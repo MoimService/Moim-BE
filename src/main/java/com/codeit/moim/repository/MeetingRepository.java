@@ -44,6 +44,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
     @Query(
             "SELECT m FROM Meeting m " +
                     "JOIN FETCH m.user u " +
+                    "JOIN FETCH m.category c " +
                     "WHERE m.meetingId = :meetingId "
     )
     Meeting findByIdWithUser(int meetingId);
