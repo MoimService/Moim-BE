@@ -1,16 +1,13 @@
 package com.codeit.moim.web.dto.response.meeting;
 
 import com.codeit.moim.domain.Meeting;
-import com.codeit.moim.domain.Skill;
-import com.codeit.moim.domain.enums.MemberStatus;
 import lombok.Builder;
-
 import java.time.LocalDate;
-import java.util.List;
 
 @Builder
 public record ReadMeetingDetailResponse(
         int meetingId,
+        String categoryTitle,
         String title,
         String thumbnail,
         String location,
@@ -30,6 +27,7 @@ public record ReadMeetingDetailResponse(
     public static ReadMeetingDetailResponse fromEntity(Meeting meeting, boolean isLike, boolean isMember, String memberStatus,String[] meetingSkillArray) {
         return ReadMeetingDetailResponse.builder()
             .meetingId(meeting.getMeetingId())
+                .categoryTitle(meeting.getCategory().getCategoryTitle())
             .title(meeting.getMeetingTitle())
             .thumbnail(meeting.getThumbnail())
             .location(meeting.getLocation())
