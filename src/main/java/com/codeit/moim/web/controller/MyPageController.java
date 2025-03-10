@@ -153,18 +153,18 @@ public class MyPageController {
     }
 
     @Operation(
-            summary = "Get meetings to create comments",
+            summary = "Get meetings where user can create comments",
             description = "Get my meetings to create comments, infinite scroll applied with min size 3"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Get success")
     })
     @GetMapping("/meeting-comment")
-    public Response<Slice<ReadMyMeetingCommentResponse>> readMyMeetingForComment(
+    public Response<Slice<ReadMyMeetingCommentResponse>> readMyCommentableMeeting(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @ModelAttribute ReadMyMeetingCommentRequest request
     ) {
         int userId = userDetails.getUserId();
-        return Response.ok(myPageService.getMyMeetingForComment(userId, request));
+        return Response.ok(myPageService.getMyCommentableMeeting(userId, request));
     }
 }

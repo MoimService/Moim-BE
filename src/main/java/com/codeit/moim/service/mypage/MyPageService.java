@@ -26,5 +26,5 @@ public interface MyPageService {
 
     ReadUserResponse readUser(int userId);
 
-    Slice<ReadMyMeetingCommentResponse> getMyMeetingForComment(int userId, ReadMyMeetingCommentRequest request);
+    Slice<ReadMyMeetingCommentResponse> getMyCommentableMeeting(int userId, ReadMyMeetingCommentRequest request);
 }
