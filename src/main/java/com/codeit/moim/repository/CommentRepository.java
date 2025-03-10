@@ -44,6 +44,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     @Query(
             "SELECT c FROM Comment c " +
                     "JOIN FETCH c.meeting " +
+                    "JOIN FETCH c.meeting.category " +
                     "WHERE c.user.userId = :userId " +
                     "ORDER BY c.commentId DESC "
     )
@@ -52,6 +53,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     @Query(
             "SELECT c FROM Comment c " +
                     "JOIN FETCH c.meeting " +
+                    "JOIN FETCH c.meeting.category " +
                     "WHERE c.user.userId = :userId " +
                     "AND c.commentId < :lastCommentId " +
                     "ORDER BY c.commentId DESC "

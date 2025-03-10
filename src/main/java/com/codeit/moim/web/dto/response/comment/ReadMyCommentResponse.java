@@ -14,6 +14,7 @@ public record ReadMyCommentResponse(
         String content,
         LocalDateTime createdAt,
         int meetingId,
+        String categoryTitle,
         String meetingTitle,
         String thumbnail,
         String location,
@@ -28,6 +29,7 @@ public record ReadMyCommentResponse(
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .meetingId(meeting.getMeetingId())
+                .categoryTitle(meeting.getCategory().getCategoryTitle())
                 .meetingTitle(meeting.getMeetingTitle())
                 .thumbnail(meeting.getThumbnail())
                 .location(meeting.getLocation())
