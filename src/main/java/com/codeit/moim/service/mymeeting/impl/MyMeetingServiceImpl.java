@@ -46,7 +46,6 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     private final SkillRepository skillRepository;
 
 
-    private static final int BAD_REQUEST = 400;
 
     @Override
     public UpdateMemberStatusResponse updateMemberStatus(int userId, UpdateMemberStatusRequest request) {
@@ -86,13 +85,12 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         Pageable pageable = PageRequest.of(0, pageSize);
 
         User user = getUser(userId);
-        //List<Meeting> meetingList = memberRepository.findMeetingsByUser(user);
 
         Slice<Meeting> meetings;
         if(Objects.isNull(request.lastMeetingId()) || request.lastMeetingId() <=0 ){
-            meetings = memberRepository.findByUser_userOrderByMeetingIdDesc(user, pageable);
+            meetings = meetingRepository.findByUser_userOrderByMeetingIdDesc(user, pageable);
         }else{
-            meetings = memberRepository.findByUser_userLessThanOrderByMeetingIdDesc(user, request.lastMeetingId(), pageable);
+            meetings = meetingRepository.findByUser_userLessThanOrderByMeetingIdDesc(user, request.lastMeetingId(), pageable);
         }
 
         List<ReadAllMeetingResponse> meetingResponses = meetings.stream()
