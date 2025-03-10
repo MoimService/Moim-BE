@@ -5,6 +5,7 @@ import com.codeit.moim.domain.Meeting;
 import com.codeit.moim.domain.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,8 +38,10 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
     Optional<Meeting> findMeetingWithManagerAndSkill(@Param("meetingId") int meetingId);
 
 
+    @EntityGraph(attributePaths = {"category"})
     Slice<Meeting> findByUserOrderByMeetingIdDesc(User user, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"category"})
     Slice<Meeting> findByUserAndMeetingIdLessThanOrderByMeetingIdDesc(User user, Integer integer, Pageable pageable);
 
     @Query(
