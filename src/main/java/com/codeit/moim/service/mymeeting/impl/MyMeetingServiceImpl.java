@@ -231,7 +231,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
                 : null;
 
         Member requestedUserMember =  memberRepository.findByUserAndMeeting(requestedUser, meeting);
-        if(requestedUserMember == null) throw new MemberNotFoundException("UserId: "+ userId );
+        if(requestedUserMember == null) throw new MemberNotFoundException("UserId: "+ request.userId() + " MeetingId: " + request.meetingId());
         ReadMemberMessageResponse memberResponse = ReadMemberMessageResponse.fromEntity(requestedUserMember);
 
 
