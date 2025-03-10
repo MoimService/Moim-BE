@@ -247,7 +247,7 @@ public class MeetingServiceImpl implements MeetingService {
         SortField sortEnum = SortField.valueOf(sortField);
 
         switch(sortEnum){
-            case NEW:
+            case CREATED:
                 meetingList.sort(Comparator.comparing(Meeting::getCreatedAt).reversed());
                 break;
             case OLD:

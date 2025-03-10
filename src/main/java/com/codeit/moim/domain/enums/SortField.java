@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public enum SortField {
     OLD("오래된 순"),
-    NEW("최신순"),
+    CREATED("생성 순"),
     LIKES("좋아요 순");
 
     private final String value;
