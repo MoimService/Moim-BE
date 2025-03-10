@@ -32,6 +32,7 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
 
     @Query(
             "SELECT m.meeting FROM Member m " +
+                    "JOIN FETCH m.meeting.category " +
                     "WHERE m.user = :user " +
                     "ORDER BY m.meeting.meetingId DESC "
     )
@@ -39,6 +40,7 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
 
     @Query(
             "SELECT m.meeting FROM Member m " +
+                    "JOIN FETCH m.meeting.category " +
                     "WHERE m.user = :user " +
                     "AND m.meeting.meetingId < :lastMeetingId " +
                     "ORDER BY m.meeting.meetingId DESC "
