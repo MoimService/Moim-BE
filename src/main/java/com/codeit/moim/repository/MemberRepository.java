@@ -5,6 +5,8 @@ import com.codeit.moim.domain.Member;
 import com.codeit.moim.domain.User;
 import com.codeit.moim.domain.enums.MemberStatus;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -29,4 +31,22 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     List<Member> findByMeeting(Meeting meeting);
 
     boolean existsByUserEmailAndMeetingAndStatus(String email, Meeting meeting, MemberStatus memberStatus);
+
+    @Query(
+            "SELECT m.meeting FROM Member m " +
+                    "JOIN FETCH m.meeting.category " +
+                    "WHERE m.user = :user " +
+                    "ORDER BY m.meeting.meetingId DESC "
+    )
+    Slice<Meeting> findByUser_userOrderByMeetingIdDesc(@org.springframework.data.repository.query.Param("user") User user, Pageable pageable);
+
+    @Query(
+            "SELECT m.meeting FROM Member m " +
+                    "JOIN FETCH m.meeting.category " +
+                    "WHERE m.user = :user " +
+                    "AND m.meeting.meetingId < :lastMeetingId " +
+                    "ORDER BY m.meeting.meetingId DESC "
+    )
+    Slice<Meeting> findByUser_userLessThanOrderByMeetingIdDesc(@org.springframework.data.repository.query.Param("user") User user, Integer lastMeetingId, Pageable pageable);
+
 }

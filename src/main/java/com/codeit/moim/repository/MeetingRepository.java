@@ -53,23 +53,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
     Meeting findByIdWithUser(int meetingId);
 
     @Query(
-            "SELECT m FROM Meeting m " +
-                    "JOIN FETCH m.category " +
-                    "WHERE m.user = :user " +
-                    "ORDER BY m.meetingId DESC "
-    )
-    Slice<Meeting> findByUser_userOrderByMeetingIdDesc(@Param("user") User user, Pageable pageable);
-
-    @Query(
-            "SELECT m FROM Meeting m " +
-                    "JOIN FETCH m.category " +
-                    "WHERE m.user = :user " +
-                    "AND m.meetingId < :lastMeetingId " +
-                    "ORDER BY m.meetingId DESC "
-    )
-    Slice<Meeting> findByUser_userLessThanOrderByMeetingIdDesc(@Param("user") User user, Integer lastMeetingId, Pageable pageable);
-
-    @Query(
             "SELECT l.meeting FROM Likes l " +
                     "JOIN FETCH l.meeting.category " +
                     "WHERE l.user = :user " +

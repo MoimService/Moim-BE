@@ -88,9 +88,9 @@ public class MyMeetingServiceImpl implements MyMeetingService {
 
         Slice<Meeting> meetings;
         if(Objects.isNull(request.lastMeetingId()) || request.lastMeetingId() <=0 ){
-            meetings = meetingRepository.findByUser_userOrderByMeetingIdDesc(user, pageable);
+            meetings = memberRepository.findByUser_userOrderByMeetingIdDesc(user, pageable);
         }else{
-            meetings = meetingRepository.findByUser_userLessThanOrderByMeetingIdDesc(user, request.lastMeetingId(), pageable);
+            meetings = memberRepository.findByUser_userLessThanOrderByMeetingIdDesc(user, request.lastMeetingId(), pageable);
         }
 
         List<ReadAllMeetingResponse> meetingResponses = meetings.stream()
