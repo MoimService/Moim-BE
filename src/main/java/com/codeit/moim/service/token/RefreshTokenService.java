@@ -14,7 +14,7 @@ public interface RefreshTokenService {
 
     Optional<RefreshToken> findByToken(String requestRefreshToken);
 
-    //String refreshToken(TokenRefreshRequest request);
-    String refreshToken(String refreshToken);
+    String refreshToken(TokenRefreshRequest request);
+    //String refreshToken(String refreshToken);
 
 }
