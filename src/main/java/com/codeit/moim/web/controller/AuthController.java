@@ -73,8 +73,7 @@ public class AuthController {
         httpServletResponse.addCookie(accessTokenCookie);
         httpServletResponse.addCookie(refreshTokenCookie);
 
-
-        httpServletResponse.addHeader("Access-Token-Cookie",
+        httpServletResponse.addHeader("Set-Cookie",
                 String.format("%s=%s; Path=%s; Max-Age=%d; HttpOnly; SameSite=None; Secure;",
                         accessTokenCookie.getName(),
                         accessTokenCookie.getValue(),
@@ -83,7 +82,7 @@ public class AuthController {
                 )
         );
 
-        httpServletResponse.addHeader("Refresh-Token-Cookie",
+        httpServletResponse.addHeader("Set-Cookie",
                 String.format("%s=%s; Path=%s; Max-Age=%d; HttpOnly; SameSite=None; Secure;",
                         refreshTokenCookie.getName(),
                         refreshTokenCookie.getValue(),
