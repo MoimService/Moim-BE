@@ -198,9 +198,9 @@ public class MyMeetingServiceImpl implements MyMeetingService {
 
         Slice<Meeting> meetings;
         if(Objects.isNull(request.lastMeetingId()) || request.lastMeetingId() <=0 ){
-            meetings = likesRepository.findLikedMeetings(user, pageable);
+            meetings = meetingRepository.findLikedMeetings(user, pageable);
        }else{
-            meetings = likesRepository.findLikeMeetingsLessThan(user, request.lastMeetingId(), pageable);
+            meetings = meetingRepository.findLikeMeetingsLessThan(user, request.lastMeetingId(), pageable);
         }
 
         List<ReadLikeMeetingResponse> meetingResponses = meetings

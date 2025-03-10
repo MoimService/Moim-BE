@@ -69,4 +69,22 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
     )
     Slice<Meeting> findByUser_userLessThanOrderByMeetingIdDesc(@Param("user") User user, Integer lastMeetingId, Pageable pageable);
 
+    @Query(
+            "SELECT l.meeting FROM Likes l " +
+                    "JOIN FETCH l.meeting.category " +
+                    "WHERE l.user = :user " +
+                    "ORDER BY l.meeting.meetingId DESC "
+    )
+    Slice<Meeting> findLikedMeetings(@Param("user") User user, Pageable pageable);
+
+    @Query(
+            "SELECT l.meeting FROM Likes l " +
+                    "JOIN FETCH l.meeting.category " +
+                    "WHERE l.user = :user " +
+                    "AND l.meeting.meetingId < :lastMeetingId " +
+                    "ORDER BY l.meeting.meetingId DESC"
+    )
+    Slice<Meeting> findLikeMeetingsLessThan(@Param("user") User user, @io.lettuce.core.dynamic.annotation.Param("lastLikeId") int lastMeetingId, Pageable pageable);
+
+
 }
