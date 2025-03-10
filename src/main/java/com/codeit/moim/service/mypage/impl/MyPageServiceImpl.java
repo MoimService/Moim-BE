@@ -4,14 +4,18 @@ import com.codeit.moim.common.exception.auth.PasswordInvlaidException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.*;
+import com.codeit.moim.domain.enums.MemberStatus;
 import com.codeit.moim.repository.*;
 import com.codeit.moim.service.mypage.MyPageService;
 import com.codeit.moim.service.storage.StorageService;
 import com.codeit.moim.service.user.impl.UserServiceImpl;
 import com.codeit.moim.web.dto.request.comment.ReadMyCommentRequest;
+import com.codeit.moim.web.dto.request.comment.ReadMyMeetingCommentRequest;
 import com.codeit.moim.web.dto.request.mypage.*;
 import com.codeit.moim.web.dto.response.comment.ReadMyCommentResponse;
+import com.codeit.moim.web.dto.response.comment.ReadMyMeetingCommentResponse;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
+import com.codeit.moim.web.dto.response.mymeeting.ReadManageMeetingResponse;
 import com.codeit.moim.web.dto.response.mymeeting.ReadMemberContactResponse;
 import com.codeit.moim.web.dto.response.mypage.*;
 import com.codeit.moim.web.dto.response.slice.CustomSlice;
@@ -37,6 +41,7 @@ public class MyPageServiceImpl implements MyPageService {
     private final UserSkillRepository userSkillRepository;
     private final SkillRepository skillRepository;
     private final CommentRepository commentRepository;
+    private final MemberRepository memberRepository;
     private final UserServiceImpl userServiceImpl;
     private final PasswordEncoder passwordEncoder;
 
@@ -159,6 +164,34 @@ public class MyPageServiceImpl implements MyPageService {
                 : null;
 
         return ReadUserResponse.fromEntity(user, userSkillArray, contactResponse);
+    }
+
+    @Override
+    public Slice<ReadMyMeetingCommentResponse> getMyCommentableMeeting(int userId, ReadMyMeetingCommentRequest request) {
+        int pageSize = request.size();
+        Pageable pageable = PageRequest.of(0, pageSize);
+
+        User user = getUser(userId);
+        MemberStatus status = MemberStatus.APPROVED;
+
+        //member 중 approved가 된 meeting 중에서 comment에 없는 meeting들을 반환하면 되겠다
+        Slice<Meeting> meetings ;
+        if(Objects.isNull(request.lastMeetingId()) || request.lastMeetingId() <=0 ){
+            meetings = memberRepository.findByUserMemberStatus_NotExistsComments_OrderByMeetingIdDesc(user, status, pageable);
+        }else{
+            meetings = memberRepository.findByUserMemberStatus_NotExistsComments_LessThanOrderByMeetingIdDesc(user, status, request.lastMeetingId(), pageable);
+        }
+
+        List<ReadMyMeetingCommentResponse> meetingResponses = meetings.stream()
+                .map(ReadMyMeetingCommentResponse::fromEntity)
+                .toList();
+
+        Integer nextCursor = meetings.hasNext()
+                ? meetings.getContent().get(meetings.getContent().size() -1).getMeetingId()
+                : null;
+
+
+        return new CustomSlice<>(meetingResponses, pageable, meetings.hasNext(), nextCursor);
     }
 
     private User getUser(int userId){
