@@ -8,6 +8,7 @@ import com.codeit.moim.domain.User;
 import com.codeit.moim.repository.RefreshTokenRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.token.RefreshTokenService;
+import com.codeit.moim.web.dto.request.token.TokenRefreshRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,27 +30,26 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return refreshTokenRepository.findByToken(token);
     }
 
+//    @Override
+//    public String refreshToken(String refreshToken) {
+//        RefreshToken verifiedToken = findByToken(refreshToken)
+//                .map(token -> verifyExpiration(token))
+//                .orElseThrow(()-> new TokenRefreshException("Refresh token is not in database."));
+//        String accessToken = jwtTokenProvider.createToken(verifiedToken.getUser().getEmail());
+//
+//        return accessToken;
+//    }
+
     @Override
-    public String refreshToken(String refreshToken) {
-        RefreshToken verifiedToken = findByToken(refreshToken)
+    public String refreshToken(TokenRefreshRequest request) {
+        String requestRefreshToken = request.refreshToken();
+        RefreshToken verifiedToken = findByToken(requestRefreshToken)
                 .map(token -> verifyExpiration(token))
                 .orElseThrow(()-> new TokenRefreshException("Refresh token is not in database."));
         String accessToken = jwtTokenProvider.createToken(verifiedToken.getUser().getEmail());
 
         return accessToken;
     }
-
-//    @Override
-//    public String refreshToken(TokenRefreshRequest request) {
-//        String requestRefreshToken = request.refreshToken();
-//        RefreshToken verifiedToken = findByToken(requestRefreshToken)
-//                .map(token -> verifyExpiration(token))
-//                .orElseThrow(()-> new TokenRefreshException("Refresh token is not in database."));
-//        String accessToken = jwtTokenProvider.createToken(verifiedToken.getUser().getEmail());
-//
-//
-//        return accessToken;
-//    }
 
 
 

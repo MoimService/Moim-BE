@@ -67,13 +67,8 @@ public class AuthController {
 
 
         Cookie accessTokenCookie = jwtTokenProvider.createCookie("access_token", accessToken, ACCESS_TOKEN_COOKIE_VALID_SECONDS);
-        Cookie refreshTokenCookie = jwtTokenProvider.createCookie("refresh_token", refreshToken.getToken(), REFRESH_TOKEN_COOKIE_VALID_SECONDS);
-
-
         httpServletResponse.addCookie(accessTokenCookie);
-        httpServletResponse.addCookie(refreshTokenCookie);
-
-        httpServletResponse.addHeader("Set-Cookie",
+        httpServletResponse.setHeader("Set-Cookie",
                 String.format("%s=%s; Path=%s; Max-Age=%d; HttpOnly; SameSite=None; Secure;",
                         accessTokenCookie.getName(),
                         accessTokenCookie.getValue(),
@@ -82,75 +77,67 @@ public class AuthController {
                 )
         );
 
-        httpServletResponse.addHeader("Set-Cookie",
-                String.format("%s=%s; Path=%s; Max-Age=%d; HttpOnly; SameSite=None; Secure;",
-                        refreshTokenCookie.getName(),
-                        refreshTokenCookie.getValue(),
-                        refreshTokenCookie.getPath(),
-                        refreshTokenCookie.getMaxAge()
-                )
-        );
-
 //        httpServletResponse.addHeader("Access-Control-Expose-Headers", "token");
 //        httpServletResponse.setHeader("token", accessToken);
         return Response.ok(new LoginResponse(loginRequest.email(), accessToken, refreshToken.getToken()));
     }
 
-//    @PostMapping(value = "/refresh")
-//    public Response<JwtResponse> refreshToken(
-//            @Valid @RequestBody TokenRefreshRequest request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse
-//    ){
-//        String newAccessToken = refreshTokenService.refreshToken(request);
-//        Cookie accessTokenCookie = jwtTokenProvider.createCookie("access_token", newAccessToken, ACCESS_TOKEN_COOKIE_VALID_SECONDS);
-//        httpServletResponse.addCookie(accessTokenCookie);
-//        httpServletResponse.addHeader("Access-Token-Cookie",
-//                String.format("%s=%s; Path=%s; Max-Age=%d; HttpOnly; SameSite=None; Secure;",
-//                        accessTokenCookie.getName(),
-//                        accessTokenCookie.getValue(),
-//                        accessTokenCookie.getPath(),
-//                        accessTokenCookie.getMaxAge()
-//                )
-//        );
-//    return Response.ok(new JwtResponse(newAccessToken, request.refreshToken()));
-//    }
-
     @PostMapping(value = "/refresh")
     public Response<JwtResponse> refreshToken(
-            HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse
+            @Valid @RequestBody TokenRefreshRequest request, HttpServletResponse httpServletResponse
     ){
-        String refreshToken;
-        String newAccessToken;
+        String newAccessToken = refreshTokenService.refreshToken(request);
 
-        if (httpServletRequest.getCookies() == null) {
-            throw new TokenRefreshException("no token");
-        } else {
-            refreshToken = Arrays.stream(httpServletRequest.getCookies())
-                    .filter(cookie -> cookie.getName().equals("refresh_token"))
-                    .map(Cookie::getValue)
-                    .findFirst()
-                    .orElse(null);
-        }
-        if (refreshToken == null) {
-            throw new TokenRefreshException("Refresh token expired. Please make a new login request.");
-        }
-
-
-        newAccessToken = refreshTokenService.refreshToken(refreshToken);
-
-        if(newAccessToken != null) {
-            Cookie accessTokenCookie = jwtTokenProvider.createCookie("access_token", newAccessToken, ACCESS_TOKEN_COOKIE_VALID_SECONDS);
-            httpServletResponse.addCookie(accessTokenCookie);
-            httpServletResponse.addHeader("Access-Token-Cookie",
-                    String.format("%s=%s; Path=%s; Max-Age=%d; HttpOnly; SameSite=None; Secure;",
-                            accessTokenCookie.getName(),
-                            accessTokenCookie.getValue(),
-                            accessTokenCookie.getPath(),
-                            accessTokenCookie.getMaxAge()
-                    )
-            );
-        }
-        return Response.ok(new JwtResponse(newAccessToken, refreshToken));
+        Cookie accessTokenCookie = jwtTokenProvider.createCookie("access_token", newAccessToken, ACCESS_TOKEN_COOKIE_VALID_SECONDS);
+        httpServletResponse.addCookie(accessTokenCookie);
+        httpServletResponse.setHeader("Set-Cookie",
+                String.format("%s=%s; Path=%s; Max-Age=%d; HttpOnly; SameSite=None; Secure;",
+                        accessTokenCookie.getName(),
+                        accessTokenCookie.getValue(),
+                        accessTokenCookie.getPath(),
+                        accessTokenCookie.getMaxAge()
+                )
+        );
+    return Response.ok(new JwtResponse(newAccessToken, request.refreshToken()));
     }
+
+//    @PostMapping(value = "/refresh")
+//    public Response<JwtResponse> refreshToken(
+//            HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse
+//    ){
+//        String refreshToken;
+//        String newAccessToken;
+//
+//        if (httpServletRequest.getCookies() == null) {
+//            throw new TokenRefreshException("no token");
+//        } else {
+//            refreshToken = Arrays.stream(httpServletRequest.getCookies())
+//                    .filter(cookie -> cookie.getName().equals("refresh_token"))
+//                    .map(Cookie::getValue)
+//                    .findFirst()
+//                    .orElse(null);
+//        }
+//        if (refreshToken == null) {
+//            throw new TokenRefreshException("Refresh token expired. Please make a new login request.");
+//        }
+//
+//
+//        newAccessToken = refreshTokenService.refreshToken(refreshToken);
+//
+//        if(newAccessToken != null) {
+//            Cookie accessTokenCookie = jwtTokenProvider.createCookie("access_token", newAccessToken, ACCESS_TOKEN_COOKIE_VALID_SECONDS);
+//            httpServletResponse.addCookie(accessTokenCookie);
+//            httpServletResponse.addHeader("Access-Token-Cookie",
+//                    String.format("%s=%s; Path=%s; Max-Age=%d; HttpOnly; SameSite=None; Secure;",
+//                            accessTokenCookie.getName(),
+//                            accessTokenCookie.getValue(),
+//                            accessTokenCookie.getPath(),
+//                            accessTokenCookie.getMaxAge()
+//                    )
+//            );
+//        }
+//        return Response.ok(new JwtResponse(newAccessToken, refreshToken));
+//    }
 
 
     @Operation(summary = "name check", description = "Check if name already exists in DB")
