@@ -3,9 +3,11 @@ package com.codeit.moim.web.controller;
 import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.mypage.MyPageService;
 import com.codeit.moim.web.dto.request.comment.ReadMyCommentRequest;
+import com.codeit.moim.web.dto.request.comment.ReadMyMeetingCommentRequest;
 import com.codeit.moim.web.dto.request.mypage.*;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.comment.ReadMyCommentResponse;
+import com.codeit.moim.web.dto.response.comment.ReadMyMeetingCommentResponse;
 import com.codeit.moim.web.dto.response.mypage.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -148,5 +150,21 @@ public class MyPageController {
     ){
         int userId = userDetails.getUserId();
         return Response.ok(myPageService.readUser(userId));
+    }
+
+    @Operation(
+            summary = "Get meetings to create comments",
+            description = "Get my meetings to create comments, infinite scroll applied with min size 3"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get success")
+    })
+    @GetMapping("/meeting-comment")
+    public Response<Slice<ReadMyMeetingCommentResponse>> readMyMeetingForComment(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @ModelAttribute ReadMyMeetingCommentRequest request
+    ) {
+        int userId = userDetails.getUserId();
+        return Response.ok(myPageService.getMyMeetingForComment(userId, request));
     }
 }

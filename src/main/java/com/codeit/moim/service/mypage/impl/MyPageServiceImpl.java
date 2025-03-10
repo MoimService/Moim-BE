@@ -9,8 +9,10 @@ import com.codeit.moim.service.mypage.MyPageService;
 import com.codeit.moim.service.storage.StorageService;
 import com.codeit.moim.service.user.impl.UserServiceImpl;
 import com.codeit.moim.web.dto.request.comment.ReadMyCommentRequest;
+import com.codeit.moim.web.dto.request.comment.ReadMyMeetingCommentRequest;
 import com.codeit.moim.web.dto.request.mypage.*;
 import com.codeit.moim.web.dto.response.comment.ReadMyCommentResponse;
+import com.codeit.moim.web.dto.response.comment.ReadMyMeetingCommentResponse;
 import com.codeit.moim.web.dto.response.member.CreateMemberResponse;
 import com.codeit.moim.web.dto.response.mymeeting.ReadMemberContactResponse;
 import com.codeit.moim.web.dto.response.mypage.*;
@@ -159,6 +161,16 @@ public class MyPageServiceImpl implements MyPageService {
                 : null;
 
         return ReadUserResponse.fromEntity(user, userSkillArray, contactResponse);
+    }
+
+    @Override
+    public Slice<ReadMyMeetingCommentResponse> getMyMeetingForComment(int userId, ReadMyMeetingCommentRequest request) {
+        //member 중 approved가 된 meeting
+        //List<Meeting> meetingList =
+        //중에서 comment에 없는 meeting들을 반환하면 되겠다
+
+
+        return null;
     }
 
     private User getUser(int userId){
