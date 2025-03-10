@@ -8,6 +8,7 @@ import java.util.List;
 @Builder
 public record ReadAllMeetingResponse(
         int meetingId,
+        String categoryTitle,
         String title,
         String thumbnail,
         String location,
@@ -22,6 +23,7 @@ public record ReadAllMeetingResponse(
     public static ReadAllMeetingResponse fromEntity(Meeting meeting, String myMemberStatus, List<ReadAllMeetingMemberResponse> memberList){
         return ReadAllMeetingResponse.builder()
                 .meetingId(meeting.getMeetingId())
+                .categoryTitle(meeting.getCategory().getCategoryTitle())
                 .title(meeting.getMeetingTitle())
                 .thumbnail(meeting.getThumbnail())
                 .location(meeting.getLocation())

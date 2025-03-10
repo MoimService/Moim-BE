@@ -5,6 +5,7 @@ import com.codeit.moim.domain.Meeting;
 import com.codeit.moim.domain.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,8 +38,10 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
     Optional<Meeting> findMeetingWithManagerAndSkill(@Param("meetingId") int meetingId);
 
 
+    @EntityGraph(attributePaths = {"category"})
     Slice<Meeting> findByUserOrderByMeetingIdDesc(User user, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"category"})
     Slice<Meeting> findByUserAndMeetingIdLessThanOrderByMeetingIdDesc(User user, Integer integer, Pageable pageable);
 
     @Query(
@@ -48,4 +51,40 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
                     "WHERE m.meetingId = :meetingId "
     )
     Meeting findByIdWithUser(int meetingId);
+
+    @Query(
+            "SELECT m FROM Meeting m " +
+                    "JOIN FETCH m.category " +
+                    "WHERE m.user = :user " +
+                    "ORDER BY m.meetingId DESC "
+    )
+    Slice<Meeting> findByUser_userOrderByMeetingIdDesc(@Param("user") User user, Pageable pageable);
+
+    @Query(
+            "SELECT m FROM Meeting m " +
+                    "JOIN FETCH m.category " +
+                    "WHERE m.user = :user " +
+                    "AND m.meetingId < :lastMeetingId " +
+                    "ORDER BY m.meetingId DESC "
+    )
+    Slice<Meeting> findByUser_userLessThanOrderByMeetingIdDesc(@Param("user") User user, Integer lastMeetingId, Pageable pageable);
+
+    @Query(
+            "SELECT l.meeting FROM Likes l " +
+                    "JOIN FETCH l.meeting.category " +
+                    "WHERE l.user = :user " +
+                    "ORDER BY l.meeting.meetingId DESC "
+    )
+    Slice<Meeting> findLikedMeetings(@Param("user") User user, Pageable pageable);
+
+    @Query(
+            "SELECT l.meeting FROM Likes l " +
+                    "JOIN FETCH l.meeting.category " +
+                    "WHERE l.user = :user " +
+                    "AND l.meeting.meetingId < :lastMeetingId " +
+                    "ORDER BY l.meeting.meetingId DESC"
+    )
+    Slice<Meeting> findLikeMeetingsLessThan(@Param("user") User user, @io.lettuce.core.dynamic.annotation.Param("lastLikeId") int lastMeetingId, Pageable pageable);
+
+
 }
