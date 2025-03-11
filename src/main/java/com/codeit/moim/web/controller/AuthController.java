@@ -39,8 +39,7 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    private static final int ACCESS_TOKEN_COOKIE_VALID_SECONDS = 60*1; //1min
-    private static final int REFRESH_TOKEN_COOKIE_VALID_SECONDS = 60*5; //60*60*24; //24h
+    private static final int ACCESS_TOKEN_COOKIE_VALID_SECONDS = 60*60; //1hour  //60*60*24; //24h
 
 
 
