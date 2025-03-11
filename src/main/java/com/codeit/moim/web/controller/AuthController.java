@@ -83,9 +83,9 @@ public class AuthController {
 
     @PostMapping(value = "/refresh")
     public Response<JwtResponse> refreshToken(
-            @Valid @RequestBody TokenRefreshRequest request, HttpServletResponse httpServletResponse
+            @Valid @RequestBody TokenRefreshRequest request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse
     ){
-        String newAccessToken = refreshTokenService.refreshToken(request);
+        String newAccessToken = refreshTokenService.refreshToken(request, httpServletRequest);
 
         Cookie accessTokenCookie = jwtTokenProvider.createCookie("access_token", newAccessToken, ACCESS_TOKEN_COOKIE_VALID_SECONDS);
         httpServletResponse.addCookie(accessTokenCookie);
@@ -97,8 +97,10 @@ public class AuthController {
                         accessTokenCookie.getMaxAge()
                 )
         );
-    return Response.ok(new JwtResponse(newAccessToken, request.refreshToken()));
+        return Response.ok(new JwtResponse(newAccessToken, request.refreshToken()));
     }
+
+
 
 //    @PostMapping(value = "/refresh")
 //    public Response<JwtResponse> refreshToken(

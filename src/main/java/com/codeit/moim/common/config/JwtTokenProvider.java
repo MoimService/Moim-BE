@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -105,6 +107,16 @@ public class JwtTokenProvider {
                 .getBody()
                 .getSubject();
     }
+
+    private final Set<String> tokenBlackList = new HashSet<>();
+    public void addToBlackList(String accessToken) {
+        tokenBlackList.add(accessToken);
+    }
+
+    public boolean isTokenBlackListed(String jwtToken){
+        return tokenBlackList.contains(jwtToken);
+    }
+
 
 
 

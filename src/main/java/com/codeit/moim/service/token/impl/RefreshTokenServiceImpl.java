@@ -9,7 +9,11 @@ import com.codeit.moim.repository.RefreshTokenRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.token.RefreshTokenService;
 import com.codeit.moim.web.dto.request.token.TokenRefreshRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,21 +34,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return refreshTokenRepository.findByToken(token);
     }
 
-//    @Override
-//    public String refreshToken(String refreshToken) {
-//        RefreshToken verifiedToken = findByToken(refreshToken)
-//                .map(token -> verifyExpiration(token))
-//                .orElseThrow(()-> new TokenRefreshException("Refresh token is not in database."));
-//        String accessToken = jwtTokenProvider.createToken(verifiedToken.getUser().getEmail());
-//
-//        return accessToken;
-//    }
-
     @Override
-    public String refreshToken(TokenRefreshRequest request) {
+    public String refreshToken(TokenRefreshRequest request, HttpServletRequest httpServletRequest) {
         String requestRefreshToken = request.refreshToken();
         RefreshToken verifiedToken = findByToken(requestRefreshToken)
-                .map(token -> verifyExpiration(token))
+                .map(token -> verifyExpiration(token, httpServletRequest))
                 .orElseThrow(()-> new TokenRefreshException("Refresh token is not in database."));
         String accessToken = jwtTokenProvider.createToken(verifiedToken.getUser().getEmail());
 
@@ -74,9 +68,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public RefreshToken verifyExpiration(RefreshToken token){
+    public RefreshToken verifyExpiration(RefreshToken token, HttpServletRequest httpServletRequest){
         if(token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
+            String accessToken = jwtTokenProvider.resolveToken(httpServletRequest);
+            jwtTokenProvider.addToBlackList(accessToken);
+
             throw new TokenRefreshException("Refresh token expired. Please make a new login request. Refresh token expired at: " + token.getExpiryDate());
         }
         return token;

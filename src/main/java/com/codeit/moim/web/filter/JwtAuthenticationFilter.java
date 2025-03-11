@@ -2,6 +2,7 @@ package com.codeit.moim.web.filter;
 
 import com.codeit.moim.common.config.JwtTokenProvider;
 import com.codeit.moim.common.exception.global.JwtException;
+import com.codeit.moim.common.exception.jwt.JwtNotValidException;
 import com.codeit.moim.common.exception.payload.ErrorResponse;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.web.dto.response.Response;
@@ -37,6 +38,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //                        "Header is empty. JWT token not found", UNAUTHORIZED
 //                ));
 //            }
+            if(jwtTokenProvider.isTokenBlackListed(jwtToken)){
+                throw new JwtNotValidException("This JWT is blaklisted");
+            }
             if(jwtToken != null && jwtTokenProvider.validToken(jwtToken)){
                 Authentication auth = jwtTokenProvider.getAuthentication(jwtToken);
                 SecurityContextHolder.getContext().setAuthentication(auth);
