@@ -17,5 +17,5 @@ public interface UserService {
 
     SignUpCheckResponse userEmailCheck(String email);
 
-    LogoutResponse logout(HttpServletRequest request, int userId);
+    void logout(HttpServletRequest request, int userId);
 }

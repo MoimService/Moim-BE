@@ -1,6 +1,7 @@
 package com.codeit.moim.web.controller;
 
 import com.codeit.moim.common.config.JwtTokenProvider;
+import com.codeit.moim.common.exception.jwt.JwtNotValidException;
 import com.codeit.moim.common.exception.jwt.TokenRefreshException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.RefreshToken;
@@ -28,6 +29,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -105,11 +107,12 @@ public class AuthController {
 
     @PostMapping(value = "/refresh")
     public Response<JwtResponse> refreshToken(
-            @Valid @RequestBody TokenRefreshRequest request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse
+            @Valid @RequestBody TokenRefreshRequest request,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse
     ){
         try{
-            String newAccessToken = refreshTokenService.refreshToken(request, httpServletRequest);
-
+        String newAccessToken = refreshTokenService.refreshToken(request, httpServletRequest);
             Cookie accessTokenCookie = jwtTokenProvider.createCookie("access_token", newAccessToken, ACCESS_TOKEN_COOKIE_VALID_SECONDS);
             httpServletResponse.addCookie(accessTokenCookie);
             httpServletResponse.setHeader("Set-Cookie",
@@ -121,9 +124,9 @@ public class AuthController {
                     )
             );
             return Response.ok(new JwtResponse(newAccessToken, request.refreshToken()));
-        }catch(TokenRefreshException e){
-            String emptyAccessToken = "empty token";
-            Cookie emptyCookie = jwtTokenProvider.createCookie("access_token", emptyAccessToken, 0);
+        }
+        catch(TokenRefreshException e){
+            Cookie emptyCookie = jwtTokenProvider.createCookie("access_token", "", 0);
             httpServletResponse.addCookie(emptyCookie);
             httpServletResponse.setHeader("Set-Cookie",
                     String.format("%s=%s; Path=%s; Max-Age=%d; HttpOnly; SameSite=None; Secure;",
@@ -133,7 +136,7 @@ public class AuthController {
                             emptyCookie.getMaxAge()
                     )
             );
-            return Response.ok(new JwtResponse(emptyAccessToken, request.refreshToken()));
+            throw new TokenRefreshException("Refresh token expired. Please make a new login request.");
         }
     }
 
@@ -168,9 +171,9 @@ public class AuthController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         int userId = userDetails.getUserId();
+        userService.logout(httpServletRequest, userId);
 
-        String emptyAccessToken = "empty token";
-        Cookie emptyCookie = jwtTokenProvider.createCookie("access_token", emptyAccessToken, 0);
+        Cookie emptyCookie = jwtTokenProvider.createCookie("access_token", "", 0);
         httpServletResponse.addCookie(emptyCookie);
         httpServletResponse.setHeader("Set-Cookie",
                 String.format("%s=%s; Path=%s; Max-Age=%d; HttpOnly; SameSite=None; Secure;",
@@ -181,7 +184,7 @@ public class AuthController {
                 )
         );
 
-        return Response.ok( userService.logout(httpServletRequest, userId));
+        return Response.ok(new LogoutResponse(userId));
     }
 
 
