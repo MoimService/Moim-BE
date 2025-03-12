@@ -8,14 +8,18 @@ import com.codeit.moim.common.exception.auth.SignUpExistException;
 import com.codeit.moim.common.exception.auth.UserNotFoundException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.Contact;
+import com.codeit.moim.domain.RefreshToken;
 import com.codeit.moim.domain.User;
 import com.codeit.moim.repository.ContactRepository;
+import com.codeit.moim.repository.RefreshTokenRepository;
 import com.codeit.moim.repository.UserRepository;
 import com.codeit.moim.service.user.UserService;
 import com.codeit.moim.web.dto.request.auth.LoginRequest;
 import com.codeit.moim.web.dto.request.auth.SignUpRequest;
+import com.codeit.moim.web.dto.response.auth.LogoutResponse;
 import com.codeit.moim.web.dto.response.auth.SignUpCheckResponse;
 import com.codeit.moim.web.dto.response.auth.SignUpResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +38,8 @@ public class UserServiceImpl implements UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final ContactRepository contactRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+
 
 
     @Override
@@ -99,6 +105,18 @@ public class UserServiceImpl implements UserService {
         else{
             return new SignUpCheckResponse(true);
         }
+    }
+
+    @Override
+    public LogoutResponse logout(HttpServletRequest request, int userId) {
+        //access token -> add to blacklist
+        String accessToken = jwtTokenProvider.resolveToken(request);
+        jwtTokenProvider.addToBlackList(accessToken);
+        //refresh token -> delete from DB
+        User user = userRepository.findById(userId)
+                        .orElseThrow(()-> new UserNotFoundException("userId: " + userId));
+        refreshTokenRepository.deleteByUser(user);
+        return new LogoutResponse(userId);
     }
 
     public void passwordMatchValidation(String password, String passwordCheck){

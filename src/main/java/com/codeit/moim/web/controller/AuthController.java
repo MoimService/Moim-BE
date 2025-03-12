@@ -5,6 +5,7 @@ import com.codeit.moim.common.exception.jwt.TokenRefreshException;
 import com.codeit.moim.common.exception.payload.ErrorStatus;
 import com.codeit.moim.domain.RefreshToken;
 import com.codeit.moim.domain.User;
+import com.codeit.moim.repository.CustomUserDetails;
 import com.codeit.moim.service.token.RefreshTokenService;
 import com.codeit.moim.service.user.UserService;
 import com.codeit.moim.web.dto.request.auth.LoginRequest;
@@ -13,6 +14,7 @@ import com.codeit.moim.web.dto.request.auth.SignUpRequest;
 import com.codeit.moim.web.dto.request.token.TokenRefreshRequest;
 import com.codeit.moim.web.dto.response.Response;
 import com.codeit.moim.web.dto.response.auth.LoginResponse;
+import com.codeit.moim.web.dto.response.auth.LogoutResponse;
 import com.codeit.moim.web.dto.response.auth.SignUpCheckResponse;
 import com.codeit.moim.web.dto.response.auth.SignUpResponse;
 import com.codeit.moim.web.dto.response.token.JwtResponse;
@@ -25,6 +27,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -157,6 +160,19 @@ public class AuthController {
     @GetMapping(value = "/signup/email")
     public Response<SignUpCheckResponse> emailCheck(@RequestParam String email){
         return Response.ok( userService.userEmailCheck(email));
+    }
+
+    @Operation(summary = "Logout", description = "Add accesstoken to blacklist")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "logout success")
+    })
+    @DeleteMapping(value = "/logout")
+    public Response<LogoutResponse> logout(
+            HttpServletRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok( userService.logout(request, userId));
     }
 
 
