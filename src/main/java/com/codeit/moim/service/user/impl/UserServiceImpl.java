@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LogoutResponse logout(HttpServletRequest request, int userId) {
+    public void logout(HttpServletRequest request, int userId) {
         //access token -> add to blacklist
         String accessToken = jwtTokenProvider.resolveToken(request);
         jwtTokenProvider.addToBlackList(accessToken);
@@ -116,7 +116,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                         .orElseThrow(()-> new UserNotFoundException("userId: " + userId));
         refreshTokenRepository.deleteByUser(user);
-        return new LogoutResponse(userId);
     }
 
     public void passwordMatchValidation(String password, String passwordCheck){

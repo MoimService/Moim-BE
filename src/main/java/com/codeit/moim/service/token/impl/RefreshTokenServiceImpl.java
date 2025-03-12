@@ -73,8 +73,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
             refreshTokenRepository.delete(token);
             String accessToken = jwtTokenProvider.resolveToken(httpServletRequest);
             jwtTokenProvider.addToBlackList(accessToken);
-
-            throw new TokenRefreshException("Refresh token expired. Please make a new login request. Refresh token expired at: " + token.getExpiryDate());
+            return null;
+            //controller에서 에러 던지고 빈 쿠키 생성 위해 return void
+            //throw new TokenRefreshException("Refresh token expired. Please make a new login request. Refresh token expired at: " + token.getExpiryDate());
         }
         return token;
     }
