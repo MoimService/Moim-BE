@@ -38,7 +38,6 @@ public class MyMeetingServiceImpl implements MyMeetingService {
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
     private final MemberRepository memberRepository;
-    private final LikesRepository likesRepository;
     private final UserSkillRepository userSkillRepository;
     private final CategoryRepository categoryRepository;
     private final StorageService storageService;
@@ -85,12 +84,13 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         Pageable pageable = PageRequest.of(0, pageSize);
 
         User user = getUser(userId);
+        boolean isPublic = true;
 
         Slice<Meeting> meetings;
         if(Objects.isNull(request.lastMeetingId()) || request.lastMeetingId() <=0 ){
-            meetings = memberRepository.findByUser_userOrderByMeetingIdDesc(user, pageable);
+            meetings = memberRepository.findByUser_userOrderByMeetingIdDesc(user, isPublic, pageable);
         }else{
-            meetings = memberRepository.findByUser_userLessThanOrderByMeetingIdDesc(user, request.lastMeetingId(), pageable);
+            meetings = memberRepository.findByUser_userLessThanOrderByMeetingIdDesc(user, isPublic, request.lastMeetingId(), pageable);
         }
 
         List<ReadAllMeetingResponse> meetingResponses = meetings.stream()

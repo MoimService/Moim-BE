@@ -36,18 +36,20 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
             "SELECT m.meeting FROM Member m " +
                     "JOIN FETCH m.meeting.category " +
                     "WHERE m.user = :user " +
+                    "AND m.meeting.isPublic = :isPublic " +
                     "ORDER BY m.meeting.meetingId DESC "
     )
-    Slice<Meeting> findByUser_userOrderByMeetingIdDesc(@Param("user") User user, Pageable pageable);
+    Slice<Meeting> findByUser_userOrderByMeetingIdDesc(@Param("user") User user,  boolean isPublic, Pageable pageable);
 
     @Query(
             "SELECT m.meeting FROM Member m " +
                     "JOIN FETCH m.meeting.category " +
                     "WHERE m.user = :user " +
+                    "AND m.meeting.isPublic = :isPublic " +
                     "AND m.meeting.meetingId < :lastMeetingId " +
                     "ORDER BY m.meeting.meetingId DESC "
     )
-    Slice<Meeting> findByUser_userLessThanOrderByMeetingIdDesc(@Param("user") User user, @Param("status") Integer lastMeetingId, Pageable pageable);
+    Slice<Meeting> findByUser_userLessThanOrderByMeetingIdDesc(@Param("user") User user,  boolean isPublic, @Param("status") Integer lastMeetingId, Pageable pageable);
     @Query(
             "SELECT m FROM Member mb " +
                     "JOIN mb.meeting m " +
