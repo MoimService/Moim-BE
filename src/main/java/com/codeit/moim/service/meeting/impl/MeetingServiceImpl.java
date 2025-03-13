@@ -180,7 +180,7 @@ public class MeetingServiceImpl implements MeetingService {
             User user = userRepository.findByEmail(email)
                     .orElseThrow(()-> new UserNotFoundException("user email: " + email));
 
-            if(!meeting.isPublic() && !meeting.getUser().getEmail().equals(email)) throw new MeetingAccessDeniedException("Only meeting manager can access isPublic = false meeting. UserId: " + meeting.getUser().getEmail());
+            if(!meeting.isPublic() && !meeting.getUser().getEmail().equals(email)) throw new MeetingAccessDeniedException("Only meeting manager can access isPublic = false meeting. \n RequestUserId: " + user.getUserId() + " MeetingManagerUserId: " + meeting.getUser().getUserId());
 
             isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
             isMember = memberRepository.existsByUserEmailAndMeetingAndStatus(email, meeting, MemberStatus.APPROVED);
@@ -191,6 +191,7 @@ public class MeetingServiceImpl implements MeetingService {
             }
 
         }else{
+            if(!meeting.isPublic()) throw new MeetingAccessDeniedException("Only meeting manager can access isPublic = false meeting.");
             isLike = false;
             isMember = false;
             memberStatus = "false";
