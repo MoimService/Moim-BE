@@ -16,11 +16,12 @@ public record ReadAllMeetingResponse(
         int maxMember,
         int likesCount,
         String myMemberStatus,
+        boolean isMeetingManager,
 
         List<ReadAllMeetingMemberResponse> memberList
 
 ) {
-    public static ReadAllMeetingResponse fromEntity(Meeting meeting, String myMemberStatus, List<ReadAllMeetingMemberResponse> memberList){
+    public static ReadAllMeetingResponse fromEntity(Meeting meeting, String myMemberStatus, boolean isMeetingManager, List<ReadAllMeetingMemberResponse> memberList){
         return ReadAllMeetingResponse.builder()
                 .meetingId(meeting.getMeetingId())
                 .categoryTitle(meeting.getCategory().getCategoryTitle())
@@ -31,6 +32,7 @@ public record ReadAllMeetingResponse(
                 .maxMember(meeting.getMaxMember())
                 .likesCount(meeting.getLikesCount())
                 .myMemberStatus(myMemberStatus)
+                .isMeetingManager(isMeetingManager)
                 .memberList(memberList)
                 .build();
     }

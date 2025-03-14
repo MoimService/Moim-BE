@@ -96,12 +96,13 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         List<ReadAllMeetingResponse> meetingResponses = meetings.stream()
                 .map(meeting -> {
                     String status = memberRepository.findByUserAndMeeting(user, meeting).getStatus().toString();
+                    boolean isMeetingManager = meeting.getUser().getUserId() == userId;
                     List<ReadAllMeetingMemberResponse> memberResponseList = memberRepository.findByMeeting(meeting)
                             .stream()
                             .filter(member -> member.getStatus().equals(MemberStatus.APPROVED))
                             .map(member -> ReadAllMeetingMemberResponse.fromEntity(member.getUser()))
                             .toList();
-                    return ReadAllMeetingResponse.fromEntity(meeting, status, memberResponseList);
+                    return ReadAllMeetingResponse.fromEntity(meeting, status, isMeetingManager, memberResponseList);
                 }).toList();
 
         Integer nextCursor = meetings.hasNext()
