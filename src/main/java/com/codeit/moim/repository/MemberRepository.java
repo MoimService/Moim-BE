@@ -37,9 +37,10 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
                     "JOIN FETCH m.meeting.category " +
                     "WHERE m.user = :user " +
                     "AND m.meeting.isPublic = :isPublic " +
+                    "AND m.status <> 'PENDING' " +
                     "ORDER BY m.meeting.meetingId DESC "
     )
-    Slice<Meeting> findByUser_userOrderByMeetingIdDesc(@Param("user") User user,  boolean isPublic, Pageable pageable);
+    Slice<Meeting> findByUser_userOrderByMeetingIdDesc(@Param("user") User user,  @Param("isPublic") boolean isPublic, Pageable pageable);
 
     @Query(
             "SELECT m.meeting FROM Member m " +
@@ -49,7 +50,7 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
                     "AND m.meeting.meetingId < :lastMeetingId " +
                     "ORDER BY m.meeting.meetingId DESC "
     )
-    Slice<Meeting> findByUser_userLessThanOrderByMeetingIdDesc(@Param("user") User user,  boolean isPublic, @Param("status") Integer lastMeetingId, Pageable pageable);
+    Slice<Meeting> findByUser_userLessThanOrderByMeetingIdDesc(@Param("user") User user,  @Param("isPublic") boolean isPublic, @Param("status") Integer lastMeetingId, Pageable pageable);
     @Query(
             "SELECT m FROM Member mb " +
                     "JOIN mb.meeting m " +
