@@ -174,6 +174,7 @@ public class MeetingServiceImpl implements MeetingService {
 
         boolean isLike;
         boolean isMember;
+        boolean isMeetingManager;
         String memberStatus;
 
         if(!email.equals("no user")){
@@ -184,6 +185,7 @@ public class MeetingServiceImpl implements MeetingService {
 
             isLike = likesRepository.existsByUserEmailAndMeeting(email, meeting);
             isMember = memberRepository.existsByUserEmailAndMeetingAndStatus(email, meeting, MemberStatus.APPROVED);
+            isMeetingManager = meeting.getUser().getUserId() == user.getUserId();
             if(memberRepository.existsByUserAndMeeting(user, meeting)){
                 memberStatus = memberRepository.findByUserAndMeeting(user, meeting).getStatus().toString();
             }else{
@@ -194,6 +196,7 @@ public class MeetingServiceImpl implements MeetingService {
             if(!meeting.isPublic()) throw new MeetingAccessDeniedException("Only meeting manager can access isPublic = false meeting.");
             isLike = false;
             isMember = false;
+            isMeetingManager = false;
             memberStatus = "false";
         }
 
@@ -203,7 +206,7 @@ public class MeetingServiceImpl implements MeetingService {
                 .collect(Collectors.toList());
 
         String[] meetingSkillArray = meetingSkillList.stream().toArray(String[]::new);
-        return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember, memberStatus, meetingSkillArray);
+        return ReadMeetingDetailResponse.fromEntity(meeting, isLike, isMember, isMeetingManager, memberStatus, meetingSkillArray);
     }
 
     @Override
