@@ -209,6 +209,4 @@ public class MyMeetingController {
         int userId = userDetails.getUserId();
         return Response.ok(myMeetingService.findPendingMeeting(userId, request));
     }
-
-
 }
