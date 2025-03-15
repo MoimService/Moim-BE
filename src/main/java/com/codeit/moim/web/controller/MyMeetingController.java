@@ -196,7 +196,7 @@ public class MyMeetingController {
     @Operation(
             summary = "Get pending meetings ",
             description = "Get meetings that user applied and waiting(pending). Infinite scroll min size is 6." +
-                    "Get all user with all status"
+                    "Get only approved user"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Get meetings success")
