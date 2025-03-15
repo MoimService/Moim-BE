@@ -21,10 +21,12 @@ public record ReadMeetingDetailResponse(
         Boolean isPublic,
         Boolean isLike,
         Boolean isMember,
+        boolean isMeetingManager,
+
         String memberStatus,
         String[] meetingSkillArray
 ){
-    public static ReadMeetingDetailResponse fromEntity(Meeting meeting, boolean isLike, boolean isMember, String memberStatus,String[] meetingSkillArray) {
+    public static ReadMeetingDetailResponse fromEntity(Meeting meeting, boolean isLike, boolean isMember, boolean isMeetingManager, String memberStatus,String[] meetingSkillArray) {
         return ReadMeetingDetailResponse.builder()
             .meetingId(meeting.getMeetingId())
                 .categoryTitle(meeting.getCategory().getCategoryTitle())
@@ -40,6 +42,7 @@ public record ReadMeetingDetailResponse(
                 .isPublic(meeting.isPublic())
             .isLike(isLike)
             .isMember(isMember)
+                .isMeetingManager(isMeetingManager)
                 .memberStatus(memberStatus)
                 .meetingSkillArray(meetingSkillArray)
         .build();
