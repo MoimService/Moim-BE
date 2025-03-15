@@ -277,6 +277,41 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         return new UpdateMeetingResponse(meetingId);
     }
 
+    @Override
+    public Slice<ReadAllMeetingResponse> findPendingMeeting(int userId, ReadPendingMeetingRequest request) {
+        int pageSize = request.size();
+        Pageable pageable = PageRequest.of(0, pageSize);
+
+        User user = getUser(userId);
+        boolean isPublic = true;
+
+        Slice<Meeting> meetings;
+        MemberStatus pendingStatus = MemberStatus.PENDING;
+        if(Objects.isNull(request.lastMeetingId()) || request.lastMeetingId() <=0 ){
+            meetings = memberRepository.findPendingMeetingByUser_userOrderByMeetingIdDesc(user, pendingStatus, isPublic, pageable);
+        }else{
+            meetings = memberRepository.findPendingMeetingByUser_userLessThanOrderByMeetingIdDesc(user, pendingStatus, isPublic, request.lastMeetingId(), pageable);
+        }
+
+        List<ReadAllMeetingResponse> meetingResponses = meetings.stream()
+                .map(meeting -> {
+                    String status = memberRepository.findByUserAndMeeting(user, meeting).getStatus().toString();
+                    boolean isMeetingManager = meeting.getUser().getUserId() == userId;
+                    List<ReadAllMeetingMemberResponse> memberResponseList = memberRepository.findByMeeting(meeting)
+                            .stream()
+                            .filter(member -> member.getStatus().equals(MemberStatus.APPROVED))
+                            .map(member -> ReadAllMeetingMemberResponse.fromEntity(member.getUser()))
+                            .toList();
+                    return ReadAllMeetingResponse.fromEntity(meeting, status, isMeetingManager, memberResponseList);
+                }).toList();
+
+        Integer nextCursor = meetings.hasNext()
+                ? meetings.getContent().get(meetings.getContent().size() -1).getMeetingId()
+                : null;
+
+        return new CustomSlice<>(meetingResponses, pageable, meetings.hasNext(), nextCursor);
+    }
+
 
     private User getUser(int userId){
         User user = userRepository.findById(userId)

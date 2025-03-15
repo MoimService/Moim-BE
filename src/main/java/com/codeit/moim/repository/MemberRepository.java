@@ -47,6 +47,7 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
                     "JOIN FETCH m.meeting.category " +
                     "WHERE m.user = :user " +
                     "AND m.meeting.isPublic = :isPublic " +
+                    "AND m.status <> 'PENDING' " +
                     "AND m.meeting.meetingId < :lastMeetingId " +
                     "ORDER BY m.meeting.meetingId DESC "
     )
@@ -84,20 +85,24 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     )
     Slice<Meeting> findByUserMemberStatus_NotExistsComments_LessThanOrderByMeetingIdDesc(User user, MemberStatus status, Integer lastMeetingId, Pageable pageable);
 
-//    @Query(
-//            "SELECT m.meeting FROM Member m " +
-//                    "JOIN FETCH m.meeting.category " +
-//                    "WHERE m.user = :user AND m.status = :status " +
-//                    "ORDER BY m.meeting.meetingId DESC "
-//    )
-//    Slice<Meeting> findByUser_memberStatusOrderByMeetingIdDesc(@Param("user")User user, @Param("status") MemberStatus status, Pageable pageable);
-//
-//    @Query(
-//            "SELECT m.meeting FROM Member m " +
-//                    "JOIN FETCH m.meeting.category " +
-//                    "WHERE m.user = :user AND m.status = :status " +
-//                    "AND m.meeting.meetingId < :lastMeetingId " +
-//                    "ORDER BY m.meeting.meetingId DESC "
-//    )
-//    Slice<Meeting> findByUser_memberStatusLessThanOrderByMeetingIdDesc(@Param("user") User user, @Param("status") MemberStatus status, Integer lastMeetingId, Pageable pageable);
+    @Query(
+            "SELECT m.meeting FROM Member m " +
+                    "JOIN FETCH m.meeting.category " +
+                    "WHERE m.user = :user " +
+                    "AND m.status = :status " +
+                    "AND m.meeting.isPublic = :isPublic " +
+                    "ORDER BY m.meeting.meetingId DESC "
+    )
+    Slice<Meeting> findPendingMeetingByUser_userOrderByMeetingIdDesc(@Param("user") User user, @Param("pendingStatus") MemberStatus status, @Param("isPublic") boolean isPublic, Pageable pageable);
+
+    @Query(
+            "SELECT m.meeting FROM Member m " +
+                    "JOIN FETCH m.meeting.category " +
+                    "WHERE m.user = :user " +
+                    "AND m.status = :status " +
+                    "AND m.meeting.isPublic = :isPublic " +
+                    "AND m.meeting.meetingId < :lastMeetingId " +
+                    "ORDER BY m.meeting.meetingId DESC "
+    )
+    Slice<Meeting> findPendingMeetingByUser_userLessThanOrderByMeetingIdDesc(@Param("user") User user, @Param("pendingStatus") MemberStatus status, @Param("isPublic") boolean isPublic, Integer lastMeetingId, Pageable pageable);
 }

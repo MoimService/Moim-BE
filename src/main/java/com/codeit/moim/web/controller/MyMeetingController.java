@@ -193,5 +193,20 @@ public class MyMeetingController {
         return Response.ok(myMeetingService.updateMeetingInfo(userId, meetingId, request));
     }
 
-
+    @Operation(
+            summary = "Get pending meetings ",
+            description = "Get meetings that user applied and waiting(pending). Infinite scroll min size is 6." +
+                    "Get only approved user"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get meetings success")
+    })
+    @GetMapping("/pending")
+    public Response<Slice<ReadAllMeetingResponse>> getPendingMeetingList(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @ModelAttribute ReadPendingMeetingRequest request
+    ){
+        int userId = userDetails.getUserId();
+        return Response.ok(myMeetingService.findPendingMeeting(userId, request));
+    }
 }

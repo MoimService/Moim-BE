@@ -28,4 +28,5 @@ public interface MyMeetingService {
 
     UpdateMeetingResponse updateMeetingInfo(int userId, int meetingId, UpdateMeetingRequest request);
 
+    Slice<ReadAllMeetingResponse> findPendingMeeting(int userId, ReadPendingMeetingRequest request);
 }
