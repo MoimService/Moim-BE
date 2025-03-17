@@ -22,7 +22,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private static final long TOKEN_VALID_MILLI_SECONDS = 1000L*60*3; //3min //1000L*60*60*24; //24h
+    private static final long TOKEN_VALID_MILLI_SECONDS = 1000L*60*60; //1h
 
 
     @Value("${jwtpassword.source}")

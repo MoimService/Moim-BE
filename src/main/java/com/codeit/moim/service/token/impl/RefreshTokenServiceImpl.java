@@ -27,7 +27,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private static final long REFRESH_TOKEN_VALID_MILLI_SECONDS = 1000L*60*5; //5mins //1000L*60*60*24; //24h
+    private static final long REFRESH_TOKEN_VALID_MILLI_SECONDS = 1000L*60*60*12; //12h
 
 
     public Optional<RefreshToken> findByToken(String token) {
