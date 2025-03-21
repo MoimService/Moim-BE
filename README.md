@@ -1,12 +1,32 @@
 # 🧑🏻‍💻 Let's Code Together! - Deving
 
+## 📜 Table of Contents
+1. [🚀 Project Overview](#-project-overview)
+2. [📌 Introduction](#-introduction)
+3. [👥 Team Members](#-team-members)
+4. [🗣️ Team Communication](#-team-communication)
+5. [🖥️ Development Environment](#-development-environment)
+   - [⚙️ Tools & Technologies](#-tools--technologies)
+   - [🛠 Backend Stack](#-backend-stack)
+   - [🚀 Deployment & CI/CD](#-deployment--cicd)
+   - [🗄️ Database](#-database)
+6. [📌 Project Requirements](#-project-requirements)
+7. [🖼️ Wireframe & UI/UX Design](#-wireframe--uiux-design)
+8. [🗺️ Database ERD](#-database-erd)
+9. [🏗️ Key Features](#-key-features)
+10. [📹 Demo Video](#-demo-video)
+11. [🏆 Key Achievements](#-key-achievements)
+
+
 ## 🚀 Project Overview
 - **Duration**: January 31st - March 19th, 2025
 - **Live URL**: [Deving Together](https://deving-together.netlify.app/)
+- **Design Figma** | [DEVING - Design](https://www.figma.com/design/whAR7r8MPfWo9Cl93zhKlL/DEVING-%EC%8B%9C%EC%95%88?node-id=0-1&p=f&t=hQ9Sr369FbrTyGqY-0) |
+- **API Documentation** | [DEVING - Swagger](https://deving.shop/swagger-ui/index.html#/auth-controller) |
 
 ![Project Screenshot](https://github.com/user-attachments/assets/df7822d2-9c03-48e8-9bf6-6cb4d1a6983b)
 
-### 📌 Introduction
+## 📌 Introduction
 Deving is an online community for programmers to collaborate, network, and share knowledge. It provides services such as:
 - Team projects
 - Coding clubs
@@ -15,10 +35,14 @@ Deving is an online community for programmers to collaborate, network, and share
 
 > ⭐️ **Freelance Project**: This project was developed as a **contract freelance assignment** for **Code-It Company**, where I worked as the **sole backend developer** for two months.
 
+
+
 ## 👥 Team Members
 - **Frontend Developers**: 4
 - **Backend Developer**: 1 (myself)
 - **Role**: As the only backend developer, I was responsible for setting up the **CI/CD pipeline, backend architecture, and core development**.
+
+
 
 ## 🗣️ Team Communication
 - **[Daily Scrum](https://project-movie-reservation.notion.site/1bd5998d726681f3bb0ae0ee430ab350?v=1bd5998d726681efae7e000c579709f6)**
@@ -109,7 +133,25 @@ Deving is an online community for programmers to collaborate, network, and share
 
 ---
 
-## 🏗️ System Architecture
+## ✨ Key Features
+| Meeting search | Meeting Detail Page|
+|:---:|:---:|
+| Able to user filter and keywords for searching meetings | Get meeting details |
+| <img src="https://github.com/user-attachments/assets/52d9255d-dea1-4ea8-8171-04473944407a" alt="meetingSearch" width="450"> | <img src="https://github.com/user-attachments/assets/6253c052-29f3-41f2-98eb-5bbfe8bc50ca" alt="meetingDetail" width="450"> |
+
+
+| Apply to meetings | Manage meetings and members |
+|:---:|:---:|
+| Apply to meetings with a short introduction about the user | Manage my meetings and approve, reject, expel members |
+| <img src="https://github.com/user-attachments/assets/cd994e45-8db0-423f-a394-043052a2e68d" alt="applyMeeting" width="450"> | <img src="https://github.com/user-attachments/assets/69d4e0f3-d4fd-4bfb-8f84-5c3658f0c641" alt="manageMeeting" width="450"> |
+
+| Update my info | Top 4 Meetings |
+|:---:|:---:|
+| Change my profile information | Get top 4 meetings with most likes |
+| <img src="https://github.com/user-attachments/assets/b9988728-96a3-4de9-9057-4e48b4cb3648" alt="myinfo" width="450"> | <img src="https://github.com/user-attachments/assets/68b2402b-7de7-446f-b106-8537ed686c57" alt="getTop" width="450" />
+ |
+</br>
+
 
 ## 📹 Demo Video
 Watch a sample project video **[on YouTube](https://youtu.be/1YsrKuZVYJI)**
@@ -120,3 +162,4 @@ Watch a sample project video **[on YouTube](https://youtu.be/1YsrKuZVYJI)**
 - Successfully delivered this **freelance contract project** for **Code-It Company**.
 - Worked **independently** as the **only backend developer**, handling **CI/CD, backend architecture, and development**.
 - Built and deployed a scalable backend infrastructure using **Spring Boot, AWS, and MySQL**.
+
