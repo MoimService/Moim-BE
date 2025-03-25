@@ -17,6 +17,9 @@ public class CorsConfig {
         configuration.addAllowedOrigin("https://moim-fe-1kc6.vercel.app");
         configuration.addAllowedOrigin("https://deving-together.vercel.app");
         configuration.addAllowedOrigin("https://deving-together.netlify.app");
+        configuration.addAllowedOrigin("https://deving-clyde.vercel.app");
+        configuration.addAllowedOrigin("https://deving-moim.vercel.app");
+        configuration.addAllowedOrigin("https://deving-fe.vercel.app");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
