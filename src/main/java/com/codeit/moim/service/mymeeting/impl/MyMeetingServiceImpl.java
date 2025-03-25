@@ -342,7 +342,7 @@ public class MyMeetingServiceImpl implements MyMeetingService {
         Member savedMember = memberRepository.save(member);
 
         if(status == MemberStatus.EXPEL){
-            return (T) new UpdateMemberToExpelResponse(savedMember.getMemberId());
+            return (T) UpdateMemberToExpelResponse.fromEntity(savedMember.getMemberId());
         }else{
             return (T) UpdateMemberStatusResponse.fromEntity(savedMember);
         }

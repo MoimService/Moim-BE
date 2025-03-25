@@ -6,4 +6,9 @@ import lombok.Builder;
 public record UpdateMemberToExpelResponse(
         int memberId
 ){
+    public static UpdateMemberToExpelResponse fromEntity(int memberId){
+        return UpdateMemberToExpelResponse.builder()
+                .memberId(memberId)
+                .build();
+    }
 }
