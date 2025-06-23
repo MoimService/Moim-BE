@@ -7,6 +7,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 public class TestController {
+    @GetMapping("/")
+    public String home(){
+        return "Hello world this is home page";
+    }
+
+
     @GetMapping("/test")
     public String hello() {
         return "/CICD merge 후 final test 페이지입니다. Security config에 permitAll()로 설정되어 있습니다";
