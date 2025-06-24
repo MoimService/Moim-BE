@@ -1,0 +1,5 @@
+services:
+  my-server:
+    build: .    #dockerfile is in the same directory as compose.yml
+    ports:
+      - 8080:8080
