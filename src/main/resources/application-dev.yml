@@ -10,6 +10,12 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
+  data:
+    redis:
+      #host: localhost
+      host: my-cache-server
+      port: 6379
+
 
   jpa:
     open-in-view: false

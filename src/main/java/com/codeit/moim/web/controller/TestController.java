@@ -1,14 +1,20 @@
 package com.codeit.moim.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
 public class TestController {
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
     @GetMapping("/")
     public String home(){
+        redisTemplate.opsForValue().set("abc", "def");
         return "Hello world this is home page";
     }
 

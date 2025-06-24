@@ -3,9 +3,11 @@ services:
     build: .
     ports:
       - 8080:8080
-    depends_on: #my-server will run when condition is fulfilled
+    depends_on:
       my-db:
-        condition: service_healthy #my-server will run when my-db service_healthy
+        condition: service_healthy
+      my-cache-server:
+        condition: service_healthy
   my-db:
     image: mysql
     environment:
@@ -17,5 +19,13 @@ services:
       - 3306:3306
     healthcheck: #how to do health_check for my-db
       test: ["CMD", "mysqladmin", "ping"]
+      interval: 5s
+      retries: 10
+  my-cache-server:
+    image: redis
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       retries: 10
