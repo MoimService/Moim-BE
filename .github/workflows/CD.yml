@@ -106,12 +106,20 @@ jobs:
             docker stop moim-server || true
             docker rm moim-server || true
             docker pull ${{ steps.login-ecr.outputs.registry }}/moim-server:latest
-            docker run -d \
-              --name moim-server \
-              -p 8080:8080 \
-              -e HOST=${{ secrets.HOST }} \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              ${{ steps.login-ecr.outputs.registry }}/moim-server:latest
+#            docker run -d \
+#              --name moim-server \
+#              -p 8080:8080 \
+#              -e HOST=${{ secrets.HOST }} \
+#              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+#              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+#              ${{ steps.login-ecr.outputs.registry }}/moim-server:latest
+           docker run --add-host=host.docker.internal:host-gateway \
+           -e HOST=host.docker.internal \
+           -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+           -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+           -p 8080:8080 \
+           --name moim-server \
+           -d ${{ steps.login-ecr.outputs.registry }}/moim-server:latest
+
       
 
