@@ -103,12 +103,11 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
-            ECR_REGISTRY="${{ steps.login-ecr.outputs.registry }}"
             docker stop moim-server || true
             docker rm moim-server || true
-            docker pull $ECR_REGISTRY/moim-server:latest       
-            docker run --add-host=host.docker.internal:host-gateway \
-              -e HOST=host.docker.internal \
+            docker pull ${{ steps.login-ecr.outputs.registry }}/moim-server:latest
+            docker run \
+              -e HOST=${{ secrets.HOST }} \
               -e DB=${{ secrets.DB }} \
               -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
@@ -118,7 +117,26 @@ jobs:
               -e BUCKET_NAME=${{ secrets.BUCKET_NAME }} \
               -p 8080:8080 \
               --name moim-server \
-              -d $ECR_REGISTRY/moim-server:latest
+              -d ${{ steps.login-ecr.outputs.registry }}/moim-server:latest
+            
+
+#          script: |
+#            ECR_REGISTRY="${{ steps.login-ecr.outputs.registry }}"
+#            docker stop moim-server || true
+#            docker rm moim-server || true
+#            docker pull $ECR_REGISTRY/moim-server:latest
+#            docker run --add-host=host.docker.internal:host-gateway \
+#              -e HOST=host.docker.internal \
+#              -e DB=${{ secrets.DB }} \
+#              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+#              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+#              -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+#              -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
+#              -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
+#              -e BUCKET_NAME=${{ secrets.BUCKET_NAME }} \
+#              -p 8080:8080 \
+#              --name moim-server \
+#              -d $ECR_REGISTRY/moim-server:latest
 
 
       
