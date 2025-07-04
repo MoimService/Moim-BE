@@ -115,6 +115,7 @@ jobs:
               -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
               -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
               -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
+              -e BUCKET_NAME=${{ secrets.BUCKET_NAME }} \
               -p 8080:8080 \
               --name moim-server \
               -d $ECR_REGISTRY/moim-server:latest
