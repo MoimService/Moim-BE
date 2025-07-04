@@ -109,6 +109,7 @@ jobs:
             docker pull $ECR_REGISTRY/moim-server:latest       
             docker run --add-host=host.docker.internal:host-gateway \
               -e HOST=host.docker.internal \
+              -e DB=${{ secrets.DB }} \
               -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
               -p 8080:8080 \
