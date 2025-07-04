@@ -112,6 +112,7 @@ jobs:
               -e DB=${{ secrets.DB }} \
               -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
               -p 8080:8080 \
               --name moim-server \
               -d $ECR_REGISTRY/moim-server:latest
